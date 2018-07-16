@@ -16,6 +16,7 @@
   "require": {
     "php": ">=7.1",
     "illuminate/support": "~5.6.0",
+    "noh4ck/graphiql": "^1.0",
     "nuwave/lighthouse": "^2.1",
     "squizlabs/php_codesniffer": "^3.3"
   },
