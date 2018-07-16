@@ -1,4 +1,4 @@
-image: bartjuh4/php7-test:latest
+image: deinternetjongens/php7.2:latest
 pipelines:
   default:
   - step:
