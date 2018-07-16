@@ -32,6 +32,13 @@ deinternetjongens\LighthouseGenerators\Facades\LighthouseGenerators::class,
 php artisan vendor:publish --provider="deinternetjongens\LighthouseGenerators\ServiceProvider" --tag="config"
 ```
 
+## Contributing
+
+Before committing, please run 
+`./automate.sh`
+
+This script will run all code style checks and phpunit tests. Fix all errors before opening a pull request.
+
 ## Usage
 
 CHANGE ME
