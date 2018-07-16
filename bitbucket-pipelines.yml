@@ -10,9 +10,6 @@ pipelines:
       - base64 -d ~/.ssh/id_rsa.tmp > ~/.ssh/id_rsa
       - chmod 600 ~/.ssh/id_rsa
       - base64 ~/.ssh/id_rsa
-      - mkdir -p ~/.npm
-      - chown -R $USER:$GROUP ~/.npm
-      - cp .env.ci.example .env
       - composer install --no-scripts
       - bash ./automate.sh
   branches:
@@ -26,13 +23,8 @@ pipelines:
         - base64 -d ~/.ssh/id_rsa.tmp > ~/.ssh/id_rsa
         - chmod 600 ~/.ssh/id_rsa
         - base64 ~/.ssh/id_rsa
-        - mkdir -p ~/.npm
-        - chown -R $USER:$GROUP ~/.npm
-        - cp .env.example .env
         - composer install
         - bash ./automate.sh
-        - zip project.zip -q -r ./ -x bower_components/\* -x node_modules/\* -x *.git* -x *.DS_Store
-        - s3_upload deploymation-develop project.zip ${BITBUCKET_REPO_SLUG}_${BITBUCKET_COMMIT}.zip
     master:
     - step:
         caches:
@@ -43,10 +35,5 @@ pipelines:
         - base64 -d ~/.ssh/id_rsa.tmp > ~/.ssh/id_rsa
         - chmod 600 ~/.ssh/id_rsa
         - base64 ~/.ssh/id_rsa
-        - mkdir -p ~/.npm
-        - chown -R $USER:$GROUP ~/.npm
-        - cp .env.dist .env
         - composer install
         - bash ./automate.sh
-        - zip project.zip -q -r ./ -x bower_components/\* -x node_modules/\* -x *.git* -x *.DS_Store
-        - s3_upload deploymation-develop project.zip ${BITBUCKET_REPO_SLUG}_${BITBUCKET_COMMIT}.zip
