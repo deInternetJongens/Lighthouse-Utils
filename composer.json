@@ -1,0 +1,53 @@
+{
+  "name": "deinternetjongens/lighthouse-generators",
+  "description": "A lighthouse generators",
+  "license": "MIT",
+  "keywords": [
+    "lighthouse",
+    "generators"
+  ],
+  "type": "library",
+  "authors": [
+    {
+      "name": "De Internet Jongens",
+      "email": "support@deinternetjongens.nl"
+    }
+  ],
+  "require": {
+    "php": ">=7.1",
+    "illuminate/support": "~5.6.0",
+    "nuwave/lighthouse": "^2.1"
+  },
+  "require-dev": {
+    "orchestra/testbench": "~3.6.0",
+    "phpunit/phpunit": "~7.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "deinternetjongens\\LighthouseGenerators\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "deinternetjongens\\LighthouseGenerators\\Tests\\": "tests"
+    },
+    "files": [
+      "vendor/phpunit/phpunit/src/Framework/Assert/Functions.php"
+    ]
+  },
+  "scripts": {
+    "phpunit": "phpunit"
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "deinternetjongens\\LighthouseGenerators\\ServiceProvider"
+      ]
+    }
+  },
+  "config": {
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "optimize-autoloader": true
+  }
+}
