@@ -1,6 +1,8 @@
 # Lighthouse Generators
 
-Package description: This package can generate queries for the [Lighthouse GraphQL library](https://github.com/nuwave/lighthouse).
+This package can generate queries for the [Lighthouse GraphQL library](https://github.com/nuwave/lighthouse).
+This is not a standalone package, so Lighthouse is listed as a dependency.
+A GraphiQL interface is also included to test your GraphQL interface.
 
 ## Installation
 
@@ -41,5 +43,16 @@ This script will run all code style checks and phpunit tests. Fix all errors bef
 
 ## Usage
 
-CHANGE ME
+This package uses Laravel Auto Discovery to register itself with your application. 
+It exposes a GraphQL interface interface on the `/graphql` route.
 
+To get started, run the following command in your Laravel application:
+`php artisan vendor:publish --provider="Nuwave\Lighthouse\Providers\LighthouseServiceProvider"`
+
+A config file will be generated: `config/lighthouse.php`. A GraphQL Schema will also be generated in `routes/graphql/schema.graphql`.  
+
+For Lighthouse usage, check [the Lighthouse docs](https://lighthouse-php.netlify.com/)
+
+To regenerate GraphiQL in your project, run the following command:
+`php artisan graphiql:publish`
+For further information about GraphiQL, please check the [readme for the GraphiQL package](https://github.com/Nohac/laravel-graphiql)
