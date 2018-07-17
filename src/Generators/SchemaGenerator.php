@@ -4,6 +4,7 @@ namespace deinternetjongens\LighthouseGenerators\Generators;
 
 use Config;
 use Exception;
+use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Definition\FieldDefinition;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Schema;
@@ -202,7 +203,7 @@ class SchemaGenerator
      *
      * @param Schema $schema
      * @param array $definitionFileDirectories
-     * @return array
+     * @return Type[]
      */
     private function getDefinedTypesFromSchema(Schema $schema, array $definitionFileDirectories): array
     {
@@ -249,27 +250,75 @@ class SchemaGenerator
     private function generateQueriesForDefinedTypes(array $definedTypes): string
     {
         $queries = [];
-        foreach ($definedTypes as $typeName => $typeFields) {
-            $query = '    ' . str_plural(strtolower($typeName));
-            $fields = [];
-
-            foreach ($typeFields as $fieldName => $fieldType) {
-                if (! in_array(class_basename($fieldType), $this->recognizedGraphqlScalarTypes)) {
-                    continue;
-                };
-                $fields[] = sprintf('%s: %s @eq', $fieldName, $fieldType->name);
+        /**
+         * @var string $typeName
+         * @var Type $type
+         */
+        foreach ($definedTypes as $typeName => $type) {
+            $paginatedWhereQuery = $this->generatePaginatedWhereQuery($typeName, $type);
+            if (! empty($paginatedWhereQuery)) {
+                $queries[] = $paginatedWhereQuery;
             }
-            if (count($fields) < 0) {
-                continue;
+            $findQuery = $this->generateFindQuery($typeName, $type);
+            if (! empty($findQuery)) {
+                $queries[] = $findQuery;
             }
-
-            $query .= sprintf('(%s)', implode(', ', $fields));
-            $query .= sprintf(': [%1$s!]! @paginate(model: "%1$s")', $typeName);
-            $queries[] = $query;
         }
         $queries = implode("\r\n", $queries);
         $queries = sprintf("type Query{\r\n%s\r\n}", $queries);
 
         return $queries;
+    }
+
+    /**
+     * @param string $typeName
+     * @param Type[] $typeFields
+     * @return string
+     */
+    private function generatePaginatedWhereQuery(string $typeName, array $typeFields): string
+    {
+        $query = '    ' . str_plural(strtolower($typeName));
+        $arguments = [];
+
+        foreach ($typeFields as $fieldName => $field) {
+            if (! in_array(class_basename($field), $this->recognizedGraphqlScalarTypes)) {
+                continue;
+            };
+            $arguments[] = sprintf('%s: %s @eq', $fieldName, $field->name);
+        }
+        if (count($arguments) < 0) {
+            return '';
+        }
+
+        $query .= sprintf('(%s)', implode(', ', $arguments));
+        $query .= sprintf(': [%1$s!]! @paginate(model: "%1$s")', $typeName);
+        return $query;
+    }
+
+    /**
+     * @param string $typeName
+     * @param Type[] $typeFields
+     * @return string
+     */
+    private function generateFindQuery(string $typeName, array $typeFields): string
+    {
+        $query = '    ' . strtolower($typeName);
+        $arguments = [];
+
+        //Loop through fields to find the 'ID' field.
+        foreach ($typeFields as $fieldName => $field) {
+            if (class_basename($field) != 'IDType') {
+                continue;
+            };
+            $arguments[] = sprintf('%s: %s! @eq', $fieldName, $field->name);
+            continue;
+        }
+        if (count($arguments) < 0) {
+            return '';
+        }
+
+        $query .= sprintf('(%s)', implode(', ', $arguments));
+        $query .= sprintf(': %1$s! @find(model: "%1$s")', $typeName);
+        return $query;
     }
 }
