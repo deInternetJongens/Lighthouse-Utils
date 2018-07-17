@@ -32,7 +32,7 @@ deinternetjongens\LighthouseGenerators\Facades\LighthouseGenerators::class,
 
 ```bash
 php artisan vendor:publish --provider="deinternetjongens\LighthouseGenerators\ServiceProvider" --tag="config"
-```
+``` 
 
 ## Contributing
 
@@ -47,12 +47,27 @@ This package uses Laravel Auto Discovery to register itself with your applicatio
 It exposes a GraphQL interface interface on the `/graphql` route.
 
 To get started, run the following command in your Laravel application:
-`php artisan vendor:publish --provider="Nuwave\Lighthouse\Providers\LighthouseServiceProvider"`
+```bash
+php artisan vendor:publish --provider="Nuwave\Lighthouse\Providers\LighthouseServiceProvider" --tag="config"
+```
 
-A config file will be generated: `config/lighthouse.php`. A GraphQL Schema will also be generated in `routes/graphql/schema.graphql`.  
+A config file will be generated: `config/lighthouse.php`. You can change these values if you want.  
 
-For Lighthouse usage, check [the Lighthouse docs](https://lighthouse-php.netlify.com/)
+### Schema
+Define your GraphQL schema by adding Types and Mutations in `app/GraphQL/Queries` and `app/GraphQL/Mutations` folders.
+If you want to change these paths, public the config file for this package and change the paths there.  
 
-To regenerate GraphiQL in your project, run the following command:
+For more information on schemas and basic Lighthouse usage, check [the Lighthouse docs](https://lighthouse-php.netlify.com/)
+
+To generate your `schema.graphql` file, run the following command:
+
+```bash
+php artisan lighthouse-generators:generate-schema
+```
+The schema will be generated to the path as defined in the Lighthouse config, `lighthouse.schema.register`
+
+### GraphiQL interface
+To add a GraphiQL interface to your project, run the following command:
 `php artisan graphiql:publish`
 For further information about GraphiQL, please check the [readme for the GraphiQL package](https://github.com/Nohac/laravel-graphiql)
+

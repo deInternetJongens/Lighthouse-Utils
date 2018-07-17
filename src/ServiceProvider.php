@@ -2,6 +2,8 @@
 
 namespace deinternetjongens\LighthouseGenerators;
 
+use deinternetjongens\LighthouseGenerators\Console\GenerateSchema;
+
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
     const CONFIG_PATH = __DIR__ . '/../config/lighthouse-generators.php';
@@ -23,5 +25,10 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         $this->app->bind('lighthouse-generators', function () {
             return new LighthouseGenerators();
         });
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                GenerateSchema::class
+            ]);
+        }
     }
 }
