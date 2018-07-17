@@ -34,17 +34,19 @@ class GenerateSchema extends Command
 
     /**
      * Execute the console command.
+     *
+     * @throws \Exception
      */
     public function handle()
     {
         // Clear the Lighthouse cached schema
-        \Cache::forget(config('lighthouse.cache.key'));
+        $this->call('lighthouse:clear-cache');
 
-        $newSchemaPath = config('lighthouse.schema.register');
+        $schemaPath = config('lighthouse.schema.register');
         $this->askWithCompletion(
             sprintf(
                 'Generating schema in location: "%s", do you want to continue?',
-                $newSchemaPath
+                $schemaPath
             ),
             ['yes', 'no'],
             'yes'
@@ -52,7 +54,11 @@ class GenerateSchema extends Command
 
         $schemaFilesPaths = config('lighthouse-generators.schema_paths');
         $generatedSchema = $this->schemaGenerator->generate($schemaFilesPaths);
-        dump($generatedSchema);
+
+        $tempSchemaFilePath = $schemaPath;
+
+        $tempSchemaFile = fopen($tempSchemaFilePath, 'wb');
+        fwrite($tempSchemaFile, $generatedSchema);
 
         $this->info('Generation complete. Validating schema.');
         $this->call('lighthouse:validate-schema');
