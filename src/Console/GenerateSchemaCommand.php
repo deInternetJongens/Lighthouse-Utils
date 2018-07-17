@@ -5,7 +5,7 @@ namespace deinternetjongens\LighthouseGenerators\Console;
 use deinternetjongens\LighthouseGenerators\Generators\SchemaGenerator;
 use Illuminate\Console\Command;
 
-class GenerateSchema extends Command
+class GenerateSchemaCommand extends Command
 {
     /**
      * The name and signature of the console command.
@@ -42,11 +42,11 @@ class GenerateSchema extends Command
         // Clear the Lighthouse cached schema
         $this->call('lighthouse:clear-cache');
 
-        $schemaPath = config('lighthouse.schema.register');
+        $schemaFilePath = config('lighthouse.schema.register');
         $this->askWithCompletion(
             sprintf(
                 'Generating schema in location: "%s", do you want to continue?',
-                $schemaPath
+                $schemaFilePath
             ),
             ['yes', 'no'],
             'yes'
@@ -55,10 +55,8 @@ class GenerateSchema extends Command
         $schemaFilesPaths = config('lighthouse-generators.schema_paths');
         $generatedSchema = $this->schemaGenerator->generate($schemaFilesPaths);
 
-        $tempSchemaFilePath = $schemaPath;
-
-        $tempSchemaFile = fopen($tempSchemaFilePath, 'wb');
-        fwrite($tempSchemaFile, $generatedSchema);
+        $schemaFile = fopen($schemaFilePath, 'wb');
+        fwrite($schemaFile, $generatedSchema);
 
         $this->info('Generation complete. Validating schema.');
         $this->call('lighthouse:validate-schema');

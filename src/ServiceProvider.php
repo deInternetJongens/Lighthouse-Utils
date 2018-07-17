@@ -2,7 +2,7 @@
 
 namespace deinternetjongens\LighthouseGenerators;
 
-use deinternetjongens\LighthouseGenerators\Console\GenerateSchema;
+use deinternetjongens\LighthouseGenerators\Console\GenerateSchemaCommand;
 
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
@@ -27,7 +27,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         });
         if ($this->app->runningInConsole()) {
             $this->commands([
-                GenerateSchema::class
+                GenerateSchemaCommand::class
             ]);
         }
     }
