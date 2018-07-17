@@ -38,9 +38,14 @@ class GenerateSchema extends Command
     public function handle()
     {
         $newSchemaPath = config('lighthouse.schema.register');
-        $this->askWithCompletion(sprintf('Generating schema in location: "%s", do you want to continue?',
-            $newSchemaPath),
-            ['yes', 'no'], 'yes');
+        $this->askWithCompletion(
+            sprintf(
+                'Generating schema in location: "%s", do you want to continue?',
+                $newSchemaPath
+            ),
+            ['yes', 'no'],
+            'yes'
+        );
 
         $schemaFilesPaths = config('lighthouse-generators.schema_paths');
 

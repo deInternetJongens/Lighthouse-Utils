@@ -11,7 +11,8 @@ class SchemaGenerator
         $allPathsPassed = $this->validateFilesPaths($schemaFilesPaths);
         if (! $allPathsPassed) {
             throw new \Exception(
-                'The \'schema_paths\' config value is not correct, it should contain a value with a valid path for the following keys: mutations, queries, types`');
+                'The \'schema_paths\' config value is not correct, it should contain a value with a valid path for the following keys: mutations, queries, types`'
+            );
         }
 
         return 'schema shizzle';
@@ -19,7 +20,6 @@ class SchemaGenerator
 
     private function generateQueriesFromTypes(string $typesPath)
     {
-
     }
 
     private function validateFilesPaths(array $schemaFilesPaths): bool
