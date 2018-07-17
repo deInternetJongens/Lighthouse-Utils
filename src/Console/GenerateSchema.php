@@ -37,6 +37,9 @@ class GenerateSchema extends Command
      */
     public function handle()
     {
+        // Clear the Lighthouse cached schema
+        \Cache::forget(config('lighthouse.cache.key'));
+
         $newSchemaPath = config('lighthouse.schema.register');
         $this->askWithCompletion(
             sprintf(
@@ -48,7 +51,6 @@ class GenerateSchema extends Command
         );
 
         $schemaFilesPaths = config('lighthouse-generators.schema_paths');
-
         $generatedSchema = $this->schemaGenerator->generate($schemaFilesPaths);
         dump($generatedSchema);
 
