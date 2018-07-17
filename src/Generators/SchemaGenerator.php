@@ -17,43 +17,52 @@ class SchemaGenerator
     private $recognizedGraphqlScalarTypes = ['IDType', 'StringType', 'IntType'];
 
     /**
-     * @param array $schemaFilePaths
-     * @return string
+     * Generates a schema from an array of definition file directories
+     * For now, this only supports Types.
+     * In the future it should also support Mutations and Queries.
+     *
+     * @param array $definitionFileDirectories
+     * @return string Generated Schema with Types and Queries
      * @throws Exception
      */
-    public function generate(array $schemaFilePaths): string
+    public function generate(array $definitionFileDirectories): string
     {
-        $this->validateFilesPaths($schemaFilePaths);
+        $this->validateFilesPaths($definitionFileDirectories);
 
-        $schema = $this->getSchemaForFiles($schemaFilePaths);
-        $definedTypes = $this->getDefinedTypesFromSchema($schema, $schemaFilePaths);
+        $schema = $this->getSchemaForFiles($definitionFileDirectories);
+        $definedTypes = $this->getDefinedTypesFromSchema($schema, $definitionFileDirectories);
 
         $queries = $this->generateQueriesForDefinedTypes($definedTypes);
-        $typesImports = $this->generateGraphqlRelativeImports($this->getGraphqlFilePaths($schemaFilePaths['types']));
+        $typesImports = $this->generateGraphqlRelativeImports($this->getGraphqlDefinitionFilePaths($definitionFileDirectories['types']));
 
         //Merge queries and types into one file with required newlines
         return sprintf("%s\r\n\r\n%s\r\n", $typesImports, $queries);
     }
 
     /**
-     * @param array $schemaFilePaths
+     * Validates if the given defintionFileDirectories contains;
+     * - All required keys
+     * - Filled values for each key
+     * - Existing paths for each key
+     *
+     * @param array $definitionFileDirectories
      * @return bool
      * @throws Exception
      */
-    private function validateFilesPaths(array $schemaFilePaths): bool
+    private function validateFilesPaths(array $definitionFileDirectories): bool
     {
-        if (count($schemaFilePaths) < 1) {
+        if (count($definitionFileDirectories) < 1) {
             throw new Exception(
                 'The "schema_paths" config value is empty, it should contain a value with a valid path for the following keys: mutations, queries, types'
             );
         }
 
-        if (array_diff(array_keys($schemaFilePaths), $this->requiredSchemaFileKeys)) {
+        if (array_diff(array_keys($definitionFileDirectories), $this->requiredSchemaFileKeys)) {
             throw new Exception(
                 'The "schema_paths" config value is incomplete, it should contain a value with a valid path for the following keys: mutations, queries, types'
             );
         }
-        foreach ($schemaFilePaths as $key => $path) {
+        foreach ($definitionFileDirectories as $key => $path) {
             if (empty($path)) {
                 throw new Exception(
                     sprintf(
@@ -73,19 +82,21 @@ class SchemaGenerator
     }
 
     /**
-     * Generates
+     * Generates a GraphQL schema for a set of definition files
+     * Definition files can only be Types at this time
+     * In the future this should also support Mutations and Queries
      *
-     * @param array $schemaFilePaths
+     * @param array $definitionFileDirectories
      * @return Schema
      */
-    private function getSchemaForFiles(array $schemaFilePaths): Schema
+    private function getSchemaForFiles(array $definitionFileDirectories): Schema
     {
         $originalSchemaFilePath = Config::get('lighthouse.schema.register');
         //Get a temp folder and file
         $schemaDirectory = dirname(config('lighthouse.schema.register'));
         $tempSchemaFilePath = $schemaDirectory . '/tempschema.graphql';
 
-        $typeDefinitionPaths = $this->getGraphqlFilePaths($schemaFilePaths['types']);
+        $typeDefinitionPaths = $this->getGraphqlDefinitionFilePaths($definitionFileDirectories['types']);
         $relativeTypeImports = $this->generateGraphqlRelativeImports($typeDefinitionPaths);
 
         if (! file_exists($schemaDirectory)) {
@@ -115,7 +126,7 @@ class SchemaGenerator
      * @param string $typePath
      * @return array
      */
-    private function getGraphqlFilePaths(string $typePath): array
+    private function getGraphqlDefinitionFilePaths(string $typePath): array
     {
         $files = [];
         foreach (glob(sprintf('%s/%s/*.graphql', base_path(), $typePath)) as $file) {
@@ -126,13 +137,15 @@ class SchemaGenerator
     }
 
     /**
-     * @param array $files
+     * Generates
+     *
+     * @param array $schemaDefinitionFilePaths
      * @return string
      */
-    private function generateGraphqlRelativeImports(array $files): string
+    private function generateGraphqlRelativeImports(array $schemaDefinitionFilePaths): string
     {
         $imports = [];
-        foreach ($files as $file) {
+        foreach ($schemaDefinitionFilePaths as $file) {
             $file = $this->getRelativePath(dirname(config('lighthouse.schema.register')), $file);
             $imports[] = sprintf('#import %s', $file);
         }
@@ -185,13 +198,15 @@ class SchemaGenerator
     }
 
     /**
+     * Parse defined types from a schema into an array with the native GraphQL Scalar types for each field
+     *
      * @param Schema $schema
-     * @param array $schemaFilePaths
+     * @param array $definitionFileDirectories
      * @return array
      */
-    private function getDefinedTypesFromSchema(Schema $schema, array $schemaFilePaths): array
+    private function getDefinedTypesFromSchema(Schema $schema, array $definitionFileDirectories): array
     {
-        $definedTypes = $this->getGraphqlFilePaths($schemaFilePaths['types']);
+        $definedTypes = $this->getGraphqlDefinitionFilePaths($definitionFileDirectories['types']);
         foreach ($definedTypes as $key => $type) {
             $definedTypes[$key] = str_replace('.graphql', '', basename($type));
         }
@@ -225,6 +240,9 @@ class SchemaGenerator
     }
 
     /**
+     * Auto-generates a query for each definedType
+     * These queries contain arguments for each field defined in the Type
+     *
      * @param array $definedTypes
      * @return string
      */
