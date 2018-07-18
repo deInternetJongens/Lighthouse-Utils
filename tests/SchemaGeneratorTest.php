@@ -3,13 +3,11 @@
 namespace DeInternetJongens\LighthouseUtils\Tests;
 
 use DeInternetJongens\LighthouseUtils\Generators\SchemaGenerator;
-use PHPUnit\Framework\TestCase;
 
 class SchemaGeneratorTest extends TestCase
 {
     public function testGenerateWithAllRequiredParametersReturnsString()
     {
-        $this->markTestIncomplete('This test cannot function without Laravel framework');
         $schemaGenerator = new SchemaGenerator();
         $schema = $schemaGenerator->generate([
             'mutations' => __DIR__ . '/files/schema/Mutations',
