@@ -311,7 +311,7 @@ class SchemaGenerator
 
         //Loop through fields to find the 'ID' field.
         foreach ($typeFields as $fieldName => $field) {
-            if (class_basename($field) != 'IDType') {
+            if (class_basename($field) !== 'IDType') {
                 continue;
             };
             $arguments[] = sprintf('%s: %s! @eq', $fieldName, $field->name);
