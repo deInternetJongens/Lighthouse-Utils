@@ -1,8 +1,8 @@
 <?php
 
-namespace deinternetjongens\LighthouseUtils\Tests;
+namespace DeInternetJongens\LighthouseUtils\Tests;
 
-use deinternetjongens\LighthouseUtils\Generators\SchemaGenerator;
+use DeInternetJongens\LighthouseUtils\Generators\SchemaGenerator;
 use PHPUnit\Framework\TestCase;
 
 class SchemaGeneratorTest extends TestCase

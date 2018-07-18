@@ -1,6 +1,6 @@
 <?php
 
-namespace deinternetjongens\LighthouseUtils\Generators;
+namespace DeInternetJongens\LighthouseUtils\Generators;
 
 use Config;
 use Exception;

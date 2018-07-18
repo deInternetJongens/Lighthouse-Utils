@@ -1,8 +1,8 @@
 <?php
 
-namespace deinternetjongens\LighthouseUtils\Console;
+namespace DeInternetJongens\LighthouseUtils\Console;
 
-use deinternetjongens\LighthouseUtils\Generators\SchemaGenerator;
+use DeInternetJongens\LighthouseUtils\Generators\SchemaGenerator;
 use Illuminate\Console\Command;
 
 class GenerateSchemaCommand extends Command

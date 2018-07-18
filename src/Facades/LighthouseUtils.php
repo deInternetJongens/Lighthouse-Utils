@@ -1,6 +1,6 @@
 <?php
 
-namespace deinternetjongens\LighthouseUtils\Facades;
+namespace DeInternetJongens\LighthouseUtils\Facades;
 
 use Illuminate\Support\Facades\Facade;
 

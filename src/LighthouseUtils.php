@@ -1,6 +1,6 @@
 <?php
 
-namespace deinternetjongens\LighthouseUtils;
+namespace DeInternetJongens\LighthouseUtils;
 
 class LighthouseUtils
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace deinternetjongens\LighthouseUtils;
+namespace DeInternetJongens\LighthouseUtils;
 
-use deinternetjongens\LighthouseUtils\Console\GenerateSchemaCommand;
+use DeInternetJongens\LighthouseUtils\Console\GenerateSchemaCommand;
 
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace deinternetjongens\LighthouseUtils\Tests;
+namespace DeInternetJongens\LighthouseUtils\Tests;
 
-use deinternetjongens\LighthouseUtils\Facades\LighthouseUtils;
-use deinternetjongens\LighthouseUtils\ServiceProvider;
+use DeInternetJongens\LighthouseUtils\Facades\LighthouseUtils;
+use DeInternetJongens\LighthouseUtils\ServiceProvider;
 use Orchestra\Testbench\TestCase;
 
 class LighthouseUtilsTest extends TestCase
