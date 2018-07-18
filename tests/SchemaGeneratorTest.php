@@ -23,6 +23,7 @@ class SchemaGeneratorTest extends TestCase
     {
         $schemaGenerator = new SchemaGenerator();
         $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('The "schema_paths" config value is empty, it should contain a value with a valid path for the following keys: mutations, queries, types');
         $schemaGenerator->generate([]);
     }
 
@@ -30,6 +31,7 @@ class SchemaGeneratorTest extends TestCase
     {
         $schemaGenerator = new SchemaGenerator();
         $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('The "schema_paths" config value is incomplete, it should contain a value with a valid path for the following keys: mutations, queries, types');
         $schemaGenerator->generate([[
             'mutations' => 'app/GraphQL/Mutations',
         ]]);
@@ -39,6 +41,7 @@ class SchemaGeneratorTest extends TestCase
     {
         $schemaGenerator = new SchemaGenerator();
         $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('The "schema_paths" config value for key "mutations" is empty, it should contain a value with a valid path');
         $schemaGenerator->generate([
             'mutations' => '',
             'queries' => '',
@@ -50,6 +53,7 @@ class SchemaGeneratorTest extends TestCase
     {
         $schemaGenerator = new SchemaGenerator();
         $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('The "schema_paths" config value for key "mutations" contains a path that does not exist');
         $schemaGenerator->generate([
             'mutations' => 'this-folder-does-not-exist',
             'queries' => 'this-folder-does-not-exist',
