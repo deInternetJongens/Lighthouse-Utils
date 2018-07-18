@@ -26,12 +26,12 @@
   },
   "autoload": {
     "psr-4": {
-      "deinternetjongens\\LighthouseGenerators\\": "src"
+      "DeInternetJongens\\LighthouseUtils\\": "src"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "deinternetjongens\\LighthouseGenerators\\Tests\\": "tests"
+      "DeInternetJongens\\LighthouseUtils\\Tests\\": "tests"
     },
     "files": [
       "vendor/phpunit/phpunit/src/Framework/Assert/Functions.php"
@@ -43,7 +43,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "deinternetjongens\\LighthouseGenerators\\ServiceProvider"
+        "DeInternetJongens\\LighthouseUtils\\ServiceProvider"
       ]
     }
   },
