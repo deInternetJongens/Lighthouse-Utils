@@ -229,12 +229,15 @@ class SchemaGenerator
              */
             foreach ($type->getFields() as $fieldName => $fieldType) {
                 $internalType = $fieldType->getType();
-                if (! method_exists($internalType, 'getWrappedType')) {
-                    continue;
+                if (method_exists($internalType, 'getWrappedType')) {
+                    $internalType = $internalType->getWrappedType();
                 }
+                if (! in_array(class_basename($internalType), $this->recognizedGraphqlScalarTypes)) {
+                    continue;
+                };
 
                 // This retrieves the GraphQL type for this field from the webonyx/graphql-php package
-                $internalTypes[$typeName][$fieldName] = $internalType->getWrappedType();
+                $internalTypes[$typeName][$fieldName] = $internalType;
             }
         }
 
@@ -309,6 +312,7 @@ class SchemaGenerator
 
         $query .= sprintf('(%s)', implode(', ', $arguments));
         $query .= sprintf(': [%1$s]! @paginate(model: "%1$s")', $typeName);
+
         return $query;
     }
 
