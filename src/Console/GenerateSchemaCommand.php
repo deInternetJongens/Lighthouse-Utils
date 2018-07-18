@@ -13,6 +13,7 @@ class GenerateSchemaCommand extends Command
      * @var string
      */
     protected $signature = 'lighthouse-utils:generate-schema';
+
     /**
      * The console command description.
      *
