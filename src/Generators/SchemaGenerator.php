@@ -3,7 +3,7 @@
 namespace DeInternetJongens\LighthouseUtils\Generators;
 
 use Config;
-use Exception;
+use DeInternetJongens\LighthouseUtils\Exceptions\InvalidConfigurationException;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Definition\FieldDefinition;
 use GraphQL\Type\Definition\ObjectType;
@@ -24,7 +24,7 @@ class SchemaGenerator
      *
      * @param array $definitionFileDirectories
      * @return string Generated Schema with Types and Queries
-     * @throws Exception
+     * @throws InvalidConfigurationException
      */
     public function generate(array $definitionFileDirectories): string
     {
@@ -48,24 +48,24 @@ class SchemaGenerator
      *
      * @param array $definitionFileDirectories
      * @return bool
-     * @throws Exception
+     * @throws InvalidConfigurationException
      */
     private function validateFilesPaths(array $definitionFileDirectories): bool
     {
         if (count($definitionFileDirectories) < 1) {
-            throw new Exception(
+            throw new InvalidConfigurationException(
                 'The "schema_paths" config value is empty, it should contain a value with a valid path for the following keys: mutations, queries, types'
             );
         }
 
         if (array_diff(array_keys($definitionFileDirectories), $this->requiredSchemaFileKeys)) {
-            throw new Exception(
+            throw new InvalidConfigurationException(
                 'The "schema_paths" config value is incomplete, it should contain a value with a valid path for the following keys: mutations, queries, types'
             );
         }
         foreach ($definitionFileDirectories as $key => $path) {
             if (empty($path)) {
-                throw new Exception(
+                throw new InvalidConfigurationException(
                     sprintf(
                         'The "schema_paths" config value for key %s is empty, it should contain a value with a valid path',
                         $key
@@ -73,7 +73,7 @@ class SchemaGenerator
                 );
             }
             if (! file_exists($path)) {
-                throw new Exception(
+                throw new InvalidConfigurationException(
                     sprintf('The "schema_paths" config value for key %s contains a path that does not exist', $key)
                 );
             }

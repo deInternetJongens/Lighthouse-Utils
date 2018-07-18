@@ -2,6 +2,7 @@
 
 namespace DeInternetJongens\LighthouseUtils\Tests;
 
+use DeInternetJongens\LighthouseUtils\Exceptions\InvalidConfigurationException;
 use DeInternetJongens\LighthouseUtils\Generators\SchemaGenerator;
 
 class SchemaGeneratorTest extends TestCase
@@ -21,14 +22,14 @@ class SchemaGeneratorTest extends TestCase
     public function testGenerateWithEmptyArrayThrowsException()
     {
         $schemaGenerator = new SchemaGenerator();
-        $this->expectException(\Exception::class);
+        $this->expectException(InvalidConfigurationException::class);
         $schemaGenerator->generate([]);
     }
 
     public function testGenerateWithTwoMissingKeysThrowsException()
     {
         $schemaGenerator = new SchemaGenerator();
-        $this->expectException(\Exception::class);
+        $this->expectException(InvalidConfigurationException::class);
         $schemaGenerator->generate([[
             'mutations' => 'app/GraphQL/Mutations',
         ]]);
@@ -37,7 +38,7 @@ class SchemaGeneratorTest extends TestCase
     public function testGenerateWithEmptyPathsThrowsException()
     {
         $schemaGenerator = new SchemaGenerator();
-        $this->expectException(\Exception::class);
+        $this->expectException(InvalidConfigurationException::class);
         $schemaGenerator->generate([
             'mutations' => '',
             'queries' => '',
@@ -48,7 +49,7 @@ class SchemaGeneratorTest extends TestCase
     public function testGenerateWithNonExistingPathsThrowsException()
     {
         $schemaGenerator = new SchemaGenerator();
-        $this->expectException(\Exception::class);
+        $this->expectException(InvalidConfigurationException::class);
         $schemaGenerator->generate([
             'mutations' => 'this-folder-does-not-exist',
             'queries' => 'this-folder-does-not-exist',
