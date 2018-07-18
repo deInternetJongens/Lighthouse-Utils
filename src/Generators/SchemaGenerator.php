@@ -287,6 +287,8 @@ class SchemaGenerator
             if (! in_array(class_basename($field), $this->recognizedGraphqlScalarTypes)) {
                 continue;
             };
+
+            // Add all our custom directives
             $arguments[] = sprintf('%s: %s @eq', $fieldName, $field->name);
             $arguments[] = sprintf('%s_not: %s @not', $fieldName, $field->name);
             $arguments[] = sprintf('%s_in: %s @in', $fieldName, $field->name);
