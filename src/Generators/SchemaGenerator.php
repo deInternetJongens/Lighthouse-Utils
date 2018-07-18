@@ -110,7 +110,7 @@ class SchemaGenerator
         $tempSchemaFile = fopen($tempSchemaFilePath, 'wb');
         fwrite($tempSchemaFile, sprintf("%s\r\n%s", $relativeTypeImports, $placeholderQuery));
 
-        //Override the config value where Lighthouse parses it's schdema from
+        //Override the config value where Lighthouse parses it's schema from
         Config::set('lighthouse.schema.register', $tempSchemaFilePath);
         $schema = graphql()->prepSchema();
 
