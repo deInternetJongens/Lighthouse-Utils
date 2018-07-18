@@ -4,9 +4,9 @@ namespace DeInternetJongens\LighthouseUtils\Generators;
 
 use Config;
 use DeInternetJongens\LighthouseUtils\Exceptions\InvalidConfigurationException;
-use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Definition\FieldDefinition;
 use GraphQL\Type\Definition\ObjectType;
+use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Schema;
 
 class SchemaGenerator
@@ -72,6 +72,7 @@ class SchemaGenerator
                     )
                 );
             }
+
             if (! file_exists($path)) {
                 throw new InvalidConfigurationException(
                     sprintf('The "schema_paths" config value for key %s contains a path that does not exist', $key)
