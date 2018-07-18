@@ -1,6 +1,6 @@
 <?php
 
-namespace deinternetjongens\LighthouseGenerators\Tests;
+namespace DeInternetJongens\LighthouseUtils\Tests;
 
 use deinternetjongens\LighthouseGenerators\Facades\LighthouseGenerators;
 use deinternetjongens\LighthouseGenerators\ServiceProvider;
