@@ -289,12 +289,12 @@ class SchemaGenerator
             };
             $arguments[] = sprintf('%s: %s @eq', $fieldName, $field->name);
         }
-        if (count($arguments) < 0) {
+        if (count($arguments) < 1) {
             return '';
         }
 
         $query .= sprintf('(%s)', implode(', ', $arguments));
-        $query .= sprintf(': [%1$s!]! @paginate(model: "%1$s")', $typeName);
+        $query .= sprintf(': [%1$s]! @paginate(model: "%1$s")', $typeName);
         return $query;
     }
 
@@ -307,7 +307,7 @@ class SchemaGenerator
      */
     private function generateFindQuery(string $typeName, array $typeFields): string
     {
-        $query = str_pad(strtolower($typeName), 4, ' ', STR_PAD_LEFT);
+        $query =  '    ' . strtolower($typeName);
         $arguments = [];
 
         //Loop through fields to find the 'ID' field.
@@ -316,9 +316,9 @@ class SchemaGenerator
                 continue;
             };
             $arguments[] = sprintf('%s: %s! @eq', $fieldName, $field->name);
-            continue;
+            break;
         }
-        if (count($arguments) < 0) {
+        if (count($arguments) < 1) {
             return '';
         }
 
