@@ -37,7 +37,7 @@ php artisan vendor:publish --provider="deinternetjongens\LighthouseUtils\Service
 ### Publish Configuration File
 
 ```bash
-php artisan vendor:publish --provider="deinternetjongens\LighthouseUtils\ServiceProvider" --tag="config"
+php artisan vendor:publish --provider="DeInternetJongens\LighthouseUtils\ServiceProvider" --tag="config"
 ``` 
 
 ## Contributing
