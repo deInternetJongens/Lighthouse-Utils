@@ -1,10 +1,11 @@
 {
-  "name": "deinternetjongens/lighthouse-generators",
-  "description": "A lighthouse generators",
+  "name": "deinternetjongens/lighthouse-utils",
+  "description": "A Laravel Lighthouse addon with several utilities to automatically generate an awesome GraphQL API",
   "license": "MIT",
   "keywords": [
     "lighthouse",
-    "generators"
+    "generators",
+    "GraphQL"
   ],
   "type": "library",
   "authors": [

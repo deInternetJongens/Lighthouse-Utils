@@ -1,8 +1,8 @@
 <?php
 
-namespace deinternetjongens\LighthouseGenerators\Console;
+namespace deinternetjongens\LighthouseUtils\Console;
 
-use deinternetjongens\LighthouseGenerators\Generators\SchemaGenerator;
+use deinternetjongens\LighthouseUtils\Generators\SchemaGenerator;
 use Illuminate\Console\Command;
 
 class GenerateSchemaCommand extends Command
@@ -12,7 +12,7 @@ class GenerateSchemaCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'lighthouse-generators:generate-schema';
+    protected $signature = 'lighthouse-utils:generate-schema';
     /**
      * The console command description.
      *
@@ -52,7 +52,7 @@ class GenerateSchemaCommand extends Command
             'yes'
         );
 
-        $schemaFilesPaths = config('lighthouse-generators.schema_paths');
+        $schemaFilesPaths = config('lighthouse-utils.schema_paths');
         $generatedSchema = $this->schemaGenerator->generate($schemaFilesPaths);
 
         $schemaFile = fopen($schemaFilePath, 'wb');

@@ -1,12 +1,12 @@
 <?php
 
-namespace deinternetjongens\LighthouseGenerators\Tests;
+namespace deinternetjongens\LighthouseUtils\Tests;
 
-use deinternetjongens\LighthouseGenerators\Facades\LighthouseGenerators;
-use deinternetjongens\LighthouseGenerators\ServiceProvider;
+use deinternetjongens\LighthouseUtils\Facades\LighthouseUtils;
+use deinternetjongens\LighthouseUtils\ServiceProvider;
 use Orchestra\Testbench\TestCase;
 
-class LighthouseGeneratorsTest extends TestCase
+class LighthouseUtilsTest extends TestCase
 {
     protected function getPackageProviders($app)
     {
@@ -16,7 +16,7 @@ class LighthouseGeneratorsTest extends TestCase
     protected function getPackageAliases($app)
     {
         return [
-            'lighthouse-generators' => LighthouseGenerators::class,
+            'lighthouse-utils' => LighthouseUtils::class,
         ];
     }
 

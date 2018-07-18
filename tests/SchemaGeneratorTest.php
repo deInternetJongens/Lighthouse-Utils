@@ -1,8 +1,8 @@
 <?php
 
-namespace deinternetjongens\LighthouseGenerators\Tests;
+namespace deinternetjongens\LighthouseUtils\Tests;
 
-use deinternetjongens\LighthouseGenerators\Generators\SchemaGenerator;
+use deinternetjongens\LighthouseUtils\Generators\SchemaGenerator;
 use PHPUnit\Framework\TestCase;
 
 class SchemaGeneratorTest extends TestCase
@@ -51,7 +51,7 @@ class SchemaGeneratorTest extends TestCase
     {
         $schemaGenerator = new SchemaGenerator();
         $this->expectException(\Exception::class);
-        $schema = $schemaGenerator->generate([
+        $schemaGenerator->generate([
             'mutations' => 'this-folder-does-not-exist',
             'queries' => 'this-folder-does-not-exist',
             'types' => 'this-folder-does-not-exist',
