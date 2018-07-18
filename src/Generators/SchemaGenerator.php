@@ -307,7 +307,7 @@ class SchemaGenerator
      */
     private function generateFindQuery(string $typeName, array $typeFields): string
     {
-        $query = str_pad(strtolower($typeName), 4, ' ', STR_PAD_LEFT);
+        $query =  '    ' . strtolower($typeName);
         $arguments = [];
 
         //Loop through fields to find the 'ID' field.
