@@ -2,8 +2,8 @@
 
 namespace DeInternetJongens\LighthouseUtils\Tests;
 
-use deinternetjongens\LighthouseGenerators\Facades\LighthouseGenerators;
-use deinternetjongens\LighthouseGenerators\ServiceProvider;
+use DeInternetJongens\LighthouseUtils\Facades\LighthouseUtils;
+use DeInternetJongens\LighthouseUtils\ServiceProvider;
 use Nuwave\Lighthouse\Providers\LighthouseServiceProvider;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 
@@ -34,7 +34,7 @@ abstract class TestCase extends BaseTestCase
     protected function getPackageAliases($app)
     {
         return [
-            'lighthouse-generators' => LighthouseGenerators::class,
+            'lighthouse-generators' => LighthouseUtils::class,
         ];
     }
 }
