@@ -1,10 +1,11 @@
 {
-  "name": "deinternetjongens/lighthouse-generators",
-  "description": "A lighthouse generators",
+  "name": "deinternetjongens/lighthouse-utils",
+  "description": "A Laravel Lighthouse addon with several utilities to automatically generate an awesome GraphQL API",
   "license": "MIT",
   "keywords": [
     "lighthouse",
-    "generators"
+    "generators",
+    "GraphQL"
   ],
   "type": "library",
   "authors": [
@@ -21,17 +22,16 @@
   "require-dev": {
     "orchestra/testbench": "~3.6.0",
     "phpunit/phpunit": "~7.0",
-    "noh4ck/graphiql": "^1.0",
     "squizlabs/php_codesniffer": "^3.3"
   },
   "autoload": {
     "psr-4": {
-      "deinternetjongens\\LighthouseGenerators\\": "src"
+      "DeInternetJongens\\LighthouseUtils\\": "src"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "deinternetjongens\\LighthouseGenerators\\Tests\\": "tests"
+      "DeInternetJongens\\LighthouseUtils\\Tests\\": "tests"
     },
     "files": [
       "vendor/phpunit/phpunit/src/Framework/Assert/Functions.php"
@@ -43,7 +43,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "deinternetjongens\\LighthouseGenerators\\ServiceProvider"
+        "DeInternetJongens\\LighthouseUtils\\ServiceProvider"
       ]
     }
   },
