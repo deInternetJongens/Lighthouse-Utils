@@ -40,14 +40,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         );
 
         // Merging config doesn't seem to work on arrays, this is our work-around.
-        $this->app['config']['lighthouse']['directives'];
-        $this->app['config']->set(
-            'lighthouse.directives',
-            array_merge(
-                $this->app['config']['lighthouse']['directives'],
-                [$this->directiveAppPath]
-            )
-        );
+        config()->set('lighthouse.directives', array_merge(config('lighthouse.directives', []), [$this->directiveAppPath]));
 
         $this->app->bind('lighthouse-utils', function () {
             return new LighthouseUtils();
