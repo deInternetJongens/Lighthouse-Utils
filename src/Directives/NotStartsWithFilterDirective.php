@@ -12,12 +12,12 @@ class NotStartsWithFilterDirective extends BaseDirective implements ArgMiddlewar
 {
     use HandlesQueryFilter;
 
-    public function name()
+    public function name(): string
     {
         return 'not_starts_with';
     }
 
-    public function handleArgument(ArgumentValue $argument)
+    public function handleArgument(ArgumentValue $argument): ArgumentValue
     {
         return $this->injectFilter(
             $argument,

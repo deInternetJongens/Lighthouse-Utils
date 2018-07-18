@@ -12,12 +12,12 @@ class EndsWithFilterDirective extends BaseDirective implements ArgMiddleware
 {
     use HandlesQueryFilter;
 
-    public function name()
+    public function name(): string
     {
         return 'ends_with';
     }
 
-    public function handleArgument(ArgumentValue $argument)
+    public function handleArgument(ArgumentValue $argument): ArgumentValue
     {
         return $this->injectFilter(
             $argument,

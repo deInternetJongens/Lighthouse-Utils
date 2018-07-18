@@ -12,12 +12,12 @@ class NotContainsFilterDirective extends BaseDirective implements ArgMiddleware
 {
     use HandlesQueryFilter;
 
-    public function name()
+    public function name(): string
     {
         return 'not_contains';
     }
 
-    public function handleArgument(ArgumentValue $argument)
+    public function handleArgument(ArgumentValue $argument): ArgumentValue
     {
         return $this->injectFilter(
             $argument,
