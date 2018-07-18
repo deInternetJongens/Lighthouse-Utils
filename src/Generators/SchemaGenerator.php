@@ -316,7 +316,7 @@ class SchemaGenerator
                 continue;
             };
             $arguments[] = sprintf('%s: %s! @eq', $fieldName, $field->name);
-            continue;
+            break;
         }
         if (count($arguments) < 1) {
             return '';
