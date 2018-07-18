@@ -67,7 +67,7 @@ class SchemaGenerator
             if (empty($path)) {
                 throw new InvalidConfigurationException(
                     sprintf(
-                        'The "schema_paths" config value for key %s is empty, it should contain a value with a valid path',
+                        'The "schema_paths" config value for key "%s" is empty, it should contain a value with a valid path',
                         $key
                     )
                 );
@@ -75,7 +75,7 @@ class SchemaGenerator
 
             if (! file_exists($path)) {
                 throw new InvalidConfigurationException(
-                    sprintf('The "schema_paths" config value for key %s contains a path that does not exist', $key)
+                    sprintf('The "schema_paths" config value for key "%s" contains a path that does not exist', $key)
                 );
             }
         }
