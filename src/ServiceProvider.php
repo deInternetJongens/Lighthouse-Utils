@@ -1,15 +1,17 @@
 <?php
 
-namespace deinternetjongens\LighthouseGenerators;
+namespace DeInternetJongens\LighthouseUtils;
+
+use DeInternetJongens\LighthouseUtils\Console\GenerateSchemaCommand;
 
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
-    const CONFIG_PATH = __DIR__ . '/../config/lighthouse-generators.php';
+    const CONFIG_PATH = __DIR__ . '/../config/lighthouse-utils.php';
 
     public function boot()
     {
         $this->publishes([
-            self::CONFIG_PATH => config_path('lighthouse-generators.php'),
+            self::CONFIG_PATH => config_path('lighthouse-utils.php'),
         ], 'config');
     }
 
@@ -17,11 +19,17 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
     {
         $this->mergeConfigFrom(
             self::CONFIG_PATH,
-            'lighthouse-generators'
+            'lighthouse-utils'
         );
 
-        $this->app->bind('lighthouse-generators', function () {
-            return new LighthouseGenerators();
+        $this->app->bind('lighthouse-utils', function () {
+            return new LighthouseUtils();
         });
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                GenerateSchemaCommand::class
+            ]);
+        }
     }
 }
