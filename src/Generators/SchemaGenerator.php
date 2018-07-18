@@ -303,7 +303,7 @@ class SchemaGenerator
             $arguments[] = sprintf('%s_not_starts_with: %s @not_starts_with', $fieldName, $field->name);
             $arguments[] = sprintf('%s_ends_with: %s @not_ends_with', $fieldName, $field->name);
         }
-        if (count($arguments) < 0) {
+        if (count($arguments) < 1) {
             return '';
         }
 
@@ -332,7 +332,7 @@ class SchemaGenerator
             $arguments[] = sprintf('%s: %s! @eq', $fieldName, $field->name);
             continue;
         }
-        if (count($arguments) < 0) {
+        if (count($arguments) < 1) {
             return '';
         }
 
