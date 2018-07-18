@@ -65,9 +65,3 @@ To generate your `schema.graphql` file, run the following command:
 php artisan lighthouse-generators:generate-schema
 ```
 The schema will be generated to the path as defined in the Lighthouse config, `lighthouse.schema.register`
-
-### GraphiQL interface
-To add a GraphiQL interface to your project, run the following command:
-`php artisan graphiql:publish`
-For further information about GraphiQL, please check the [readme for the GraphiQL package](https://github.com/Nohac/laravel-graphiql)
-
