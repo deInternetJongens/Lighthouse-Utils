@@ -25,6 +25,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         $this->app->bind('lighthouse-utils', function () {
             return new LighthouseUtils();
         });
+
         if ($this->app->runningInConsole()) {
             $this->commands([
                 GenerateSchemaCommand::class
