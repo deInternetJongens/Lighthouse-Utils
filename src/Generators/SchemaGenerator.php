@@ -289,7 +289,7 @@ class SchemaGenerator
             };
             $arguments[] = sprintf('%s: %s @eq', $fieldName, $field->name);
         }
-        if (count($arguments) < 0) {
+        if (count($arguments) < 1) {
             return '';
         }
 
@@ -318,7 +318,7 @@ class SchemaGenerator
             $arguments[] = sprintf('%s: %s! @eq', $fieldName, $field->name);
             continue;
         }
-        if (count($arguments) < 0) {
+        if (count($arguments) < 1) {
             return '';
         }
 
