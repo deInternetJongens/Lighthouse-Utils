@@ -1,0 +1,35 @@
+<?php
+
+namespace DeInternetJongens\LighthouseUtils\Directives;
+
+use Illuminate\Database\Eloquent\Builder;
+use Nuwave\Lighthouse\Schema\Directives\BaseDirective;
+use Nuwave\Lighthouse\Schema\Values\ArgumentValue;
+use Nuwave\Lighthouse\Support\Contracts\ArgMiddleware;
+use Nuwave\Lighthouse\Support\Traits\HandlesQueryFilter;
+
+class NotStartsWithFilterDirective extends BaseDirective implements ArgMiddleware
+{
+    use HandlesQueryFilter;
+
+    public function name()
+    {
+        return 'not_starts_with';
+    }
+
+    public function handleArgument(ArgumentValue $argument)
+    {
+        return $this->injectFilter(
+            $argument,
+            [
+                'resolve' => function (Builder $builder, string $key, array $arguments) {
+                    $value = $arguments[$key];
+
+                    $field = \preg_replace('/_not_starts_with$/', '', $key);
+
+                    return $builder->where($field, 'NOT LIKE', "$value%");
+                },
+            ]
+        );
+    }
+}
