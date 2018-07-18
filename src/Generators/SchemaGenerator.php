@@ -271,6 +271,8 @@ class SchemaGenerator
     }
 
     /**
+     * Generates a GraphQL query that returns multiple arguments with arguments for each field
+     *
      * @param string $typeName
      * @param Type[] $typeFields
      * @return string
@@ -296,6 +298,8 @@ class SchemaGenerator
     }
 
     /**
+     * Generates a GraphQL query that returns one entity by ID
+     *
      * @param string $typeName
      * @param Type[] $typeFields
      * @return string
