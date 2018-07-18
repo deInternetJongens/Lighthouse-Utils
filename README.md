@@ -1,4 +1,4 @@
-# Lighthouse Generators
+# Lighthouse Utils
 
 This package can generate queries for the [Lighthouse GraphQL library](https://github.com/nuwave/lighthouse).
 This is not a standalone package, so Lighthouse is listed as a dependency.
@@ -8,7 +8,7 @@ A GraphiQL interface is also included to test your GraphQL interface.
 
 Install via composer
 ```bash
-composer require deinternetjongens/lighthouse-generators
+composer require deinternetjongens/lighthouse-utils
 ```
 
 ### Register Service Provider
@@ -18,20 +18,20 @@ auto discovery feature.**
 
 Add service provider to `config/app.php` in `providers` section
 ```php
-deinternetjongens\LighthouseGenerators\ServiceProvider::class,
+deinternetjongens\LighthouseUtils\ServiceProvider::class,
 ```
 
 ### Register Facade
 
 Register package facade in `config/app.php` in `aliases` section
 ```php
-deinternetjongens\LighthouseGenerators\Facades\LighthouseGenerators::class,
+deinternetjongens\LighthouseUtils\Facades\LighthouseUtils::class,
 ```
 
 ### Publish Configuration File
 
 ```bash
-php artisan vendor:publish --provider="deinternetjongens\LighthouseGenerators\ServiceProvider" --tag="config"
+php artisan vendor:publish --provider="deinternetjongens\LighthouseUtils\ServiceProvider" --tag="config"
 ``` 
 
 ## Contributing
@@ -62,6 +62,6 @@ For more information on schemas and basic Lighthouse usage, check [the Lighthous
 To generate your `schema.graphql` file, run the following command:
 
 ```bash
-php artisan lighthouse-generators:generate-schema
+php artisan lighthouse-utils:generate-schema
 ```
 The schema will be generated to the path as defined in the Lighthouse config, `lighthouse.schema.register`
