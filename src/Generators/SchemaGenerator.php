@@ -294,7 +294,7 @@ class SchemaGenerator
         }
 
         $query .= sprintf('(%s)', implode(', ', $arguments));
-        $query .= sprintf(': [%1$s!]! @paginate(model: "%1$s")', $typeName);
+        $query .= sprintf(': [%1$s]! @paginate(model: "%1$s")', $typeName);
         return $query;
     }
 
