@@ -288,6 +288,18 @@ class SchemaGenerator
                 continue;
             };
             $arguments[] = sprintf('%s: %s @eq', $fieldName, $field->name);
+            $arguments[] = sprintf('%s_not: %s @not', $fieldName, $field->name);
+            $arguments[] = sprintf('%s_in: %s @in', $fieldName, $field->name);
+            $arguments[] = sprintf('%s_not_in: %s @not_in', $fieldName, $field->name);
+            $arguments[] = sprintf('%s_lt: %s @lt', $fieldName, $field->name);
+            $arguments[] = sprintf('%s_lte: %s @lte', $fieldName, $field->name);
+            $arguments[] = sprintf('%s_gt: %s @gt', $fieldName, $field->name);
+            $arguments[] = sprintf('%s_gte: %s @gte', $fieldName, $field->name);
+            $arguments[] = sprintf('%s_contains: %s @contains', $fieldName, $field->name);
+            $arguments[] = sprintf('%s_not_contains: %s @not_contains', $fieldName, $field->name);
+            $arguments[] = sprintf('%s_starts_with: %s @starts_with', $fieldName, $field->name);
+            $arguments[] = sprintf('%s_not_starts_with: %s @not_starts_with', $fieldName, $field->name);
+            $arguments[] = sprintf('%s_ends_with: %s @not_ends_with', $fieldName, $field->name);
         }
         if (count($arguments) < 0) {
             return '';

@@ -1,6 +1,6 @@
 <?php
 
-namespace DeInternetJongens\LighthouseUtils\Directives;
+namespace App\DijLightHouse\Directives;
 
 use Illuminate\Database\Eloquent\Builder;
 use Nuwave\Lighthouse\Schema\Directives\BaseDirective;
