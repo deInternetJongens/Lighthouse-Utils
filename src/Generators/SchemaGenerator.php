@@ -15,7 +15,7 @@ class SchemaGenerator
     private $requiredSchemaFileKeys = ['mutations', 'queries', 'types'];
 
     /** @var array */
-    private $recognizedGraphqlScalarTypes = ['IDType', 'StringType', 'IntType'];
+    private $recognizedGraphqlScalarTypes = ['IDType', 'StringType', 'IntType', 'FloatType'];
 
     /**
      * Generates a schema from an array of definition file directories
@@ -300,11 +300,14 @@ class SchemaGenerator
             $arguments[] = sprintf('%s_lte: %s @lte', $fieldName, $field->name);
             $arguments[] = sprintf('%s_gt: %s @gt', $fieldName, $field->name);
             $arguments[] = sprintf('%s_gte: %s @gte', $fieldName, $field->name);
-            $arguments[] = sprintf('%s_contains: %s @contains', $fieldName, $field->name);
-            $arguments[] = sprintf('%s_not_contains: %s @not_contains', $fieldName, $field->name);
-            $arguments[] = sprintf('%s_starts_with: %s @starts_with', $fieldName, $field->name);
-            $arguments[] = sprintf('%s_not_starts_with: %s @not_starts_with', $fieldName, $field->name);
-            $arguments[] = sprintf('%s_ends_with: %s @not_ends_with', $fieldName, $field->name);
+
+            if(\strtolower($field->name) === 'string') {
+                $arguments[] = sprintf('%s_contains: %s @contains', $fieldName, $field->name);
+                $arguments[] = sprintf('%s_not_contains: %s @not_contains', $fieldName, $field->name);
+                $arguments[] = sprintf('%s_starts_with: %s @starts_with', $fieldName, $field->name);
+                $arguments[] = sprintf('%s_not_starts_with: %s @not_starts_with', $fieldName, $field->name);
+                $arguments[] = sprintf('%s_ends_with: %s @not_ends_with', $fieldName, $field->name);
+            }
         }
         if (count($arguments) < 1) {
             return '';
