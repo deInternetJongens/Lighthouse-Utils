@@ -291,6 +291,11 @@ class SchemaGenerator
             if (! empty($updateQuery)) {
                 $mutations[] = $updateQuery;
             }
+
+            $deleteQuery = $this->generateDeleteQuery($typeName, $type);
+            if (! empty($deleteQuery)) {
+                $mutations[] = $deleteQuery;
+            }
         }
         $return = sprintf("type Query{\r\n%s\r\n}", implode("\r\n", $queries));
         $return .= "\r\n\r\n";
@@ -446,6 +451,37 @@ class SchemaGenerator
 
         $query .= sprintf('(%s)', implode(', ', $arguments));
         $query .= sprintf(': %1$s @update(model: "%1$s")', $typeName);
+
+        return $query;
+    }
+
+
+    /**
+     * Generates a GraphQL query that returns one entity by ID
+     *
+     * @param string $typeName
+     * @param Type[] $typeFields
+     * @return string
+     */
+    private function generateDeleteQuery(string $typeName, array $typeFields): string
+    {
+        $query =  '    ' . strtolower($typeName);
+        $arguments = [];
+
+        //Loop through fields to find the 'ID' field.
+        foreach ($typeFields as $fieldName => $field) {
+            if (get_class($field) !== IDType::class) {
+                continue;
+            };
+            $arguments[] = sprintf('%s: %s! @eq', $fieldName, $field->name);
+            break;
+        }
+        if (count($arguments) < 1) {
+            return '';
+        }
+
+        $query .= sprintf('(%s)', implode(', ', $arguments));
+        $query .= sprintf(': %1$s @delete', $typeName);
 
         return $query;
     }
