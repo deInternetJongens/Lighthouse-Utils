@@ -424,7 +424,7 @@ class SchemaGenerator
     }
 
     /**
-     * Generates a GraphQL Mutation to create a record
+     * Generates a GraphQL Mutation to update a record
      *
      * @param string $typeName
      * @param Type[] $typeFields
@@ -465,7 +465,7 @@ class SchemaGenerator
 
 
     /**
-     * Generates a GraphQL query that returns one entity by ID
+     * Generates a GraphQL query deletes a record
      *
      * @param string $typeName
      * @param Type[] $typeFields
