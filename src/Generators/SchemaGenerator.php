@@ -228,16 +228,17 @@ class SchemaGenerator
              * @var FieldDefinition $fieldType
              */
             foreach ($type->getFields() as $fieldName => $fieldType) {
-                $internalType = $fieldType->getType();
-                if (method_exists($internalType, 'getWrappedType')) {
-                    $internalType = $internalType->getWrappedType();
+                $graphQLType = $fieldType->getType();
+                if (method_exists($graphQLType, 'getWrappedType')) {
+                    $graphQLType = $graphQLType->getWrappedType();
                 }
-                if (! in_array(class_basename($internalType), $this->recognizedGraphQLTypes)) {
+
+                if (! in_array(class_basename($graphQLType), $this->recognizedGraphQLTypes)) {
                     continue;
                 };
 
                 // This retrieves the GraphQL type for this field from the webonyx/graphql-php package
-                $internalTypes[$typeName][$fieldName] = $internalType;
+                $internalTypes[$typeName][$fieldName] = $graphQLType;
             }
         }
 
