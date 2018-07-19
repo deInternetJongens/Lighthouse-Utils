@@ -470,7 +470,7 @@ class SchemaGenerator
      */
     private function generateDeleteQuery(string $typeName, array $typeFields): string
     {
-        $query =  '    ' . strtolower($typeName);
+        $query = '    delete' . $typeName;
         $arguments = [];
 
         //Loop through fields to find the 'ID' field.
