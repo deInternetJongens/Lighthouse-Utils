@@ -15,7 +15,7 @@ class SchemaGenerator
     private $requiredSchemaFileKeys = ['mutations', 'queries', 'types'];
 
     /** @var array */
-    private $recognizedGraphqlScalarTypes = ['IDType', 'StringType', 'IntType', 'FloatType'];
+    private $recognizedGraphQLTypes = ['IDType', 'StringType', 'IntType', 'FloatType'];
 
     /**
      * Generates a schema from an array of definition file directories
@@ -232,7 +232,7 @@ class SchemaGenerator
                 if (method_exists($internalType, 'getWrappedType')) {
                     $internalType = $internalType->getWrappedType();
                 }
-                if (! in_array(class_basename($internalType), $this->recognizedGraphqlScalarTypes)) {
+                if (! in_array(class_basename($internalType), $this->recognizedGraphQLTypes)) {
                     continue;
                 };
 
@@ -276,6 +276,10 @@ class SchemaGenerator
                 $mutations[] = $findQuery;
             }
 
+            $findQuery = $this->generateUpdateQuery($typeName, $type);
+            if (! empty($findQuery)) {
+                $mutations[] = $findQuery;
+            }
         }
         $return = sprintf("type Query{\r\n%s\r\n}", implode("\r\n", $queries));
         $return .= "\r\n\r\n";
@@ -297,7 +301,7 @@ class SchemaGenerator
         $arguments = [];
 
         foreach ($typeFields as $fieldName => $field) {
-            if (! in_array(class_basename($field), $this->recognizedGraphqlScalarTypes)) {
+            if (! in_array(class_basename($field), $this->recognizedGraphQLTypes)) {
                 continue;
             };
 
@@ -373,7 +377,7 @@ class SchemaGenerator
 
         foreach ($typeFields as $fieldName => $field) {
             $classBaseName = class_basename($field);
-            if (! in_array($classBaseName, $this->recognizedGraphqlScalarTypes) || $classBaseName === 'IDType' || str_contains($fieldName, '_at')) {
+            if (! in_array($classBaseName, $this->recognizedGraphQLTypes) || $classBaseName === 'IDType' || str_contains($fieldName, '_at')) {
                 continue;
             };
             $arguments[] = sprintf('%s: %s!', $fieldName, $field->name);
