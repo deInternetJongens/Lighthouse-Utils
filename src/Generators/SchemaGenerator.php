@@ -402,10 +402,13 @@ class SchemaGenerator
                 continue;
             };
 
+            $argumentType = $field->name;
             if ($className === ObjectType::class) {
                 $fieldName .= '_id';
+                $argumentType = 'ID';
             }
-            $arguments[] = sprintf('%s: %s!', $fieldName, $field->name);
+
+            $arguments[] = sprintf('%s: %s!', $fieldName, $argumentType);
         }
         if (count($arguments) < 1) {
             return '';
@@ -436,14 +439,16 @@ class SchemaGenerator
             };
 
             $required = '';
+            $argumentType = $field->name;
             if ($className === IDType::class) {
                 $required = '!';
             }
             if ($className === ObjectType::class) {
                 $fieldName .= '_id';
+                $argumentType = 'ID';
             }
 
-            $arguments[] = sprintf('%s: %s%s', $fieldName, $field->name, $required);
+            $arguments[] = sprintf('%s: %s%s', $fieldName, $argumentType, $required);
         }
         if (count($arguments) < 1) {
             return '';
