@@ -396,6 +396,10 @@ class SchemaGenerator
             ) || $className === IDType::class || str_contains($fieldName, '_at')) {
                 continue;
             };
+
+            if ($className === ObjectType::class) {
+                $fieldName .= '_id';
+            }
             $arguments[] = sprintf('%s: %s!', $fieldName, $field->name);
         }
         if (count($arguments) < 1) {
@@ -429,6 +433,9 @@ class SchemaGenerator
             $required = '';
             if ($className === IDType::class) {
                 $required = '!';
+            }
+            if ($className === ObjectType::class) {
+                $fieldName .= '_id';
             }
 
             $arguments[] = sprintf('%s: %s%s', $fieldName, $field->name, $required);
