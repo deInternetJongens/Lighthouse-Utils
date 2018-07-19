@@ -12,10 +12,9 @@ abstract class BaseDirective extends LighthouseBaseDirective implements ArgMiddl
 {
     use HandlesQueryFilter;
 
-    //TODO: Fix compatibility with Lighthouse 2.2
-    public function handleArgument(ArgumentValue $argument, Closure $next): ArgumentValue
+    public function handleArgument(ArgumentValue $argument, \Closure $next): ArgumentValue
     {
-        return $this->injectFilter(
+        $argument = $this->injectFilter(
             $argument,
             [
                 'resolve' => function (Builder $builder, string $key, array $arguments): Builder {
@@ -27,6 +26,8 @@ abstract class BaseDirective extends LighthouseBaseDirective implements ArgMiddl
                 },
             ]
         );
+
+        return $next($argument);
     }
 
     /**
