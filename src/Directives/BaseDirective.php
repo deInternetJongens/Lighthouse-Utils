@@ -6,12 +6,11 @@ use Illuminate\Database\Eloquent\Builder;
 use Nuwave\Lighthouse\Schema\Directives\BaseDirective as LighthouseBaseDirective;
 use Nuwave\Lighthouse\Schema\Values\ArgumentValue;
 use Nuwave\Lighthouse\Support\Contracts\ArgMiddleware;
-use Nuwave\Lighthouse\Support\Traits\HandlesGlobalId;
 use Nuwave\Lighthouse\Support\Traits\HandlesQueryFilter;
 
 abstract class BaseDirective extends LighthouseBaseDirective implements ArgMiddleware
 {
-    use HandlesQueryFilter, HandlesGlobalId;
+    use HandlesQueryFilter;
 
     public function handleArgument(ArgumentValue $argument): ArgumentValue
     {
@@ -22,12 +21,6 @@ abstract class BaseDirective extends LighthouseBaseDirective implements ArgMiddl
                     $value = $arguments[$key];
 
                     $field = \preg_replace(sprintf('/%s$/', $this->getSuffix()), '', $key);
-
-                    $globalIdParts = $this->decodeGlobalId($value);
-
-                    if(count($globalIdParts) === 2) {
-                        $value = $globalIdParts[1];
-                    }
 
                     return $this->handle($field, $value, $builder);
                 },
