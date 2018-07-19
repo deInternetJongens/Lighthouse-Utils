@@ -40,7 +40,7 @@ abstract class BaseDirective extends LighthouseBaseDirective implements ArgMiddl
      * Add query statement to the eloquent builder.
      *
      * @param string $fieldName
-     * @param mixed $value
+     * @param mixed $value The value can be a string, number, bool, etc… This mixed is on purpose!
      * @param Builder $builder
      * @return Builder
      */
