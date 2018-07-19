@@ -391,4 +391,37 @@ class SchemaGenerator
 
         return $query;
     }
+
+    /**
+     * Generates a GraphQL Mutation to create a record
+     *
+     * @param string $typeName
+     * @param Type[] $typeFields
+     * @return string
+     */
+    private function generateUpdateQuery(string $typeName, array $typeFields): string
+    {
+        $query = '    update' . $typeName;
+        $arguments = [];
+
+        foreach ($typeFields as $fieldName => $field) {
+            $classBaseName = class_basename($field);
+            if (! in_array($classBaseName, $this->recognizedGraphQLTypes) || str_contains($fieldName, '_at')) {
+                continue;
+            };
+            $required = '';
+            if($classBaseName === 'IDType'){
+                $required = '!';
+            }
+            $arguments[] = sprintf('%s: %s%s', $fieldName, $field->name, $required);
+        }
+        if (count($arguments) < 1) {
+            return '';
+        }
+
+        $query .= sprintf('(%s)', implode(', ', $arguments));
+        $query .= sprintf(': %1$s @update(model: "%1$s")', $typeName);
+
+        return $query;
+    }
 }
