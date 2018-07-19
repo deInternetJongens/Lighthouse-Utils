@@ -271,7 +271,7 @@ class SchemaGenerator
          * @var Type $type
          */
         foreach ($definedTypes as $typeName => $type) {
-            $paginatedWhereQuery = $this->generatePaginatedWhereQuery($typeName, $type);
+            $paginatedWhereQuery = $this->generateWhereQueries($typeName, $type);
 
             if (! empty($paginatedWhereQuery)) {
                 $queries[] = $paginatedWhereQuery;
@@ -311,9 +311,8 @@ class SchemaGenerator
      * @param Type[] $typeFields
      * @return string
      */
-    private function generatePaginatedWhereQuery(string $typeName, array $typeFields): string
+    private function generateWhereQueries(string $typeName, array $typeFields): string
     {
-        $query = '    ' . str_plural(strtolower($typeName));
         $arguments = [];
 
         foreach ($typeFields as $fieldName => $field) {
@@ -345,10 +344,14 @@ class SchemaGenerator
             return '';
         }
 
-        $query .= sprintf('(%s)', implode(', ', $arguments));
-        $query .= sprintf(': [%1$s]! @paginate(model: "%1$s")', $typeName);
+        $allQuery = '    ' . str_plural(strtolower($typeName));
+        $queryArguments = sprintf('(%s)', implode(', ', $arguments));
+        $allQuery .= sprintf('%1$s: [%2$s]! @all(model: "%2$s")', $queryArguments, $typeName);
 
-        return $query;
+        $paginatedQuery = '    ' . str_plural(strtolower($typeName)) . 'Paginated';
+        $paginatedQuery .= sprintf('%1$s: [%2$s]! @paginate(model: "%2$s")', $queryArguments, $typeName);
+
+        return $allQuery ."\r\n". $paginatedQuery;
     }
 
     /**
