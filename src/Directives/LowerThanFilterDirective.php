@@ -22,7 +22,7 @@ class LowerThanFilterDirective extends BaseDirective implements ArgMiddleware
         return $this->injectFilter(
             $argument,
             [
-                'resolve' => function (Builder $builder, string $key, array $arguments) {
+                'resolve' => function (Builder $builder, string $key, array $arguments): Builder {
                     $value = $arguments[$key];
 
                     $field = \preg_replace('/_lt$/', '', $key);

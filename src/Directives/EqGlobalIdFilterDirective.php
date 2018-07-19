@@ -8,13 +8,13 @@ use Nuwave\Lighthouse\Schema\Values\ArgumentValue;
 use Nuwave\Lighthouse\Support\Contracts\ArgMiddleware;
 use Nuwave\Lighthouse\Support\Traits\HandlesQueryFilter;
 
-class ContainsFilterDirective extends BaseDirective implements ArgMiddleware
+class EqGlobalIdFilterDirective extends BaseDirective implements ArgMiddleware
 {
     use HandlesQueryFilter;
 
     public function name(): string
     {
-        return 'contains';
+        return 'eq';
     }
 
     public function handleArgument(ArgumentValue $argument): ArgumentValue
@@ -25,9 +25,9 @@ class ContainsFilterDirective extends BaseDirective implements ArgMiddleware
                 'resolve' => function (Builder $builder, string $key, array $arguments): Builder {
                     $value = $arguments[$key];
 
-                    $field = \preg_replace('/_contains$/', '', $key);
+                    $field = $key;
 
-                    return $builder->where($field, 'LIKE', "%$value%");
+                    return $builder->where($field, $value);
                 },
             ]
         );
