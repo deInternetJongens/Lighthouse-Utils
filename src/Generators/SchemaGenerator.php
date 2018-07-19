@@ -5,7 +5,11 @@ namespace DeInternetJongens\LighthouseUtils\Generators;
 use Config;
 use DeInternetJongens\LighthouseUtils\Exceptions\InvalidConfigurationException;
 use GraphQL\Type\Definition\FieldDefinition;
+use GraphQL\Type\Definition\FloatType;
+use GraphQL\Type\Definition\IDType;
+use GraphQL\Type\Definition\IntType;
 use GraphQL\Type\Definition\ObjectType;
+use GraphQL\Type\Definition\StringType;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Schema;
 
@@ -15,7 +19,13 @@ class SchemaGenerator
     private $requiredSchemaFileKeys = ['mutations', 'queries', 'types'];
 
     /** @var array */
-    private $recognizedGraphQLTypes = ['IDType', 'StringType', 'IntType', 'FloatType'];
+    private $recognizedGraphQLTypes = [
+        IDType::class,
+        StringType::class,
+        IntType::class,
+        FloatType::class,
+        ObjectType::class,
+    ];
 
     /**
      * Generates a schema from an array of definition file directories
@@ -233,7 +243,7 @@ class SchemaGenerator
                     $graphQLType = $graphQLType->getWrappedType();
                 }
 
-                if (! in_array(class_basename($graphQLType), $this->recognizedGraphQLTypes)) {
+                if (! in_array(get_class($graphQLType), $this->recognizedGraphQLTypes)) {
                     continue;
                 };
 
@@ -302,7 +312,7 @@ class SchemaGenerator
         $arguments = [];
 
         foreach ($typeFields as $fieldName => $field) {
-            if (! in_array(class_basename($field), $this->recognizedGraphQLTypes)) {
+            if (! in_array(get_class($field), $this->recognizedGraphQLTypes)) {
                 continue;
             };
 
@@ -316,7 +326,7 @@ class SchemaGenerator
             $arguments[] = sprintf('%s_gt: %s @gt', $fieldName, $field->name);
             $arguments[] = sprintf('%s_gte: %s @gte', $fieldName, $field->name);
             
-            if(\strtolower($field->name) === 'string') {
+            if (\strtolower($field->name) === 'string') {
                 $arguments[] = sprintf('%s_contains: %s @contains', $fieldName, $field->name);
                 $arguments[] = sprintf('%s_not_contains: %s @not_contains', $fieldName, $field->name);
                 $arguments[] = sprintf('%s_starts_with: %s @starts_with', $fieldName, $field->name);
@@ -377,8 +387,11 @@ class SchemaGenerator
         $arguments = [];
 
         foreach ($typeFields as $fieldName => $field) {
-            $classBaseName = class_basename($field);
-            if (! in_array($classBaseName, $this->recognizedGraphQLTypes) || $classBaseName === 'IDType' || str_contains($fieldName, '_at')) {
+            $className = get_class($field);
+            if (! in_array(
+                $className,
+                $this->recognizedGraphQLTypes
+            ) || $className === IDType::class || str_contains($fieldName, '_at')) {
                 continue;
             };
             $arguments[] = sprintf('%s: %s!', $fieldName, $field->name);
@@ -406,14 +419,16 @@ class SchemaGenerator
         $arguments = [];
 
         foreach ($typeFields as $fieldName => $field) {
-            $classBaseName = class_basename($field);
-            if (! in_array($classBaseName, $this->recognizedGraphQLTypes) || str_contains($fieldName, '_at')) {
+            $className = get_class($field);
+            if (! in_array($className, $this->recognizedGraphQLTypes) || str_contains($fieldName, '_at')) {
                 continue;
             };
+
             $required = '';
-            if($classBaseName === 'IDType'){
+            if ($className === IDType::class) {
                 $required = '!';
             }
+
             $arguments[] = sprintf('%s: %s%s', $fieldName, $field->name, $required);
         }
         if (count($arguments) < 1) {
