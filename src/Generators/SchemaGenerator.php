@@ -312,7 +312,9 @@ class SchemaGenerator
         $arguments = [];
 
         foreach ($typeFields as $fieldName => $field) {
-            if (! in_array(get_class($field), $this->recognizedGraphQLTypes)) {
+            $className = get_class($field);
+            // We can generate queries for all but Object types, as Object types are relations
+            if (! in_array($className, $this->recognizedGraphQLTypes) || $className === ObjectType::class) {
                 continue;
             };
 
