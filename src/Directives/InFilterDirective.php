@@ -9,7 +9,7 @@ class InFilterDirective extends BaseDirective
     /**
      * @inheritdoc
      */
-    public function handle(string $fieldName, string $value, Builder $builder): Builder
+    public function handle(string $fieldName, $value, Builder $builder): Builder
     {
         return $builder->whereIn($fieldName, explode(',', $value));
     }

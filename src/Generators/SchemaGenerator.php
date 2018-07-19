@@ -294,12 +294,6 @@ class SchemaGenerator
 
             // Add all our custom directives
             $arguments[] = sprintf('%s: %s @eq', $fieldName, $field->name);
-
-            // ID's only get @eq.
-            if(\strtolower($field->name) === 'id') {
-                continue;
-            }
-
             $arguments[] = sprintf('%s_not: %s @not', $fieldName, $field->name);
             $arguments[] = sprintf('%s_in: %s @in', $fieldName, $field->name);
             $arguments[] = sprintf('%s_not_in: %s @not_in', $fieldName, $field->name);
@@ -307,7 +301,7 @@ class SchemaGenerator
             $arguments[] = sprintf('%s_lte: %s @lte', $fieldName, $field->name);
             $arguments[] = sprintf('%s_gt: %s @gt', $fieldName, $field->name);
             $arguments[] = sprintf('%s_gte: %s @gte', $fieldName, $field->name);
-
+            
             if(\strtolower($field->name) === 'string') {
                 $arguments[] = sprintf('%s_contains: %s @contains', $fieldName, $field->name);
                 $arguments[] = sprintf('%s_not_contains: %s @not_contains', $fieldName, $field->name);

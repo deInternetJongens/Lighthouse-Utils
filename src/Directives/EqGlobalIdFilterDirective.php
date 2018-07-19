@@ -12,7 +12,7 @@ class EqGlobalIdFilterDirective extends BaseDirective
     /**
      * @inheritdoc
      */
-    public function handle(string $fieldName, string $value, Builder $builder): Builder
+    public function handle(string $fieldName, $value, Builder $builder): Builder
     {
         $globalIdParts = $this->decodeGlobalId($value);
 

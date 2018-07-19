@@ -38,10 +38,11 @@ abstract class BaseDirective extends LighthouseBaseDirective implements ArgMiddl
 
     /**
      * Add query statement to the eloquent builder.
+     *
      * @param string $fieldName
-     * @param string $value
+     * @param mixed $value
      * @param Builder $builder
      * @return Builder
      */
-    abstract public function handle(string $fieldName, string $value, Builder $builder): Builder;
+    abstract public function handle(string $fieldName, $value, Builder $builder): Builder;
 }
