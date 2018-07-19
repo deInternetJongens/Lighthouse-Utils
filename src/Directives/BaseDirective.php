@@ -12,6 +12,7 @@ abstract class BaseDirective extends LighthouseBaseDirective implements ArgMiddl
 {
     use HandlesQueryFilter;
 
+    //TODO: Fix compatibility with Lighthouse 2.2
     public function handleArgument(ArgumentValue $argument): ArgumentValue
     {
         return $this->injectFilter(
@@ -32,7 +33,8 @@ abstract class BaseDirective extends LighthouseBaseDirective implements ArgMiddl
      * Get the suffix for this query, e.g. : foo_contains, _contains is the suffix here.
      * @return string
      */
-    protected function getSuffix(): string {
+    protected function getSuffix(): string
+    {
         return sprintf('_%s', $this->name());
     }
 
