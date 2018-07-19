@@ -305,7 +305,8 @@ class SchemaGenerator
     }
 
     /**
-     * Generates a GraphQL query that returns multiple arguments with arguments for each field
+     * Generates GraphQL queries with arguments for each field
+     * Returns a query for 'all' and 'paginated', depending on what kind of result you want
      *
      * @param string $typeName
      * @param Type[] $typeFields
@@ -465,7 +466,7 @@ class SchemaGenerator
 
 
     /**
-     * Generates a GraphQL query deletes a record
+     * Generates a GraphQL mutation that deletes a record
      *
      * @param string $typeName
      * @param Type[] $typeFields
