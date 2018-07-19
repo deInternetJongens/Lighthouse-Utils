@@ -6,7 +6,6 @@ use Config;
 use DeInternetJongens\LighthouseUtils\Exceptions\InvalidConfigurationException;
 use GraphQL\Type\Definition\FieldDefinition;
 use GraphQL\Type\Definition\ObjectType;
-use GraphQL\Type\Definition\StringType;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Schema;
 
@@ -255,24 +254,34 @@ class SchemaGenerator
     private function generateQueriesForDefinedTypes(array $definedTypes): string
     {
         $queries = [];
+        $mutations = [];
         /**
          * @var string $typeName
          * @var Type $type
          */
         foreach ($definedTypes as $typeName => $type) {
             $paginatedWhereQuery = $this->generatePaginatedWhereQuery($typeName, $type);
+
             if (! empty($paginatedWhereQuery)) {
                 $queries[] = $paginatedWhereQuery;
             }
             $findQuery = $this->generateFindQuery($typeName, $type);
+
             if (! empty($findQuery)) {
                 $queries[] = $findQuery;
             }
-        }
-        $queries = implode("\r\n", $queries);
-        $queries = sprintf("type Query{\r\n%s\r\n}", $queries);
 
-        return $queries;
+            $findQuery = $this->generateCreateQuery($typeName, $type);
+            if (! empty($findQuery)) {
+                $mutations[] = $findQuery;
+            }
+
+        }
+        $return = sprintf("type Query{\r\n%s\r\n}", implode("\r\n", $queries));
+        $return .= "\r\n\r\n";
+        $return .= sprintf("type Mutation{\r\n%s\r\n}", implode("\r\n", $mutations));
+
+        return $return;
     }
 
     /**
@@ -346,6 +355,36 @@ class SchemaGenerator
 
         $query .= sprintf('(%s)', implode(', ', $arguments));
         $query .= sprintf(': %1$s! @find(model: "%1$s")', $typeName);
+
+        return $query;
+    }
+
+    /**
+     * Generates a GraphQL Mutation to create a record
+     *
+     * @param string $typeName
+     * @param Type[] $typeFields
+     * @return string
+     */
+    private function generateCreateQuery(string $typeName, array $typeFields): string
+    {
+        $query = '    create' . $typeName;
+        $arguments = [];
+
+        foreach ($typeFields as $fieldName => $field) {
+            $classBaseName = class_basename($field);
+            if (! in_array($classBaseName, $this->recognizedGraphqlScalarTypes) || $classBaseName === 'IDType' || str_contains($fieldName, '_at')) {
+                continue;
+            };
+            $arguments[] = sprintf('%s: %s!', $fieldName, $field->name);
+        }
+        if (count($arguments) < 1) {
+            return '';
+        }
+
+        $query .= sprintf('(%s)', implode(', ', $arguments));
+        $query .= sprintf(': %1$s @create(model: "%1$s")', $typeName);
+
         return $query;
     }
 }
