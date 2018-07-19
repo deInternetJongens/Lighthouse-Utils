@@ -12,9 +12,9 @@ abstract class BaseDirective extends LighthouseBaseDirective implements ArgMiddl
 {
     use HandlesQueryFilter;
 
-    public function handleArgument(ArgumentValue $argument): ArgumentValue
+    public function handleArgument(ArgumentValue $argument, \Closure $next): ArgumentValue
     {
-        return $this->injectFilter(
+        $argument = $this->injectFilter(
             $argument,
             [
                 'resolve' => function (Builder $builder, string $key, array $arguments): Builder {
@@ -26,13 +26,16 @@ abstract class BaseDirective extends LighthouseBaseDirective implements ArgMiddl
                 },
             ]
         );
+
+        return $next($argument);
     }
 
     /**
      * Get the suffix for this query, e.g. : foo_contains, _contains is the suffix here.
      * @return string
      */
-    protected function getSuffix(): string {
+    protected function getSuffix(): string
+    {
         return sprintf('_%s', $this->name());
     }
 

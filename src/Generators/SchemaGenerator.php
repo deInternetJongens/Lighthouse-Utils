@@ -5,6 +5,9 @@ namespace DeInternetJongens\LighthouseUtils\Generators;
 use Config;
 use DeInternetJongens\LighthouseUtils\Exceptions\InvalidConfigurationException;
 use GraphQL\Type\Definition\FieldDefinition;
+use GraphQL\Type\Definition\FloatType;
+use GraphQL\Type\Definition\IDType;
+use GraphQL\Type\Definition\IntType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\StringType;
 use GraphQL\Type\Definition\Type;
@@ -16,7 +19,13 @@ class SchemaGenerator
     private $requiredSchemaFileKeys = ['mutations', 'queries', 'types'];
 
     /** @var array */
-    private $recognizedGraphqlScalarTypes = ['IDType', 'StringType', 'IntType', 'FloatType'];
+    private $recognizedGraphQLTypes = [
+        IDType::class,
+        StringType::class,
+        IntType::class,
+        FloatType::class,
+        ObjectType::class,
+    ];
 
     /**
      * Generates a schema from an array of definition file directories
@@ -229,16 +238,17 @@ class SchemaGenerator
              * @var FieldDefinition $fieldType
              */
             foreach ($type->getFields() as $fieldName => $fieldType) {
-                $internalType = $fieldType->getType();
-                if (method_exists($internalType, 'getWrappedType')) {
-                    $internalType = $internalType->getWrappedType();
+                $graphQLType = $fieldType->getType();
+                if (method_exists($graphQLType, 'getWrappedType')) {
+                    $graphQLType = $graphQLType->getWrappedType();
                 }
-                if (! in_array(class_basename($internalType), $this->recognizedGraphqlScalarTypes)) {
+
+                if (! in_array(get_class($graphQLType), $this->recognizedGraphQLTypes)) {
                     continue;
                 };
 
                 // This retrieves the GraphQL type for this field from the webonyx/graphql-php package
-                $internalTypes[$typeName][$fieldName] = $internalType;
+                $internalTypes[$typeName][$fieldName] = $graphQLType;
             }
         }
 
@@ -255,40 +265,61 @@ class SchemaGenerator
     private function generateQueriesForDefinedTypes(array $definedTypes): string
     {
         $queries = [];
+        $mutations = [];
         /**
          * @var string $typeName
          * @var Type $type
          */
         foreach ($definedTypes as $typeName => $type) {
-            $paginatedWhereQuery = $this->generatePaginatedWhereQuery($typeName, $type);
+            $paginatedWhereQuery = $this->generateWhereQueries($typeName, $type);
+
             if (! empty($paginatedWhereQuery)) {
                 $queries[] = $paginatedWhereQuery;
             }
+
             $findQuery = $this->generateFindQuery($typeName, $type);
             if (! empty($findQuery)) {
                 $queries[] = $findQuery;
             }
-        }
-        $queries = implode("\r\n", $queries);
-        $queries = sprintf("type Query{\r\n%s\r\n}", $queries);
 
-        return $queries;
+            $createQuery = $this->generateCreateQuery($typeName, $type);
+            if (! empty($createQuery)) {
+                $mutations[] = $createQuery;
+            }
+
+            $updateQuery = $this->generateUpdateQuery($typeName, $type);
+            if (! empty($updateQuery)) {
+                $mutations[] = $updateQuery;
+            }
+
+            $deleteQuery = $this->generateDeleteQuery($typeName, $type);
+            if (! empty($deleteQuery)) {
+                $mutations[] = $deleteQuery;
+            }
+        }
+        $return = sprintf("type Query{\r\n%s\r\n}", implode("\r\n", $queries));
+        $return .= "\r\n\r\n";
+        $return .= sprintf("type Mutation{\r\n%s\r\n}", implode("\r\n", $mutations));
+
+        return $return;
     }
 
     /**
-     * Generates a GraphQL query that returns multiple arguments with arguments for each field
+     * Generates GraphQL queries with arguments for each field
+     * Returns a query for 'all' and 'paginated', depending on what kind of result you want
      *
      * @param string $typeName
      * @param Type[] $typeFields
      * @return string
      */
-    private function generatePaginatedWhereQuery(string $typeName, array $typeFields): string
+    private function generateWhereQueries(string $typeName, array $typeFields): string
     {
-        $query = '    ' . str_plural(strtolower($typeName));
         $arguments = [];
 
         foreach ($typeFields as $fieldName => $field) {
-            if (! in_array(class_basename($field), $this->recognizedGraphqlScalarTypes)) {
+            $className = get_class($field);
+            // We can generate queries for all but Object types, as Object types are relations
+            if (! in_array($className, $this->recognizedGraphQLTypes) || $className === ObjectType::class) {
                 continue;
             };
 
@@ -302,7 +333,7 @@ class SchemaGenerator
             $arguments[] = sprintf('%s_gt: %s @gt', $fieldName, $field->name);
             $arguments[] = sprintf('%s_gte: %s @gte', $fieldName, $field->name);
             
-            if(\strtolower($field->name) === 'string') {
+            if (\strtolower($field->name) === 'string') {
                 $arguments[] = sprintf('%s_contains: %s @contains', $fieldName, $field->name);
                 $arguments[] = sprintf('%s_not_contains: %s @not_contains', $fieldName, $field->name);
                 $arguments[] = sprintf('%s_starts_with: %s @starts_with', $fieldName, $field->name);
@@ -314,10 +345,14 @@ class SchemaGenerator
             return '';
         }
 
-        $query .= sprintf('(%s)', implode(', ', $arguments));
-        $query .= sprintf(': [%1$s]! @paginate(model: "%1$s")', $typeName);
+        $allQuery = '    ' . str_plural(strtolower($typeName));
+        $queryArguments = sprintf('(%s)', implode(', ', $arguments));
+        $allQuery .= sprintf('%1$s: [%2$s]! @all(model: "%2$s")', $queryArguments, $typeName);
 
-        return $query;
+        $paginatedQuery = '    ' . str_plural(strtolower($typeName)) . 'Paginated';
+        $paginatedQuery .= sprintf('%1$s: [%2$s]! @paginate(model: "%2$s")', $queryArguments, $typeName);
+
+        return $allQuery ."\r\n". $paginatedQuery;
     }
 
     /**
@@ -334,7 +369,7 @@ class SchemaGenerator
 
         //Loop through fields to find the 'ID' field.
         foreach ($typeFields as $fieldName => $field) {
-            if (class_basename($field) !== 'IDType') {
+            if (get_class($field) !== IDType::class) {
                 continue;
             };
             $arguments[] = sprintf('%s: %s! @eq', $fieldName, $field->name);
@@ -346,6 +381,117 @@ class SchemaGenerator
 
         $query .= sprintf('(%s)', implode(', ', $arguments));
         $query .= sprintf(': %1$s! @find(model: "%1$s")', $typeName);
+
+        return $query;
+    }
+
+    /**
+     * Generates a GraphQL Mutation to create a record
+     *
+     * @param string $typeName
+     * @param Type[] $typeFields
+     * @return string
+     */
+    private function generateCreateQuery(string $typeName, array $typeFields): string
+    {
+        $query = '    create' . $typeName;
+        $arguments = [];
+
+        foreach ($typeFields as $fieldName => $field) {
+            $className = get_class($field);
+            if (! in_array(
+                $className,
+                $this->recognizedGraphQLTypes
+            ) || $className === IDType::class || str_contains($fieldName, '_at')) {
+                continue;
+            };
+
+            $argumentType = $field->name;
+            if ($className === ObjectType::class) {
+                $fieldName .= '_id';
+                $argumentType = 'ID';
+            }
+
+            $arguments[] = sprintf('%s: %s!', $fieldName, $argumentType);
+        }
+        if (count($arguments) < 1) {
+            return '';
+        }
+
+        $query .= sprintf('(%s)', implode(', ', $arguments));
+        $query .= sprintf(': %1$s @create(model: "%1$s")', $typeName);
+
+        return $query;
+    }
+
+    /**
+     * Generates a GraphQL Mutation to update a record
+     *
+     * @param string $typeName
+     * @param Type[] $typeFields
+     * @return string
+     */
+    private function generateUpdateQuery(string $typeName, array $typeFields): string
+    {
+        $query = '    update' . $typeName;
+        $arguments = [];
+
+        foreach ($typeFields as $fieldName => $field) {
+            $className = get_class($field);
+            if (! in_array($className, $this->recognizedGraphQLTypes) || str_contains($fieldName, '_at')) {
+                continue;
+            };
+
+            $required = '';
+            $argumentType = $field->name;
+            if ($className === IDType::class) {
+                $required = '!';
+            }
+            if ($className === ObjectType::class) {
+                $fieldName .= '_id';
+                $argumentType = 'ID';
+            }
+
+            $arguments[] = sprintf('%s: %s%s', $fieldName, $argumentType, $required);
+        }
+        if (count($arguments) < 1) {
+            return '';
+        }
+
+        $query .= sprintf('(%s)', implode(', ', $arguments));
+        $query .= sprintf(': %1$s @update(model: "%1$s")', $typeName);
+
+        return $query;
+    }
+
+
+    /**
+     * Generates a GraphQL mutation that deletes a record
+     *
+     * @param string $typeName
+     * @param Type[] $typeFields
+     * @return string
+     */
+    private function generateDeleteQuery(string $typeName, array $typeFields): string
+    {
+        $query = '    delete' . $typeName;
+        $arguments = [];
+
+        //Loop through fields to find the 'ID' field.
+        foreach ($typeFields as $fieldName => $field) {
+            if (get_class($field) !== IDType::class) {
+                continue;
+            };
+            $arguments[] = sprintf('%s: %s! @eq', $fieldName, $field->name);
+            break;
+        }
+        if (count($arguments) < 1) {
+            return '';
+        }
+
+        $query .= sprintf('(%s)', implode(', ', $arguments));
+        $query .= sprintf(': %1$s @delete', $typeName);
+
         return $query;
     }
 }

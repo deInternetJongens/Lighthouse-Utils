@@ -16,7 +16,7 @@ class EqGlobalIdFilterDirective extends BaseDirective
     {
         $globalIdParts = $this->decodeGlobalId($value);
 
-        if(count($globalIdParts) === 2) {
+        if (count($globalIdParts) === 2) {
             $value = $globalIdParts[1];
         }
 
