@@ -276,20 +276,20 @@ class SchemaGenerator
             if (! empty($paginatedWhereQuery)) {
                 $queries[] = $paginatedWhereQuery;
             }
-            $findQuery = $this->generateFindQuery($typeName, $type);
 
+            $findQuery = $this->generateFindQuery($typeName, $type);
             if (! empty($findQuery)) {
                 $queries[] = $findQuery;
             }
 
-            $findQuery = $this->generateCreateQuery($typeName, $type);
-            if (! empty($findQuery)) {
-                $mutations[] = $findQuery;
+            $createQuery = $this->generateCreateQuery($typeName, $type);
+            if (! empty($createQuery)) {
+                $mutations[] = $createQuery;
             }
 
-            $findQuery = $this->generateUpdateQuery($typeName, $type);
-            if (! empty($findQuery)) {
-                $mutations[] = $findQuery;
+            $updateQuery = $this->generateUpdateQuery($typeName, $type);
+            if (! empty($updateQuery)) {
+                $mutations[] = $updateQuery;
             }
         }
         $return = sprintf("type Query{\r\n%s\r\n}", implode("\r\n", $queries));
