@@ -6,6 +6,7 @@ use Config;
 use DeInternetJongens\LighthouseUtils\Exceptions\InvalidConfigurationException;
 use GraphQL\Type\Definition\FieldDefinition;
 use GraphQL\Type\Definition\ObjectType;
+use GraphQL\Type\Definition\StringType;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Schema;
 
@@ -293,6 +294,12 @@ class SchemaGenerator
 
             // Add all our custom directives
             $arguments[] = sprintf('%s: %s @eq', $fieldName, $field->name);
+
+            // ID's only get @eq.
+            if(\strtolower($field->name) === 'id') {
+                continue;
+            }
+
             $arguments[] = sprintf('%s_not: %s @not', $fieldName, $field->name);
             $arguments[] = sprintf('%s_in: %s @in', $fieldName, $field->name);
             $arguments[] = sprintf('%s_not_in: %s @not_in', $fieldName, $field->name);

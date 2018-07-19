@@ -3,33 +3,19 @@
 namespace App\DijLightHouse\Directives;
 
 use Illuminate\Database\Eloquent\Builder;
-use Nuwave\Lighthouse\Schema\Directives\BaseDirective;
-use Nuwave\Lighthouse\Schema\Values\ArgumentValue;
-use Nuwave\Lighthouse\Support\Contracts\ArgMiddleware;
-use Nuwave\Lighthouse\Support\Traits\HandlesQueryFilter;
 
-class NotFilterDirective extends BaseDirective implements ArgMiddleware
+class NotFilterDirective extends BaseDirective
 {
-    use HandlesQueryFilter;
+    /**
+     * @inheritdoc
+     */
+    public function handle(string $fieldName, string $value, Builder $builder): Builder
+    {
+        return $builder->where($fieldName, '!=', $value);
+    }
 
     public function name(): string
     {
         return 'not';
-    }
-
-    public function handleArgument(ArgumentValue $argument): ArgumentValue
-    {
-        return $this->injectFilter(
-            $argument,
-            [
-                'resolve' => function (Builder $builder, string $key, array $arguments): Builder {
-                    $value = $arguments[$key];
-
-                    $field = \preg_replace('/_not$/', '', $key);
-
-                    return $builder->where($field, '!=', $value);
-                },
-            ]
-        );
     }
 }

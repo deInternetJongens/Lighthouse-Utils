@@ -28,7 +28,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
 
         $this->publishes([
             self::DIRECTIVE_PATH => $this->directiveAppPath,
-        ]);
+        ], 'directives');
     }
 
     public function register()
