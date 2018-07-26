@@ -238,9 +238,11 @@ class SchemaGenerator
              * @var FieldDefinition $fieldType
              */
             foreach ($type->getFields() as $fieldName => $fieldType) {
-                $graphQLType = clone $fieldType->getType();
+                $graphQLType = $fieldType->getType();
+
                 //Every required field is defined by a parent 'NonNullType'
                 if (method_exists($graphQLType, 'getWrappedType')) {
+                    //Clone the field to prevent pass by reference, because we want to add a config value unique to this field.
                     $graphQLType = clone $graphQLType->getWrappedType();
                     //We want to know later on if wether or not a field is required
                     $graphQLType->config['generator-required'] = true;
