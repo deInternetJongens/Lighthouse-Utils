@@ -32,6 +32,7 @@ class UpdateMutationGenerator
             if ($className === IDType::class) {
                 $required = '!';
             }
+
             if ($className === ObjectType::class) {
                 $fieldName .= '_id';
                 $argumentType = 'ID';

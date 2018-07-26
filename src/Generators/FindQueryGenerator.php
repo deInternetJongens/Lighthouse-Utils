@@ -23,10 +23,12 @@ class FindQueryGenerator
         foreach ($typeFields as $fieldName => $field) {
             if (get_class($field) !== IDType::class) {
                 continue;
-            };
+            }
+
             $arguments[] = sprintf('%s: %s! @eq', $fieldName, $field->name);
             break;
         }
+
         if (count($arguments) < 1) {
             return '';
         }

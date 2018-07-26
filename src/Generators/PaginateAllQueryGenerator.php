@@ -45,6 +45,7 @@ class PaginateAllQueryGenerator
                 $arguments[] = sprintf('%s_ends_with: %s @not_ends_with', $fieldName, $field->name);
             }
         }
+
         if (count($arguments) < 1) {
             return '';
         }
