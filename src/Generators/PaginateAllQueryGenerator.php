@@ -2,11 +2,22 @@
 
 namespace DeInternetJongens\LighthouseUtils\Generators;
 
-use GraphQL\Type\Definition\ObjectType;
+use GraphQL\Type\Definition\FloatType;
+use GraphQL\Type\Definition\IDType;
+use GraphQL\Type\Definition\IntType;
+use GraphQL\Type\Definition\StringType;
 use GraphQL\Type\Definition\Type;
 
 class PaginateAllQueryGenerator
 {
+    /** @var array */
+    private static $supportedGraphQLTypes = [
+        IDType::class,
+        StringType::class,
+        IntType::class,
+        FloatType::class,
+    ];
+
     /**
      * Generates GraphQL queries with arguments for each field
      * Returns a query for 'all' and 'paginated', depending on what kind of result you want
@@ -16,14 +27,14 @@ class PaginateAllQueryGenerator
      * @param array $supportedGraphQLTypes
      * @return string
      */
-    public static function generate(string $typeName, array $typeFields, array $supportedGraphQLTypes): string
+    public static function generate(string $typeName, array $typeFields): string
     {
         $arguments = [];
 
         foreach ($typeFields as $fieldName => $field) {
             $className = get_class($field);
             // We can generate queries for all but Object types, as Object types are relations
-            if (! in_array($className, $supportedGraphQLTypes) || $className === ObjectType::class) {
+            if (! in_array($className, self::$supportedGraphQLTypes)) {
                 continue;
             }
 

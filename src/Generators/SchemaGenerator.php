@@ -238,9 +238,10 @@ class SchemaGenerator
              * @var FieldDefinition $fieldType
              */
             foreach ($type->getFields() as $fieldName => $fieldType) {
-                $graphQLType = $fieldType->getType();
+                $graphQLType = clone $fieldType->getType();
                 if (method_exists($graphQLType, 'getWrappedType')) {
-                    $graphQLType = $graphQLType->getWrappedType();
+                    $graphQLType = clone $graphQLType->getWrappedType();
+                    $graphQLType->config['generator-required'] = true;
                 }
 
                 if (! in_array(get_class($graphQLType), $this->supportedGraphQLTypes)) {
@@ -271,7 +272,7 @@ class SchemaGenerator
          * @var Type $type
          */
         foreach ($definedTypes as $typeName => $type) {
-            $paginatedWhereQuery = PaginateAllQueryGenerator::generate($typeName, $type, $this->supportedGraphQLTypes);
+            $paginatedWhereQuery = PaginateAllQueryGenerator::generate($typeName, $type);
 
             if (! empty($paginatedWhereQuery)) {
                 $queries[] = $paginatedWhereQuery;
@@ -282,12 +283,12 @@ class SchemaGenerator
                 $queries[] = $findQuery;
             }
 
-            $createQuery = CreateMutationGenerator::generate($typeName, $type, $this->supportedGraphQLTypes);
+            $createQuery = CreateMutationGenerator::generate($typeName, $type);
             if (! empty($createQuery)) {
                 $mutations[] = $createQuery;
             }
 
-            $updateQuery = UpdateMutationGenerator::generate($typeName, $type, $this->supportedGraphQLTypes);
+            $updateQuery = UpdateMutationGenerator::generate($typeName, $type);
             if (! empty($updateQuery)) {
                 $mutations[] = $updateQuery;
             }

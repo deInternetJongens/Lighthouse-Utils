@@ -2,8 +2,6 @@
 
 namespace DeInternetJongens\LighthouseUtils\Generators;
 
-use GraphQL\Type\Definition\IDType;
-use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 
 class CreateMutationGenerator
@@ -13,31 +11,15 @@ class CreateMutationGenerator
      *
      * @param string $typeName
      * @param Type[] $typeFields
-     * @param array $supportedGraphQLTypes
      * @return string
      */
-    public static function generate(string $typeName, array $typeFields, array $supportedGraphQLTypes): string
+    public static function generate(string $typeName, array $typeFields): string
     {
         $query = '    create' . $typeName;
-        $arguments = [];
 
-        foreach ($typeFields as $fieldName => $field) {
-            $className = get_class($field);
-            if (! in_array($className, $supportedGraphQLTypes)
-                || $className === IDType::class
-                || str_contains($fieldName, '_at')
-            ) {
-                continue;
-            }
+        $arguments = RelationArgumentGenerator::generate($typeFields);
+        $arguments = array_merge(InputTypeArgumentGenerator::generate($typeFields), $arguments);
 
-            $argumentType = $field->name;
-            if ($className === ObjectType::class) {
-                $fieldName .= '_id';
-                $argumentType = 'ID';
-            }
-
-            $arguments[] = sprintf('%s: %s!', $fieldName, $argumentType);
-        }
         if (count($arguments) < 1) {
             return '';
         }
