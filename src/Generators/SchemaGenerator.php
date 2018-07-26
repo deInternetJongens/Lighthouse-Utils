@@ -19,7 +19,7 @@ class SchemaGenerator
     private $requiredSchemaFileKeys = ['mutations', 'queries', 'types'];
 
     /** @var array */
-    private $recognizedGraphQLTypes = [
+    private $supportedGraphQLTypes = [
         IDType::class,
         StringType::class,
         IntType::class,
@@ -243,7 +243,7 @@ class SchemaGenerator
                     $graphQLType = $graphQLType->getWrappedType();
                 }
 
-                if (! in_array(get_class($graphQLType), $this->recognizedGraphQLTypes)) {
+                if (! in_array(get_class($graphQLType), $this->supportedGraphQLTypes)) {
                     continue;
                 };
 
@@ -271,28 +271,28 @@ class SchemaGenerator
          * @var Type $type
          */
         foreach ($definedTypes as $typeName => $type) {
-            $paginatedWhereQuery = $this->generateWhereQueries($typeName, $type);
+            $paginatedWhereQuery = PaginateAllQueryGenerator::generate($typeName, $type, $this->supportedGraphQLTypes);
 
             if (! empty($paginatedWhereQuery)) {
                 $queries[] = $paginatedWhereQuery;
             }
+            $findQuery = FindQueryGenerator::generate($typeName, $type);
 
-            $findQuery = $this->generateFindQuery($typeName, $type);
             if (! empty($findQuery)) {
                 $queries[] = $findQuery;
             }
 
-            $createQuery = $this->generateCreateQuery($typeName, $type);
+            $createQuery = CreateMutationGenerator::generate($typeName, $type, $this->supportedGraphQLTypes);
             if (! empty($createQuery)) {
                 $mutations[] = $createQuery;
             }
 
-            $updateQuery = $this->generateUpdateQuery($typeName, $type);
+            $updateQuery = UpdateMutationGenerator::generate($typeName, $type, $this->supportedGraphQLTypes);
             if (! empty($updateQuery)) {
                 $mutations[] = $updateQuery;
             }
 
-            $deleteQuery = $this->generateDeleteQuery($typeName, $type);
+            $deleteQuery = DeleteMutationGenerator::generate($typeName, $type);
             if (! empty($deleteQuery)) {
                 $mutations[] = $deleteQuery;
             }
@@ -302,196 +302,5 @@ class SchemaGenerator
         $return .= sprintf("type Mutation{\r\n%s\r\n}", implode("\r\n", $mutations));
 
         return $return;
-    }
-
-    /**
-     * Generates GraphQL queries with arguments for each field
-     * Returns a query for 'all' and 'paginated', depending on what kind of result you want
-     *
-     * @param string $typeName
-     * @param Type[] $typeFields
-     * @return string
-     */
-    private function generateWhereQueries(string $typeName, array $typeFields): string
-    {
-        $arguments = [];
-
-        foreach ($typeFields as $fieldName => $field) {
-            $className = get_class($field);
-            // We can generate queries for all but Object types, as Object types are relations
-            if (! in_array($className, $this->recognizedGraphQLTypes) || $className === ObjectType::class) {
-                continue;
-            };
-
-            // Add all our custom directives
-            $arguments[] = sprintf('%s: %s @eq', $fieldName, $field->name);
-            $arguments[] = sprintf('%s_not: %s @not', $fieldName, $field->name);
-            $arguments[] = sprintf('%s_in: %s @in', $fieldName, $field->name);
-            $arguments[] = sprintf('%s_not_in: %s @not_in', $fieldName, $field->name);
-            $arguments[] = sprintf('%s_lt: %s @lt', $fieldName, $field->name);
-            $arguments[] = sprintf('%s_lte: %s @lte', $fieldName, $field->name);
-            $arguments[] = sprintf('%s_gt: %s @gt', $fieldName, $field->name);
-            $arguments[] = sprintf('%s_gte: %s @gte', $fieldName, $field->name);
-            
-            if (\strtolower($field->name) === 'string') {
-                $arguments[] = sprintf('%s_contains: %s @contains', $fieldName, $field->name);
-                $arguments[] = sprintf('%s_not_contains: %s @not_contains', $fieldName, $field->name);
-                $arguments[] = sprintf('%s_starts_with: %s @starts_with', $fieldName, $field->name);
-                $arguments[] = sprintf('%s_not_starts_with: %s @not_starts_with', $fieldName, $field->name);
-                $arguments[] = sprintf('%s_ends_with: %s @not_ends_with', $fieldName, $field->name);
-            }
-        }
-        if (count($arguments) < 1) {
-            return '';
-        }
-
-        $allQuery = '    ' . str_plural(strtolower($typeName));
-        $queryArguments = sprintf('(%s)', implode(', ', $arguments));
-        $allQuery .= sprintf('%1$s: [%2$s]! @all(model: "%2$s")', $queryArguments, $typeName);
-
-        $paginatedQuery = '    ' . str_plural(strtolower($typeName)) . 'Paginated';
-        $paginatedQuery .= sprintf('%1$s: [%2$s]! @paginate(model: "%2$s")', $queryArguments, $typeName);
-
-        return $allQuery ."\r\n". $paginatedQuery;
-    }
-
-    /**
-     * Generates a GraphQL query that returns one entity by ID
-     *
-     * @param string $typeName
-     * @param Type[] $typeFields
-     * @return string
-     */
-    private function generateFindQuery(string $typeName, array $typeFields): string
-    {
-        $query =  '    ' . strtolower($typeName);
-        $arguments = [];
-
-        //Loop through fields to find the 'ID' field.
-        foreach ($typeFields as $fieldName => $field) {
-            if (get_class($field) !== IDType::class) {
-                continue;
-            };
-            $arguments[] = sprintf('%s: %s! @eq', $fieldName, $field->name);
-            break;
-        }
-        if (count($arguments) < 1) {
-            return '';
-        }
-
-        $query .= sprintf('(%s)', implode(', ', $arguments));
-        $query .= sprintf(': %1$s! @find(model: "%1$s")', $typeName);
-
-        return $query;
-    }
-
-    /**
-     * Generates a GraphQL Mutation to create a record
-     *
-     * @param string $typeName
-     * @param Type[] $typeFields
-     * @return string
-     */
-    private function generateCreateQuery(string $typeName, array $typeFields): string
-    {
-        $query = '    create' . $typeName;
-        $arguments = [];
-
-        foreach ($typeFields as $fieldName => $field) {
-            $className = get_class($field);
-            if (! in_array(
-                $className,
-                $this->recognizedGraphQLTypes
-            ) || $className === IDType::class || str_contains($fieldName, '_at')) {
-                continue;
-            };
-
-            $argumentType = $field->name;
-            if ($className === ObjectType::class) {
-                $fieldName .= '_id';
-                $argumentType = 'ID';
-            }
-
-            $arguments[] = sprintf('%s: %s!', $fieldName, $argumentType);
-        }
-        if (count($arguments) < 1) {
-            return '';
-        }
-
-        $query .= sprintf('(%s)', implode(', ', $arguments));
-        $query .= sprintf(': %1$s @create(model: "%1$s")', $typeName);
-
-        return $query;
-    }
-
-    /**
-     * Generates a GraphQL Mutation to update a record
-     *
-     * @param string $typeName
-     * @param Type[] $typeFields
-     * @return string
-     */
-    private function generateUpdateQuery(string $typeName, array $typeFields): string
-    {
-        $query = '    update' . $typeName;
-        $arguments = [];
-
-        foreach ($typeFields as $fieldName => $field) {
-            $className = get_class($field);
-            if (! in_array($className, $this->recognizedGraphQLTypes) || str_contains($fieldName, '_at')) {
-                continue;
-            };
-
-            $required = '';
-            $argumentType = $field->name;
-            if ($className === IDType::class) {
-                $required = '!';
-            }
-            if ($className === ObjectType::class) {
-                $fieldName .= '_id';
-                $argumentType = 'ID';
-            }
-
-            $arguments[] = sprintf('%s: %s%s', $fieldName, $argumentType, $required);
-        }
-        if (count($arguments) < 1) {
-            return '';
-        }
-
-        $query .= sprintf('(%s)', implode(', ', $arguments));
-        $query .= sprintf(': %1$s @update(model: "%1$s")', $typeName);
-
-        return $query;
-    }
-
-
-    /**
-     * Generates a GraphQL mutation that deletes a record
-     *
-     * @param string $typeName
-     * @param Type[] $typeFields
-     * @return string
-     */
-    private function generateDeleteQuery(string $typeName, array $typeFields): string
-    {
-        $query = '    delete' . $typeName;
-        $arguments = [];
-
-        //Loop through fields to find the 'ID' field.
-        foreach ($typeFields as $fieldName => $field) {
-            if (get_class($field) !== IDType::class) {
-                continue;
-            };
-            $arguments[] = sprintf('%s: %s! @eq', $fieldName, $field->name);
-            break;
-        }
-        if (count($arguments) < 1) {
-            return '';
-        }
-
-        $query .= sprintf('(%s)', implode(', ', $arguments));
-        $query .= sprintf(': %1$s @delete', $typeName);
-
-        return $query;
     }
 }
