@@ -7,7 +7,6 @@ use GraphQL\Type\Definition\Type;
 
 class DeleteMutationGenerator
 {
-
     /**
      * Generates a GraphQL mutation that deletes a record
      *
@@ -24,7 +23,8 @@ class DeleteMutationGenerator
         foreach ($typeFields as $fieldName => $field) {
             if (get_class($field) !== IDType::class) {
                 continue;
-            };
+            }
+
             $arguments[] = sprintf('%s: %s! @eq', $fieldName, $field->name);
             break;
         }

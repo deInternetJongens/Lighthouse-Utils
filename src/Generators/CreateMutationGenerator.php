@@ -8,7 +8,6 @@ use GraphQL\Type\Definition\Type;
 
 class CreateMutationGenerator
 {
-
     /**
      * Generates a GraphQL Mutation to create a record
      *
@@ -24,12 +23,12 @@ class CreateMutationGenerator
 
         foreach ($typeFields as $fieldName => $field) {
             $className = get_class($field);
-            if (! in_array(
-                    $className,
-                    $supportedGraphQLTypes
-                ) || $className === IDType::class || str_contains($fieldName, '_at')) {
+            if (! in_array($className, $supportedGraphQLTypes)
+                || $className === IDType::class
+                || str_contains($fieldName, '_at')
+            ) {
                 continue;
-            };
+            }
 
             $argumentType = $field->name;
             if ($className === ObjectType::class) {

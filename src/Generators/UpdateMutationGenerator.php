@@ -8,7 +8,6 @@ use GraphQL\Type\Definition\Type;
 
 class UpdateMutationGenerator
 {
-
     /**
      * Generates a GraphQL Mutation to update a record
      *
@@ -26,7 +25,7 @@ class UpdateMutationGenerator
             $className = get_class($field);
             if (! in_array($className, $supportedGraphQLTypes) || str_contains($fieldName, '_at')) {
                 continue;
-            };
+            }
 
             $required = '';
             $argumentType = $field->name;
