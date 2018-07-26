@@ -12,8 +12,8 @@ return [
    |
    */
     'schema_paths' => [
-        'mutations' => 'app/GraphQL/Mutations',
-        'queries' => 'app/GraphQL/Queries',
-        'types' => 'app/GraphQL/Types',
+        'mutations' => 'app/Http/GraphQL/Mutations',
+        'queries' => 'app/Http/GraphQL/Queries',
+        'types' => 'app/Http/GraphQL/Types',
     ],
 ];
