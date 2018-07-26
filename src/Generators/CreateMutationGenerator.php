@@ -18,7 +18,7 @@ class CreateMutationGenerator
         $query = '    create' . $typeName;
 
         $arguments = RelationArgumentGenerator::generate($typeFields);
-        $arguments = array_merge(InputTypeArgumentGenerator::generate($typeFields), $arguments);
+        $arguments = array_merge($arguments, InputTypeArgumentGenerator::generate($typeFields));
 
         if (count($arguments) < 1) {
             return '';

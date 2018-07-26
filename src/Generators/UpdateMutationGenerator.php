@@ -18,8 +18,8 @@ class UpdateMutationGenerator
     {
         $query = '    update' . $typeName;
         $arguments = IdArgumentGenerator::generate($typeFields);
-        $arguments = array_merge(RelationArgumentGenerator::generate($typeFields, false), $arguments);
-        $arguments = array_merge(InputTypeArgumentGenerator::generate($typeFields), $arguments);
+        $arguments = array_merge($arguments, RelationArgumentGenerator::generate($typeFields, false));
+        $arguments = array_merge($arguments, InputTypeArgumentGenerator::generate($typeFields));
 
         if (count($arguments) < 1) {
             return '';
