@@ -20,8 +20,7 @@ class IdArgumentGenerator
         $arguments = [];
         foreach ($typeFields as $fieldName => $field) {
             $className = get_class($field);
-            if ($className !== IDType::class
-            ) {
+            if ($className !== IDType::class) {
                 continue;
             };
 
