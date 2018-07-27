@@ -4,6 +4,11 @@ namespace DeInternetJongens\LighthouseUtils\Generators;
 
 use Config;
 use DeInternetJongens\LighthouseUtils\Exceptions\InvalidConfigurationException;
+use DeInternetJongens\LighthouseUtils\Generators\Mutations\CreateMutationGenerator;
+use DeInternetJongens\LighthouseUtils\Generators\Mutations\DeleteMutationGenerator;
+use DeInternetJongens\LighthouseUtils\Generators\Mutations\UpdateMutationGenerator;
+use DeInternetJongens\LighthouseUtils\Generators\Queries\FindQueryGenerator;
+use DeInternetJongens\LighthouseUtils\Generators\Queries\PaginateAllQueryGenerator;
 use GraphQL\Type\Definition\FieldDefinition;
 use GraphQL\Type\Definition\FloatType;
 use GraphQL\Type\Definition\IDType;

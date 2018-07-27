@@ -1,6 +1,6 @@
 <?php
 
-namespace DeInternetJongens\LighthouseUtils\Generators;
+namespace DeInternetJongens\LighthouseUtils\Generators\Arguments;
 
 use GraphQL\Type\Definition\FloatType;
 use GraphQL\Type\Definition\IntType;

@@ -1,6 +1,6 @@
 <?php
 
-namespace DeInternetJongens\LighthouseUtils\Generators;
+namespace DeInternetJongens\LighthouseUtils\Generators\Arguments;
 
 use GraphQL\Type\Definition\IDType;
 use GraphQL\Type\Definition\Type;

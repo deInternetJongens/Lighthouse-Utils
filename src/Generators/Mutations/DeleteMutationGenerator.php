@@ -1,8 +1,8 @@
 <?php
 
-namespace DeInternetJongens\LighthouseUtils\Generators;
+namespace DeInternetJongens\LighthouseUtils\Generators\Mutations;
 
-use GraphQL\Type\Definition\IDType;
+use DeInternetJongens\LighthouseUtils\Generators\Arguments\IdArgumentGenerator;
 use GraphQL\Type\Definition\Type;
 
 class DeleteMutationGenerator
