@@ -1,8 +1,8 @@
 <?php
 
-namespace DeInternetJongens\LighthouseUtils\Generators;
+namespace DeInternetJongens\LighthouseUtils\Generators\Mutations;
 
-use GraphQL\Type\Definition\IDType;
+use DeInternetJongens\LighthouseUtils\Generators\Arguments\IdArgumentGenerator;
 use GraphQL\Type\Definition\Type;
 
 class DeleteMutationGenerator
@@ -17,17 +17,8 @@ class DeleteMutationGenerator
     public static function generate(string $typeName, array $typeFields): string
     {
         $query = '    delete' . $typeName;
-        $arguments = [];
+        $arguments = IdArgumentGenerator::generate($typeFields);
 
-        //Loop through fields to find the 'ID' field.
-        foreach ($typeFields as $fieldName => $field) {
-            if (get_class($field) !== IDType::class) {
-                continue;
-            }
-
-            $arguments[] = sprintf('%s: %s! @eq', $fieldName, $field->name);
-            break;
-        }
         if (count($arguments) < 1) {
             return '';
         }

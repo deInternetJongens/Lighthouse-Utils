@@ -4,6 +4,11 @@ namespace DeInternetJongens\LighthouseUtils\Generators;
 
 use Config;
 use DeInternetJongens\LighthouseUtils\Exceptions\InvalidConfigurationException;
+use DeInternetJongens\LighthouseUtils\Generators\Mutations\CreateMutationGenerator;
+use DeInternetJongens\LighthouseUtils\Generators\Mutations\DeleteMutationGenerator;
+use DeInternetJongens\LighthouseUtils\Generators\Mutations\UpdateMutationGenerator;
+use DeInternetJongens\LighthouseUtils\Generators\Queries\FindQueryGenerator;
+use DeInternetJongens\LighthouseUtils\Generators\Queries\PaginateAllQueryGenerator;
 use GraphQL\Type\Definition\FieldDefinition;
 use GraphQL\Type\Definition\FloatType;
 use GraphQL\Type\Definition\IDType;
@@ -239,8 +244,14 @@ class SchemaGenerator
              */
             foreach ($type->getFields() as $fieldName => $fieldType) {
                 $graphQLType = $fieldType->getType();
+
+                //Every required field is defined by a parent 'NonNullType'
                 if (method_exists($graphQLType, 'getWrappedType')) {
-                    $graphQLType = $graphQLType->getWrappedType();
+                    //Clone the field to prevent pass by reference, because we want to add a config value unique to this field.
+                    $graphQLType = clone $graphQLType->getWrappedType();
+
+                    //We want to know later on wether or not a field is required
+                    $graphQLType->config['generator-required'] = true;
                 }
 
                 if (! in_array(get_class($graphQLType), $this->supportedGraphQLTypes)) {
@@ -266,12 +277,13 @@ class SchemaGenerator
     {
         $queries = [];
         $mutations = [];
+
         /**
          * @var string $typeName
          * @var Type $type
          */
         foreach ($definedTypes as $typeName => $type) {
-            $paginatedWhereQuery = PaginateAllQueryGenerator::generate($typeName, $type, $this->supportedGraphQLTypes);
+            $paginatedWhereQuery = PaginateAllQueryGenerator::generate($typeName, $type);
 
             if (! empty($paginatedWhereQuery)) {
                 $queries[] = $paginatedWhereQuery;
@@ -282,19 +294,19 @@ class SchemaGenerator
                 $queries[] = $findQuery;
             }
 
-            $createQuery = CreateMutationGenerator::generate($typeName, $type, $this->supportedGraphQLTypes);
-            if (! empty($createQuery)) {
-                $mutations[] = $createQuery;
+            $createMutation = CreateMutationGenerator::generate($typeName, $type);
+            if (! empty($createMutation)) {
+                $mutations[] = $createMutation;
             }
 
-            $updateQuery = UpdateMutationGenerator::generate($typeName, $type, $this->supportedGraphQLTypes);
-            if (! empty($updateQuery)) {
-                $mutations[] = $updateQuery;
+            $updateMutation = UpdateMutationGenerator::generate($typeName, $type);
+            if (! empty($updateMutation)) {
+                $mutations[] = $updateMutation;
             }
 
-            $deleteQuery = DeleteMutationGenerator::generate($typeName, $type);
-            if (! empty($deleteQuery)) {
-                $mutations[] = $deleteQuery;
+            $deleteMutation = DeleteMutationGenerator::generate($typeName, $type);
+            if (! empty($deleteMutation)) {
+                $mutations[] = $deleteMutation;
             }
         }
         $return = sprintf("type Query{\r\n%s\r\n}", implode("\r\n", $queries));
