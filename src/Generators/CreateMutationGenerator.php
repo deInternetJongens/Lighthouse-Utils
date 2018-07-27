@@ -2,6 +2,7 @@
 
 namespace DeInternetJongens\LighthouseUtils\Generators;
 
+use DeInternetJongens\LighthouseUtils\Generators\Classes\MutationWithInput;
 use GraphQL\Type\Definition\Type;
 
 class CreateMutationGenerator
@@ -11,22 +12,24 @@ class CreateMutationGenerator
      *
      * @param string $typeName
      * @param Type[] $typeFields
-     * @return string
+     * @return MutationWithInput
      */
-    public static function generate(string $typeName, array $typeFields): string
+    public static function generate(string $typeName, array $typeFields): MutationWithInput
     {
-        $query = '    create' . $typeName;
+        $mutation = '    create' . $typeName;
 
         $arguments = RelationArgumentGenerator::generate($typeFields);
-        $arguments = array_merge($arguments, InputTypeArgumentGenerator::generate($typeFields));
+        $inputTypeName = sprintf('create%sInput', ucfirst($typeName));
+        $arguments[] = sprintf('input: %s!', $inputTypeName);
+        $inputType = InputTypeArgumentGenerator::generate($inputTypeName, $typeFields);
 
         if (count($arguments) < 1) {
-            return '';
+            return new MutationWithInput('', '');
         }
 
-        $query .= sprintf('(%s)', implode(', ', $arguments));
-        $query .= sprintf(': %1$s @create(model: "%1$s")', $typeName);
+        $mutation .= sprintf('(%s)', implode(', ', $arguments));
+        $mutation .= sprintf(': %1$s @create(model: "%1$s")', $typeName);
 
-        return $query;
+        return new MutationWithInput($mutation, $inputType);
     }
 }

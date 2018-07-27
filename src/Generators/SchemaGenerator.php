@@ -271,6 +271,8 @@ class SchemaGenerator
     {
         $queries = [];
         $mutations = [];
+        $inputTypes = [];
+
         /**
          * @var string $typeName
          * @var Type $type
@@ -287,24 +289,28 @@ class SchemaGenerator
                 $queries[] = $findQuery;
             }
 
-            $createQuery = CreateMutationGenerator::generate($typeName, $type);
-            if (! empty($createQuery)) {
-                $mutations[] = $createQuery;
+            $createMutation = CreateMutationGenerator::generate($typeName, $type);
+            if ($createMutation->isNotEmpty()) {
+                $mutations[] = $createMutation->getMutation();
+                $inputTypes[] = $createMutation->getInputType();
             }
 
-            $updateQuery = UpdateMutationGenerator::generate($typeName, $type);
-            if (! empty($updateQuery)) {
-                $mutations[] = $updateQuery;
+            $updateMutation = UpdateMutationGenerator::generate($typeName, $type);
+            if ($updateMutation->isNotEmpty()) {
+                $mutations[] = $updateMutation->getMutation();
+                $inputTypes[] = $updateMutation->getInputType();
             }
 
-            $deleteQuery = DeleteMutationGenerator::generate($typeName, $type);
-            if (! empty($deleteQuery)) {
-                $mutations[] = $deleteQuery;
+            $deleteMutation = DeleteMutationGenerator::generate($typeName, $type);
+            if (! empty($deleteMutation)) {
+                $mutations[] = $deleteMutation;
             }
         }
         $return = sprintf("type Query{\r\n%s\r\n}", implode("\r\n", $queries));
         $return .= "\r\n\r\n";
         $return .= sprintf("type Mutation{\r\n%s\r\n}", implode("\r\n", $mutations));
+        $return .= "\r\n\r\n";
+        $return .= implode("\r\n", $inputTypes);
 
         return $return;
     }

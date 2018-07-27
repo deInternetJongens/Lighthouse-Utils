@@ -2,6 +2,7 @@
 
 namespace DeInternetJongens\LighthouseUtils\Generators;
 
+use DeInternetJongens\LighthouseUtils\Generators\Classes\MutationWithInput;
 use GraphQL\Type\Definition\Type;
 
 class UpdateMutationGenerator
@@ -12,22 +13,24 @@ class UpdateMutationGenerator
      *
      * @param string $typeName
      * @param Type[] $typeFields
-     * @return string
+     * @return MutationWithInput
      */
-    public static function generate(string $typeName, array $typeFields): string
+    public static function generate(string $typeName, array $typeFields): MutationWithInput
     {
-        $query = '    update' . $typeName;
+        $mutation = '    update' . $typeName;
         $arguments = IdArgumentGenerator::generate($typeFields);
         $arguments = array_merge($arguments, RelationArgumentGenerator::generate($typeFields, false));
-        $arguments = array_merge($arguments, InputTypeArgumentGenerator::generate($typeFields));
+        $inputTypeName = sprintf('update%sInput', ucfirst($typeName));
+        $arguments[] = sprintf('input: %s!', $inputTypeName);
+        $inputType = InputTypeArgumentGenerator::generate($inputTypeName, $typeFields);
 
         if (count($arguments) < 1) {
-            return '';
+            return new MutationWithInput('', '');
         }
 
-        $query .= sprintf('(%s)', implode(', ', $arguments));
-        $query .= sprintf(': %1$s @update(model: "%1$s")', $typeName);
+        $mutation .= sprintf('(%s)', implode(', ', $arguments));
+        $mutation .= sprintf(': %1$s @update(model: "%1$s")', $typeName);
 
-        return $query;
+        return new MutationWithInput($mutation, $inputType);
     }
 }

@@ -21,10 +21,11 @@ class InputTypeArgumentGenerator
      * More information:
      * https://lighthouse-php.netlify.com/docs/schema.html#input-types
      *
+     * @param string $inputName
      * @param Type[] $typeFields
-     * @return array
+     * @return string
      */
-    public static function generate(array $typeFields): array
+    public static function generate(string $inputName, array $typeFields): string
     {
         $arguments = [];
         foreach ($typeFields as $fieldName => $field) {
@@ -39,6 +40,7 @@ class InputTypeArgumentGenerator
             $arguments[] = sprintf('%s: %s%s', $fieldName, $field->name, $required);
         }
 
-        return $arguments;
+        $query = sprintf("input %s {\r\n%s\r\n}", $inputName, implode("\r\n", $arguments));
+        return $query;
     }
 }
