@@ -7,7 +7,6 @@ use GraphQL\Type\Definition\Type;
 
 class RelationArgumentGenerator
 {
-
     /**
      * Generates a GraphQL mutation argument for a relation field
      *

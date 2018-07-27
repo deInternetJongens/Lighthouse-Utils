@@ -4,8 +4,10 @@ namespace DeInternetJongens\LighthouseUtils\Generators\Classes;
 class MutationWithInput
 {
     /** @var string $mutation */
+    private $mutation;
+
     /** @var string $inputType */
-    private $mutation, $inputType;
+    private $inputType;
 
     /**
      * @param string $mutation
@@ -17,7 +19,11 @@ class MutationWithInput
         $this->inputType = $inputType;
     }
 
-    public function isNotEmpty(){
+    /**
+     * @return bool
+     */
+    public function isNotEmpty(): bool
+    {
         return (! empty($this->getMutation()) && ! empty($this->getInputType()));
     }
 
@@ -36,6 +42,4 @@ class MutationWithInput
     {
         return $this->inputType;
     }
-
-
 }
