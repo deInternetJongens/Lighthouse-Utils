@@ -29,9 +29,7 @@ class InputFieldsArgumentGenerator
         $arguments = [];
         foreach ($typeFields as $fieldName => $field) {
             $className = get_class($field);
-            if (! in_array($className, self::$supportedGraphQLTypes)
-                || str_contains($fieldName, '_at')
-            ) {
+            if (! in_array($className, self::$supportedGraphQLTypes) || str_contains($fieldName, '_at')) {
                 continue;
             };
 
