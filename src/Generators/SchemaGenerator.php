@@ -283,6 +283,7 @@ class SchemaGenerator
     {
         $queries = [];
         $mutations = [];
+        $inputTypes = [];
 
         /**
          * @var string $typeName
@@ -302,12 +303,14 @@ class SchemaGenerator
 
             $createMutation = CreateMutationGenerator::generate($typeName, $type);
             if (! empty($createMutation)) {
-                $mutations[] = $createMutation;
+                $mutations[] = $createMutation->getMutation();
+                $inputTypes[] = $createMutation->getInputType();
             }
 
             $updateMutation = UpdateMutationGenerator::generate($typeName, $type);
             if (! empty($updateMutation)) {
-                $mutations[] = $updateMutation;
+                $mutations[] = $updateMutation->getMutation();
+                $inputTypes[] = $updateMutation->getInputType();
             }
 
             $deleteMutation = DeleteMutationGenerator::generate($typeName, $type);
@@ -318,6 +321,8 @@ class SchemaGenerator
         $return = sprintf("type Query{\r\n%s\r\n}", implode("\r\n", $queries));
         $return .= "\r\n\r\n";
         $return .= sprintf("type Mutation{\r\n%s\r\n}", implode("\r\n", $mutations));
+        $return .= "\r\n\r\n";
+        $return .= implode("\r\n\r\n", $inputTypes);
 
         return $return;
     }

@@ -2,15 +2,16 @@
 
 namespace DeInternetJongens\LighthouseUtils\Generators\Mutations;
 
+use DeInternetJongens\LighthouseUtils\Generators\Arguments\IdArgumentGenerator;
 use DeInternetJongens\LighthouseUtils\Generators\Arguments\InputFieldsArgumentGenerator;
 use DeInternetJongens\LighthouseUtils\Generators\Arguments\RelationArgumentGenerator;
 use DeInternetJongens\LighthouseUtils\Generators\Classes\MutationWithInput;
 use GraphQL\Type\Definition\Type;
 
-class CreateMutationGenerator
+class UpdateMutationGenerator
 {
     /**
-     * Generates a GraphQL Mutation to create a record
+     * Generates a GraphQL Mutation to update a record
      *
      * @param string $typeName
      * @param Type[] $typeFields
@@ -18,11 +19,12 @@ class CreateMutationGenerator
      */
     public static function generate(string $typeName, array $typeFields): MutationWithInput
     {
-        $mutation = '    create' . $typeName;
-        $inputTypeName = sprintf('create%sInput', $typeName);
+        $mutation = '    update' . $typeName;
+        $inputTypeName = sprintf('update%sInput', $typeName);
 
-        $inputTypeArguments = InputFieldsArgumentGenerator::generate($typeFields);
-        $inputTypeArguments = array_merge(RelationArgumentGenerator::generate($typeFields), $inputTypeArguments);
+        $inputTypeArguments = IdArgumentGenerator::generate($typeFields);
+        $inputTypeArguments = array_merge($inputTypeArguments, RelationArgumentGenerator::generate($typeFields, false));
+        $inputTypeArguments = array_merge($inputTypeArguments, InputFieldsArgumentGenerator::generate($typeFields));
         $inputType = sprintf("input %s {\r\n%s\r\n}", $inputTypeName, implode($inputTypeArguments, "\r\n"));
         $arguments[] = sprintf('input: %s!', $inputTypeName);
 
@@ -31,7 +33,7 @@ class CreateMutationGenerator
         }
 
         $mutation .= sprintf('(%s)', implode(', ', $arguments));
-        $mutation .= sprintf(': %1$s @create(model: "%1$s", flatten:true)', $typeName);
+        $mutation .= sprintf(': %1$s @update(model: "%1$s", flatten: true)', $typeName);
 
         return new MutationWithInput($mutation, $inputType);
     }
