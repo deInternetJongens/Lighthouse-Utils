@@ -25,7 +25,7 @@ class RelationArgumentGenerator
                 continue;
             }
 
-            $arguments[] = sprintf('%s_id: ID%s', $fieldName, $required);
+            $arguments[] = sprintf('%s_id: ID%s @globalId', $fieldName, $required);
         }
 
         return $arguments;
