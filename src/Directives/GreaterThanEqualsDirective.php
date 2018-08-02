@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DijLightHouse\Directives;
+namespace DeInternetJongens\LighthouseUtils\Directives;
 
 use Illuminate\Database\Eloquent\Builder;
 
