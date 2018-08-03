@@ -51,7 +51,6 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
             $this->commands([
                 GenerateSchemaCommand::class
             ]);
-
         }
     }
 
