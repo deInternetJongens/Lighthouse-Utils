@@ -63,7 +63,8 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
     {
         foreach (glob(self::DIRECTIVE_PATH . \DIRECTORY_SEPARATOR . '*.php') as $directiveFile) {
             // some/path/foo.bar -> some/path/foo
-            $classNameWithPath = \current(explode('.', $directiveFile));
+            $pathParts = explode('.', $directiveFile);
+            $classNameWithPath = $pathParts[count($pathParts) - 2];
 
             // some/path/foo -> foo
             $classNameWithPathParts = explode(\DIRECTORY_SEPARATOR, $classNameWithPath);
