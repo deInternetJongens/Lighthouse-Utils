@@ -16,7 +16,7 @@
   ],
   "require": {
     "php": ">=7.1",
-    "nuwave/lighthouse": "*",
+    "nuwave/lighthouse": "dev-master",
     "illuminate/support": "^5.4"
   },
   "require-dev": {
