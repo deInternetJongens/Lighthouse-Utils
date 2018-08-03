@@ -1,6 +1,6 @@
 <?php
 
-namespace DeInternetJongens\LighthouseUtils\Tests;
+namespace DeInternetJongens\LighthouseUtils\Tests\Unit;
 
 use DeInternetJongens\LighthouseUtils\Facades\LighthouseUtils;
 use DeInternetJongens\LighthouseUtils\ServiceProvider;
@@ -14,7 +14,7 @@ abstract class TestCase extends BaseTestCase
      */
     protected function getEnvironmentSetUp($app)
     {
-        $app['config']->set('lighthouse.schema.register', __DIR__ . '/files/schema');
+        $app['config']->set('lighthouse.schema.register', __DIR__ . '/Generators/files/schema.graphql');
     }
 
     /**

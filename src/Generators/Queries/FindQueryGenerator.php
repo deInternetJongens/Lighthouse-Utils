@@ -21,7 +21,7 @@ class FindQueryGenerator
 
         //Loop through fields to find the 'ID' field.
         foreach ($typeFields as $fieldName => $field) {
-            if (get_class($field) !== IDType::class) {
+            if (false === ($field instanceof IDType)) {
                 continue;
             }
 

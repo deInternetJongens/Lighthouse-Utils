@@ -14,7 +14,7 @@ class RelationArgumentGenerator
      * @param bool $required Should the relationship fields be required?
      * @return array
      */
-    public static function generate(array $typeFields, $required = true): array
+    public static function generate(array $typeFields, bool $required = true): array
     {
         $arguments = [];
         $required = $required ? '!' : '';

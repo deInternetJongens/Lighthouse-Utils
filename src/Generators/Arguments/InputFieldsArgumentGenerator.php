@@ -16,6 +16,13 @@ class InputFieldsArgumentGenerator
         FloatType::class,
     ];
 
+    /** @var array */
+    private static $ignoredColumns = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
+
     /**
      * Generates a GraphQL Arguments for a mutation
      * More information:
@@ -29,7 +36,7 @@ class InputFieldsArgumentGenerator
         $arguments = [];
         foreach ($typeFields as $fieldName => $field) {
             $className = get_class($field);
-            if (! in_array($className, self::$supportedGraphQLTypes) || str_contains($fieldName, '_at')) {
+            if (! in_array($className, self::$supportedGraphQLTypes) || in_array($fieldName, self::$ignoredColumns)) {
                 continue;
             };
 

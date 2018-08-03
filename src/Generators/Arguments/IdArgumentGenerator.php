@@ -17,17 +17,15 @@ class IdArgumentGenerator
      */
     public static function generate(array $typeFields): array
     {
-        $arguments = [];
         foreach ($typeFields as $fieldName => $field) {
             $className = get_class($field);
-            if ($className !== IDType::class) {
-                continue;
+            if ($className === IDType::class) {
+                return [
+                    sprintf('%s: %s!', $fieldName, $field->name)
+                ];
             };
-
-            $arguments[] = sprintf('%s: %s!', $fieldName, $field->name);
-            break;
         }
 
-        return $arguments;
+        return [];
     }
 }
