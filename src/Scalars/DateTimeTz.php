@@ -23,9 +23,14 @@ class DateTimeTz extends ScalarType
     /**
      * @param Carbon $value
      * @return string
+     * @throws Error
      */
     public function serialize($value)
     {
+        if(! $value instanceof Carbon){
+            $value = $this->parseValue($value);
+        }
+
         return $value->format(self::FORMAT);
     }
 
