@@ -2,11 +2,14 @@
 
 namespace DeInternetJongens\LighthouseUtils\Generators\Queries;
 
+use DeInternetJongens\LighthouseUtils\Schema\Scalars\Date;
+use DeInternetJongens\LighthouseUtils\Schema\Scalars\DateTimeTz;
 use GraphQL\Type\Definition\FloatType;
 use GraphQL\Type\Definition\IDType;
 use GraphQL\Type\Definition\IntType;
 use GraphQL\Type\Definition\StringType;
 use GraphQL\Type\Definition\Type;
+use Nuwave\Lighthouse\Schema\Types\Scalars\DateTime;
 
 class PaginateAllQueryGenerator
 {
@@ -16,6 +19,9 @@ class PaginateAllQueryGenerator
         StringType::class,
         IntType::class,
         FloatType::class,
+        Date::class,
+        DateTime::class,
+        DateTimeTz::class
     ];
 
     /**

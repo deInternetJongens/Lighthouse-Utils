@@ -2,6 +2,8 @@
 
 namespace DeInternetJongens\LighthouseUtils\Generators\Arguments;
 
+use DeInternetJongens\LighthouseUtils\Schema\Scalars\Date;
+use DeInternetJongens\LighthouseUtils\Schema\Scalars\DateTimeTz;
 use GraphQL\Type\Definition\FloatType;
 use GraphQL\Type\Definition\IntType;
 use GraphQL\Type\Definition\StringType;
@@ -14,6 +16,8 @@ class InputFieldsArgumentGenerator
         StringType::class,
         IntType::class,
         FloatType::class,
+        Date::class,
+        DateTimeTz::class
     ];
 
     /** @var array */

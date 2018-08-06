@@ -9,6 +9,8 @@ use DeInternetJongens\LighthouseUtils\Generators\Mutations\DeleteMutationGenerat
 use DeInternetJongens\LighthouseUtils\Generators\Mutations\UpdateMutationGenerator;
 use DeInternetJongens\LighthouseUtils\Generators\Queries\FindQueryGenerator;
 use DeInternetJongens\LighthouseUtils\Generators\Queries\PaginateAllQueryGenerator;
+use DeInternetJongens\LighthouseUtils\Schema\Scalars\Date;
+use DeInternetJongens\LighthouseUtils\Schema\Scalars\DateTimeTz;
 use GraphQL\Type\Definition\FieldDefinition;
 use GraphQL\Type\Definition\FloatType;
 use GraphQL\Type\Definition\IDType;
@@ -17,6 +19,7 @@ use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\StringType;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Schema;
+use Nuwave\Lighthouse\Schema\Types\Scalars\DateTime;
 
 class SchemaGenerator
 {
@@ -30,6 +33,9 @@ class SchemaGenerator
         IntType::class,
         FloatType::class,
         ObjectType::class,
+        Date::class,
+        DateTime::class,
+        DateTimeTZ::class
     ];
 
     /**
