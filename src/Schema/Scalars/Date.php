@@ -12,7 +12,7 @@ use InvalidArgumentException;
 
 class Date extends ScalarType
 {
-    const FORMAT = 'Y-m-d';
+    private const FORMAT = 'Y-m-d';
 
     /** @var string */
     public $name = 'Date';
@@ -27,7 +27,7 @@ class Date extends ScalarType
      */
     public function serialize($value)
     {
-        if(! $value instanceof Carbon){
+        if (! $value instanceof Carbon) {
             $value = $this->parseValue($value);
         }
 

@@ -120,12 +120,12 @@ class DateTimeTzTest extends TestCase
         }
 
         $result = $dateScalar->parseLiteral(
-          new $nodeClass(
-            [
-              'value' => $input,
-              'kind' => 'String!',
-            ]
-          )
+            new $nodeClass(
+                [
+                'value' => $input,
+                'kind' => 'String!',
+                ]
+            )
         );
 
         $expectedResult = Carbon::createFromFormat(self::FORMAT, $input);

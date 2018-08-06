@@ -12,7 +12,7 @@ use InvalidArgumentException;
 
 class DateTimeTz extends ScalarType
 {
-    const FORMAT = 'Y-m-d H:i:sP';
+    private const FORMAT = 'Y-m-d H:i:sP';
 
     /** @var string */
     public $name = 'DateTimeTz';
@@ -27,7 +27,7 @@ class DateTimeTz extends ScalarType
      */
     public function serialize($value)
     {
-        if(! $value instanceof Carbon){
+        if (! $value instanceof Carbon) {
             $value = $this->parseValue($value);
         }
 
