@@ -1,6 +1,6 @@
 <?php
 
-namespace DeInternetJongens\LighthouseUtils\Scalars;
+namespace DeInternetJongens\LighthouseUtils\Schema\Scalars;
 
 use Carbon\Carbon;
 use GraphQL\Error\Error;
