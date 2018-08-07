@@ -290,10 +290,13 @@ class SchemaGenerator
          * @var Type $type
          */
         foreach ($definedTypes as $typeName => $type) {
-            $paginatedWhereQuery = PaginateAllQueryGenerator::generate($typeName, $type);
+            $paginateAndAllQuery = PaginateAllQueryGenerator::generate($typeName, $type);
 
-            if (! empty($paginatedWhereQuery)) {
-                $queries[] = $paginatedWhereQuery;
+            if ($paginateAndAllQuery->isNotEmpty()) {
+                foreach ($paginateAndAllQuery->getQueries() as $query) {
+                    $queries[] = $query;
+                }
+                $inputTypes[] = $paginateAndAllQuery->getInputType();
             }
             $findQuery = FindQueryGenerator::generate($typeName, $type);
 
@@ -302,13 +305,13 @@ class SchemaGenerator
             }
 
             $createMutation = CreateMutationGenerator::generate($typeName, $type);
-            if (! empty($createMutation)) {
+            if ($createMutation->isNotEmpty()) {
                 $mutations[] = $createMutation->getMutation();
                 $inputTypes[] = $createMutation->getInputType();
             }
 
             $updateMutation = UpdateMutationGenerator::generate($typeName, $type);
-            if (! empty($updateMutation)) {
+            if ($updateMutation->isNotEmpty()) {
                 $mutations[] = $updateMutation->getMutation();
                 $inputTypes[] = $updateMutation->getInputType();
             }
@@ -322,7 +325,7 @@ class SchemaGenerator
         $return .= "\r\n\r\n";
         $return .= sprintf("type Mutation{\r\n%s\r\n}", implode("\r\n", $mutations));
         $return .= "\r\n\r\n";
-        $return .= implode("\r\n\r\n", $inputTypes);
+        $return .= implode("\r\n", $inputTypes);
 
         return $return;
     }
