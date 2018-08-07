@@ -35,6 +35,7 @@ class FindQueryGenerator
 
         $query .= sprintf('(%s)', implode(', ', $arguments));
         $query .= sprintf(': %1$s! @find(model: "%1$s")', $typeName);
+        $query .= sprintf(' @can(if: "find", model: "%1$s")', $typeName);
 
         return $query;
     }
