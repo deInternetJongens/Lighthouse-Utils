@@ -29,7 +29,7 @@ class CreateMutationGenerator
             return new MutationWithInput('', '');
         }
 
-        $mutation .= sprintf('(input: %s!)', $inputTypeName);;
+        $mutation .= sprintf('(input: %s!)', $inputTypeName);
         $mutation .= sprintf(': %1$s @create(model: "%1$s", flatten:true)', $typeName);
 
         return new MutationWithInput($mutation, $inputType);
