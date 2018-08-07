@@ -32,6 +32,7 @@ class UpdateMutationWithInputTypeGenerator
 
         $mutation .= sprintf('(%s)', implode(', ', $arguments));
         $mutation .= sprintf(': %1$s @update(model: "%1$s")', $typeName);
+        $mutation .= sprintf(' @can(if: "update", model: "%1$s")', $typeName);
 
         return new MutationWithInput($mutation, $inputType);
     }
