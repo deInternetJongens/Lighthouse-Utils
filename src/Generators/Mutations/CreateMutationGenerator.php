@@ -28,7 +28,10 @@ class CreateMutationGenerator
 
         $mutation .= sprintf('(%s)', implode(', ', $arguments));
         $mutation .= sprintf(': %1$s @create(model: "%1$s")', $typeName);
-        $mutation .= sprintf(' @can(if: "create", model: "%1$s")', $typeName);
+
+        if (config('lighthouse-utils.authorization')) {
+            $mutation .= sprintf(' @can(if: "create%1$s", model: "User")', $typeName);
+        }
 
         return $mutation;
     }

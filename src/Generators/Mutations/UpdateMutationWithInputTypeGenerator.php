@@ -32,7 +32,10 @@ class UpdateMutationWithInputTypeGenerator
 
         $mutation .= sprintf('(%s)', implode(', ', $arguments));
         $mutation .= sprintf(': %1$s @update(model: "%1$s")', $typeName);
-        $mutation .= sprintf(' @can(if: "update", model: "%1$s")', $typeName);
+
+        if (config('lighthouse-utils.authorization')) {
+            $mutation .= sprintf(' @can(if: "update%1$s", model: "User")', $typeName);
+        }
 
         return new MutationWithInput($mutation, $inputType);
     }

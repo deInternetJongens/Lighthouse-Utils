@@ -25,7 +25,10 @@ class DeleteMutationGenerator
 
         $query .= sprintf('(%s)', implode(', ', $arguments));
         $query .= sprintf(': %1$s @delete', $typeName);
-        $query .= sprintf(' @can(if: "delete", model: "%1$s")', $typeName);
+
+        if (config('lighthouse-utils.authorization')) {
+            $query .= sprintf(' @can(if: "delete%1$s", model: "User")', $typeName);
+        }
 
         return $query;
     }
