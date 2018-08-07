@@ -26,13 +26,12 @@ class UpdateMutationGenerator
         $inputTypeArguments = array_merge($inputTypeArguments, RelationArgumentGenerator::generate($typeFields, false));
         $inputTypeArguments = array_merge($inputTypeArguments, InputFieldsArgumentGenerator::generate($typeFields));
         $inputType = sprintf("    input %s {\r\n%s\r\n}", $inputTypeName, implode($inputTypeArguments, "\r\n"));
-        $arguments[] = sprintf('input: %s!', $inputTypeName);
 
         if (count($inputTypeArguments) < 1) {
             return new MutationWithInput('', '');
         }
 
-        $mutation .= sprintf('(%s)', implode(', ', $arguments));
+        $mutation .= sprintf('(input: %s!)', $inputTypeName);
         $mutation .= sprintf(': %1$s @update(model: "%1$s", flatten: true)', $typeName);
 
         return new MutationWithInput($mutation, $inputType);
