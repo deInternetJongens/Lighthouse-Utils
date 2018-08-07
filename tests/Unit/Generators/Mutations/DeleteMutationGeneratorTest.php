@@ -15,16 +15,14 @@ class DeleteMutationGeneratorTest extends TestCase
     public function dataProvider(): array
     {
         return [
-            // Happy flow
-            [
+            'Happy flow' => [
                 'type_name' => 'Club',
                 'type_fields' => [
                     'id' => new IDType(),
                 ],
                 'expected_query' => '    deleteClub(id: ID!): Club @delete',
             ],
-            // Multiple types given
-            [
+            'Multiple types given' => [
                 'type_name' => 'Club',
                 'type_fields' => [
                     'id' => new IDType(),
@@ -32,14 +30,12 @@ class DeleteMutationGeneratorTest extends TestCase
                 ],
                 'expected_query' => '    deleteClub(id: ID!): Club @delete',
             ],
-            // No data given
-            [
+            'No data given' => [
                 'type_name' => '',
                 'type_fields' => [],
                 'expected_query' => '',
             ],
-            // Wrong type given
-            [
+            'Wrong type given' => [
                 'type_name' => 'Club',
                 'type_fields' => [
                     'id' => new StringType(),
