@@ -53,8 +53,8 @@ class DeleteMutationGeneratorTest extends TestCase
      */
     public function testCanGenerateDeleteMutation(string $typeName, array $typeFields, string $expectedQuery): void
     {
-        $query = DeleteMutationGenerator::generate($typeName, $typeFields);
+        $mutation = DeleteMutationGenerator::generate($typeName, $typeFields);
 
-        $this->assertEquals($expectedQuery, $query);
+        $this->assertEquals($expectedQuery, $mutation, 'Expected mutation');
     }
 }
