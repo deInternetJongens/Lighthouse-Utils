@@ -65,7 +65,7 @@ class PaginateAllQueryGeneratorTest extends TestCase
      * @param array $typeFields
      * @param string $expectedQuery
      */
-    public function testCanGenerateFindQueryForIDType(string $typeName, array $typeFields, string $expectedQuery): void
+    public function testCanGenerateAllQueryForIDType(string $typeName, array $typeFields, string $expectedQuery): void
     {
         $query = PaginateAllQueryGenerator::generate($typeName, $typeFields);
 
