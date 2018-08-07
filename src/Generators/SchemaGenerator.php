@@ -3,6 +3,7 @@
 namespace DeInternetJongens\LighthouseUtils\Generators;
 
 use Config;
+use DeInternetJongens\LighthouseUtils\Events\GraphQLSchemaGenerated;
 use DeInternetJongens\LighthouseUtils\Exceptions\InvalidConfigurationException;
 use DeInternetJongens\LighthouseUtils\Generators\Mutations\CreateMutationGenerator;
 use DeInternetJongens\LighthouseUtils\Generators\Mutations\DeleteMutationGenerator;
@@ -59,6 +60,8 @@ class SchemaGenerator
 
         $queries = $this->generateQueriesForDefinedTypes($definedTypes);
         $typesImports = $this->generateGraphqlRelativeImports($this->getGraphqlDefinitionFilePaths($definitionFileDirectories['types']));
+
+        dispatch(new GraphQLSchemaGenerated());
 
         //Merge queries and types into one file with required newlines
         return sprintf("%s\r\n\r\n%s\r\n", $typesImports, $queries);
