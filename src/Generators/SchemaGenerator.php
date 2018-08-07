@@ -9,6 +9,7 @@ use DeInternetJongens\LighthouseUtils\Generators\Mutations\DeleteMutationGenerat
 use DeInternetJongens\LighthouseUtils\Generators\Mutations\UpdateMutationGenerator;
 use DeInternetJongens\LighthouseUtils\Generators\Queries\FindQueryGenerator;
 use DeInternetJongens\LighthouseUtils\Generators\Queries\PaginateAllQueryGenerator;
+use DeInternetJongens\LighthouseUtils\Models\GraphQLSchema;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\Date;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\DateTimeTz;
 use GraphQL\Type\Definition\FieldDefinition;
@@ -49,6 +50,8 @@ class SchemaGenerator
      */
     public function generate(array $definitionFileDirectories): string
     {
+        GraphQLSchema::truncate();
+
         $this->validateFilesPaths($definitionFileDirectories);
 
         $schema = $this->getSchemaForFiles($definitionFileDirectories);
