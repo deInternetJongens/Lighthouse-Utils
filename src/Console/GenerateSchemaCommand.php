@@ -59,7 +59,6 @@ class GenerateSchemaCommand extends Command
         $schemaFile = fopen($schemaFilePath, 'wb');
         fwrite($schemaFile, $generatedSchema);
 
-        $this->info('Generation complete. Validating schema.');
-        $this->call('lighthouse:validate-schema');
+        $this->info('Generation complete.');
     }
 }

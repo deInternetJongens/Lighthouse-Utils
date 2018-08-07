@@ -1,9 +1,10 @@
 <?php
 
-namespace DeInternetJongens\LighthouseUtils\Tests;
+namespace DeInternetJongens\LighthouseUtils\Tests\Unit\Generators;
 
 use DeInternetJongens\LighthouseUtils\Exceptions\InvalidConfigurationException;
 use DeInternetJongens\LighthouseUtils\Generators\SchemaGenerator;
+use DeInternetJongens\LighthouseUtils\Tests\Unit\TestCase;
 
 class SchemaGeneratorTest extends TestCase
 {
