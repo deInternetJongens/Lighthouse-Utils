@@ -28,12 +28,6 @@ Register package facade in `config/app.php` in `aliases` section
 deinternetjongens\LighthouseUtils\Facades\LighthouseUtils::class,
 ```
 
-### Publish directives
-
-```bash
-php artisan vendor:publish --provider="DeInternetJongens\LighthouseUtils\ServiceProvider" --tag="directives" 
-```
-
 ### Publish Configuration File
 
 ```bash
