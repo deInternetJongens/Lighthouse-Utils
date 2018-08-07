@@ -24,7 +24,8 @@ class UpdateMutationGeneratorTest extends TestCase
                     'name' => new StringType(),
                     'id' => new StringType(),
                 ],
-                'expected_query' => '    updateClubMember(club_id: ID!, name: String, id: String): ClubMember @update(model: "ClubMember")',
+                'expected_input_type' => '    input updateClubMemberInput {club_id: ID!name: Stringid: String}',
+                'expected_mutation' => '    updateClubMember(input: updateClubMemberInput!): ClubMember @update(model: "ClubMember", flatten: true)',
             ],
             // Happy flow, required fields
             [
@@ -38,13 +39,15 @@ class UpdateMutationGeneratorTest extends TestCase
                         'generator-required' => true,
                     ]),
                 ],
-                'expected_query' => '    updateClubMember(club_id: ID!, name: String!, id: String!): ClubMember @update(model: "ClubMember")',
+                'expected_input_type' => '    input updateClubMemberInput {club_id: ID!name: String!id: String!}',
+                'expected_mutation' => '    updateClubMember(input: updateClubMemberInput!): ClubMember @update(model: "ClubMember", flatten: true)',
             ],
             // No data given
             [
                 'type_name' => '',
                 'type_fields' => [],
-                'expected_query' => '',
+                'expected_input_type' => '',
+                'expected_mutation' => '',
             ],
             // Wrong type fields given
             [
@@ -54,7 +57,8 @@ class UpdateMutationGeneratorTest extends TestCase
                         'name' => 'enum',
                     ]),
                 ],
-                'expected_query' => '',
+                'expected_input_type' => '',
+                'expected_mutation' => '',
             ],
             // Correct and wrong type fields given
             [
@@ -68,7 +72,8 @@ class UpdateMutationGeneratorTest extends TestCase
                         'name' => 'enum',
                     ]),
                 ],
-                'expected_query' => '    updateClubMember(club_id: ID!, name: String!): ClubMember @update(model: "ClubMember")',
+                'expected_input_type' => '    input updateClubMemberInput {club_id: ID!name: String!}',
+                'expected_mutation' => '    updateClubMember(input: updateClubMemberInput!): ClubMember @update(model: "ClubMember", flatten: true)',
             ],
         ];
     }
@@ -77,18 +82,21 @@ class UpdateMutationGeneratorTest extends TestCase
      * @dataProvider dataProvider
      * @param string $typeName
      * @param array $typeFields
-     * @param string $expectedQuery
+     * @param string $expectedInputType
+     * @param string $expectedMutation
      */
     public function testCanGenerateUpdateMutationForClubMember(
         string $typeName,
         array $typeFields,
-        string $expectedQuery
+        string $expectedInputType,
+        string $expectedMutation
     ): void {
-        $query = UpdateMutationGenerator::generate(
+        $mutationWithInput = UpdateMutationGenerator::generate(
             $typeName,
             $typeFields
         );
 
-        $this->assertEquals($expectedQuery, $query);
+        $this->assertEquals($expectedInputType, str_replace(["\r", "\n"], '', $mutationWithInput->getInputType()));
+        $this->assertEquals($expectedMutation, $mutationWithInput->getMutation());
     }
 }

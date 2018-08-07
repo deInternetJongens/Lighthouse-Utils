@@ -25,7 +25,7 @@ class UpdateMutationGenerator
         $inputTypeArguments = IdArgumentGenerator::generate($typeFields);
         $inputTypeArguments = array_merge($inputTypeArguments, RelationArgumentGenerator::generate($typeFields, false));
         $inputTypeArguments = array_merge($inputTypeArguments, InputFieldsArgumentGenerator::generate($typeFields));
-        $inputType = sprintf("input %s {\r\n%s\r\n}", $inputTypeName, implode($inputTypeArguments, "\r\n"));
+        $inputType = sprintf("    input %s {\r\n%s\r\n}", $inputTypeName, implode($inputTypeArguments, "\r\n"));
         $arguments[] = sprintf('input: %s!', $inputTypeName);
 
         if (count($inputTypeArguments) < 1) {

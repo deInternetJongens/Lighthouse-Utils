@@ -24,7 +24,8 @@ class CreateMutationGeneratorTest extends TestCase
                     'name' => new StringType(),
                     'id' => new StringType(),
                 ],
-                'expected_query' => '    createClubMember(name: String, id: String): ClubMember @create(model: "ClubMember")',
+                'expected_input_type' => '    input createClubMemberInput {name: Stringid: String}',
+                'expected_mutation' => '    createClubMember(input: createClubMemberInput!): ClubMember @create(model: "ClubMember", flatten:true)',
             ],
             // Happy flow, required fields
             [
@@ -38,13 +39,15 @@ class CreateMutationGeneratorTest extends TestCase
                         'generator-required' => true,
                     ]),
                 ],
-                'expected_query' => '    createClubMember(name: String!, id: String!): ClubMember @create(model: "ClubMember")',
+                'expected_input_type' => '    input createClubMemberInput {name: String!id: String!}',
+                'expected_mutation' => '    createClubMember(input: createClubMemberInput!): ClubMember @create(model: "ClubMember", flatten:true)',
             ],
             // No type fields given
             [
                 'type_name' => 'ClubMember',
                 'type_fields' => [],
-                'expected_query' => '',
+                'expected_input_type' => '',
+                'expected_mutation' => '',
             ],
             // Wrong type fields given
             [
@@ -54,7 +57,8 @@ class CreateMutationGeneratorTest extends TestCase
                         'name' => 'enum',
                     ]),
                 ],
-                'expected_query' => '',
+                'expected_input_type' => '',
+                'expected_mutation' => '',
             ],
         ];
     }
@@ -63,18 +67,20 @@ class CreateMutationGeneratorTest extends TestCase
      * @dataProvider dataProvider
      * @param string $typeName
      * @param array $typeFields
-     * @param string $expectedQuery
+     * @param string $expectedInputType
+     * @param string $expectedMutation
      */
     public function testCanGenerateCreateMutationForClubMember(
         string $typeName,
         array $typeFields,
-        string $expectedQuery
+        string $expectedInputType,
+        string $expectedMutation
     ): void {
-        $query = CreateMutationGenerator::generate(
+        $mutationWithInput = CreateMutationGenerator::generate(
             $typeName,
             $typeFields
         );
 
-        $this->assertEquals($expectedQuery, $query);
-    }
+        $this->assertEquals($expectedInputType, str_replace(["\r", "\n"], '', $mutationWithInput->getInputType()));
+        $this->assertEquals($expectedMutation, $mutationWithInput->getMutation());    }
 }
