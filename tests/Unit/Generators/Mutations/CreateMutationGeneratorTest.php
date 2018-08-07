@@ -82,5 +82,6 @@ class CreateMutationGeneratorTest extends TestCase
         );
 
         $this->assertEquals($expectedInputType, str_replace(["\r", "\n"], '', $mutationWithInput->getInputType()));
-        $this->assertEquals($expectedMutation, $mutationWithInput->getMutation());    }
+        $this->assertEquals($expectedMutation, $mutationWithInput->getMutation());
+    }
 }
