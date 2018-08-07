@@ -28,6 +28,7 @@ class CreateMutationGenerator
 
         $mutation .= sprintf('(%s)', implode(', ', $arguments));
         $mutation .= sprintf(': %1$s @create(model: "%1$s")', $typeName);
+        $mutation .= sprintf(' @can(if: "create", model: "%1$s")', $typeName);
 
         return $mutation;
     }
