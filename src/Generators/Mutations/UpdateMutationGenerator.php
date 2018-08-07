@@ -29,6 +29,7 @@ class UpdateMutationGenerator
 
         $query .= sprintf('(%s)', implode(', ', $arguments));
         $query .= sprintf(': %1$s @update(model: "%1$s")', $typeName);
+        $query .= sprintf(' @can(if: "update", model: "%1$s")', $typeName);
 
         return $query;
     }
