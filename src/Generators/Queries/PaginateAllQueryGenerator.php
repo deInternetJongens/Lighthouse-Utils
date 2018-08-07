@@ -70,9 +70,11 @@ class PaginateAllQueryGenerator
         $allQuery = '    ' . str_plural(strtolower($typeName));
         $queryArguments = sprintf('(%s)', implode(', ', $arguments));
         $allQuery .= sprintf('%1$s: [%2$s]! @all(model: "%2$s")', $queryArguments, $typeName);
+        $allQuery .= sprintf(' @can(if: "findAll", model: "%1$s")', $typeName);
 
         $paginatedQuery = '    ' . str_plural(strtolower($typeName)) . 'Paginated';
         $paginatedQuery .= sprintf('%1$s: [%2$s]! @paginate(model: "%2$s")', $queryArguments, $typeName);
+        $paginatedQuery .= sprintf(' @can(if: "paginate", model: "%1$s")', $typeName);
 
         return $allQuery ."\r\n". $paginatedQuery;
     }
