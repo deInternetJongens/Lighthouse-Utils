@@ -21,7 +21,7 @@ class InputTypeArgumentGeneratorTest extends TestCase
                 'type_fields' => [
                     'name' => new StringType(),
                 ],
-                'expected_argument' => "input name {\r\nname: String\r\n}",
+                'expected_argument' => "input name {name: String}",
             ],
             // Happy flow, required field
             [
@@ -31,7 +31,7 @@ class InputTypeArgumentGeneratorTest extends TestCase
                         'generator-required' => true,
                     ]),
                 ],
-                'expected_argument' => "input name {\r\nname: String!\r\n}",
+                'expected_argument' => "input name {name: String!}",
             ],
             // Wrong type given
             [
@@ -39,13 +39,13 @@ class InputTypeArgumentGeneratorTest extends TestCase
                 'type_fields' => [
                     'id' => new IDType(),
                 ],
-                'expected_argument' => "input id {\r\n\r\n}",
+                'expected_argument' => "input id {}",
             ],
             // No data given
             [
                 'input_name' => '',
                 'type_fields' => [],
-                'expected_argument' => "input  {\r\n\r\n}",
+                'expected_argument' => "input  {}",
             ],
             // Type fields that are ignored
             [
@@ -55,7 +55,7 @@ class InputTypeArgumentGeneratorTest extends TestCase
                     'updated_at' => new StringType(),
                     'deleted_at' => new StringType(),
                 ],
-                'expected_argument' => "input club {\r\n\r\n}",
+                'expected_argument' => "input club {}",
             ],
         ];
     }

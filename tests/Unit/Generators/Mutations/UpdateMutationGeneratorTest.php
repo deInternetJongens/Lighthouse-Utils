@@ -24,7 +24,7 @@ class UpdateMutationGeneratorTest extends TestCase
                     'name' => new StringType(),
                     'id' => new StringType(),
                 ],
-                'expected_input_type' => '    input updateClubMemberInput {club_id: ID!name: Stringid: String}',
+                'expected_input_type' => 'input updateClubMemberInput {club_id: ID! name: String id: String}',
                 'expected_mutation' => '    updateClubMember(input: updateClubMemberInput!): ClubMember @update(model: "ClubMember", flatten: true)',
             ],
             // Happy flow, required fields
@@ -39,7 +39,7 @@ class UpdateMutationGeneratorTest extends TestCase
                         'generator-required' => true,
                     ]),
                 ],
-                'expected_input_type' => '    input updateClubMemberInput {club_id: ID!name: String!id: String!}',
+                'expected_input_type' => 'input updateClubMemberInput {club_id: ID! name: String! id: String!}',
                 'expected_mutation' => '    updateClubMember(input: updateClubMemberInput!): ClubMember @update(model: "ClubMember", flatten: true)',
             ],
             // No data given
@@ -72,7 +72,7 @@ class UpdateMutationGeneratorTest extends TestCase
                         'name' => 'enum',
                     ]),
                 ],
-                'expected_input_type' => '    input updateClubMemberInput {club_id: ID!name: String!}',
+                'expected_input_type' => 'input updateClubMemberInput {club_id: ID! name: String!}',
                 'expected_mutation' => '    updateClubMember(input: updateClubMemberInput!): ClubMember @update(model: "ClubMember", flatten: true)',
             ],
         ];
@@ -96,7 +96,7 @@ class UpdateMutationGeneratorTest extends TestCase
             $typeFields
         );
 
-        $this->assertEquals($expectedInputType, str_replace(["\r", "\n"], '', $mutationWithInput->getInputType()));
+        $this->assertEquals($expectedInputType, $mutationWithInput->getInputType());
         $this->assertEquals($expectedMutation, $mutationWithInput->getMutation());
     }
 }

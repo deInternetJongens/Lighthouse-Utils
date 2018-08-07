@@ -19,7 +19,7 @@ class InputTypeArgumentGenerator
     {
         $arguments = InputFieldsArgumentGenerator::generate($typeFields);
 
-        $query = sprintf("input %s {\r\n%s\r\n}", $inputName, implode("\r\n", $arguments));
+        $query = sprintf('input %s {%s}', $inputName, implode(' ', $arguments));
         return $query;
     }
 }

@@ -23,7 +23,7 @@ class CreateMutationGenerator
 
         $inputTypeArguments = InputFieldsArgumentGenerator::generate($typeFields);
         $inputTypeArguments = array_merge(RelationArgumentGenerator::generate($typeFields), $inputTypeArguments);
-        $inputType = sprintf("    input %s {\r\n%s\r\n}", $inputTypeName, implode($inputTypeArguments, "\r\n"));
+        $inputType = sprintf('input %s {%s}', $inputTypeName, implode($inputTypeArguments, ' '));
 
         if (count($inputTypeArguments) < 1) {
             return new MutationWithInput('', '');

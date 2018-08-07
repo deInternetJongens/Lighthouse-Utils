@@ -24,7 +24,7 @@ class CreateMutationGeneratorTest extends TestCase
                     'name' => new StringType(),
                     'id' => new StringType(),
                 ],
-                'expected_input_type' => '    input createClubMemberInput {name: Stringid: String}',
+                'expected_input_type' => 'input createClubMemberInput {name: String id: String}',
                 'expected_mutation' => '    createClubMember(input: createClubMemberInput!): ClubMember @create(model: "ClubMember", flatten:true)',
             ],
             // Happy flow, required fields
@@ -39,7 +39,7 @@ class CreateMutationGeneratorTest extends TestCase
                         'generator-required' => true,
                     ]),
                 ],
-                'expected_input_type' => '    input createClubMemberInput {name: String!id: String!}',
+                'expected_input_type' => 'input createClubMemberInput {name: String! id: String!}',
                 'expected_mutation' => '    createClubMember(input: createClubMemberInput!): ClubMember @create(model: "ClubMember", flatten:true)',
             ],
             // No type fields given
@@ -81,7 +81,7 @@ class CreateMutationGeneratorTest extends TestCase
             $typeFields
         );
 
-        $this->assertEquals($expectedInputType, str_replace(["\r", "\n"], '', $mutationWithInput->getInputType()));
+        $this->assertEquals($expectedInputType, $mutationWithInput->getInputType());
         $this->assertEquals($expectedMutation, $mutationWithInput->getMutation());
     }
 }
