@@ -2,7 +2,6 @@
 
 namespace DeInternetJongens\LighthouseUtils\Tests\Unit\Generators;
 
-use DeInternetJongens\LighthouseUtils\Generators\SchemaGenerator;
 use DeInternetJongens\LighthouseUtils\Models\GraphQLSchema;
 use DeInternetJongens\LighthouseUtils\Tests\Unit\TestCase;
 
