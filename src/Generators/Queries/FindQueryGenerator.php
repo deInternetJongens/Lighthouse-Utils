@@ -36,6 +36,10 @@ class FindQueryGenerator
         $query .= sprintf('(%s)', implode(', ', $arguments));
         $query .= sprintf(': %1$s! @find(model: "%1$s")', $typeName);
 
+        if (config('lighthouse-utils.authorization')) {
+            $query .= sprintf(' @can(if: "find%1$s", model: "User")', $typeName);
+        }
+
         return $query;
     }
 }

@@ -16,4 +16,5 @@ return [
         'queries' => 'app/Http/GraphQL/Queries',
         'types' => 'app/Http/GraphQL/Types',
     ],
+     'authorization' => true,
 ];

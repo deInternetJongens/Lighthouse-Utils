@@ -21,7 +21,7 @@ class DeleteMutationGeneratorTest extends TestCase
                 'type_fields' => [
                     'id' => new IDType(),
                 ],
-                'expected_query' => '    deleteClub(id: ID!): Club @delete',
+                'expected_query' => '    deleteClub(id: ID!): Club @delete @can(if: "deleteClub", model: "User")',
             ],
             // Multiple types given
             [
@@ -30,7 +30,7 @@ class DeleteMutationGeneratorTest extends TestCase
                     'id' => new IDType(),
                     'district_id' => new IDType(),
                 ],
-                'expected_query' => '    deleteClub(id: ID!): Club @delete',
+                'expected_query' => '    deleteClub(id: ID!): Club @delete @can(if: "deleteClub", model: "User")',
             ],
             // No data given
             [

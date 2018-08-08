@@ -24,7 +24,7 @@ class CreateMutationGeneratorTest extends TestCase
                     'name' => new StringType(),
                     'id' => new StringType(),
                 ],
-                'expected_query' => '    createClubMember(name: String, id: String): ClubMember @create(model: "ClubMember")',
+                'expected_query' => '    createClubMember(name: String, id: String): ClubMember @create(model: "ClubMember") @can(if: "createClubMember", model: "User")',
             ],
             // Happy flow, required fields
             [
@@ -38,7 +38,7 @@ class CreateMutationGeneratorTest extends TestCase
                         'generator-required' => true,
                     ]),
                 ],
-                'expected_query' => '    createClubMember(name: String!, id: String!): ClubMember @create(model: "ClubMember")',
+                'expected_query' => '    createClubMember(name: String!, id: String!): ClubMember @create(model: "ClubMember") @can(if: "createClubMember", model: "User")',
             ],
             // No type fields given
             [
