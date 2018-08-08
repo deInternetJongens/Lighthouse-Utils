@@ -27,5 +27,5 @@ return [
    | and the model name.
    |
    */
-    'authorization' => false,
+    'authorization' => env('LIGHTHOUSE_UTILS_AUTHORIZATION', false),
 ];
