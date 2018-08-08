@@ -61,7 +61,7 @@ class SchemaGenerator
         $queries = $this->generateQueriesForDefinedTypes($definedTypes);
         $typesImports = $this->generateGraphqlRelativeImports($this->getGraphqlDefinitionFilePaths($definitionFileDirectories['types']));
 
-        dispatch(new GraphQLSchemaGenerated());
+        event(new GraphQLSchemaGenerated());
 
         //Merge queries and types into one file with required newlines
         return sprintf("%s\r\n\r\n%s\r\n", $typesImports, $queries);
