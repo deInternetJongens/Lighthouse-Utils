@@ -12,7 +12,7 @@ class GraphQLSchema extends Model
 
     public static function register($action, $model, $type, $permission = null)
     {
-        static::create([
+        return static::create([
             'name' => $action . $model,
             'type' => $type,
             'model' => $model,
