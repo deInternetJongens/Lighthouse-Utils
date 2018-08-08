@@ -50,6 +50,7 @@ To get started, run the following command in your Laravel application:
 ```bash
 php artisan vendor:publish --provider="Nuwave\Lighthouse\Providers\LighthouseServiceProvider" --tag="config"
 ```
+A config file will be generated: `config/lighthouse.php`. You can change these values if you want.  
 
 ## Migrations
 This package stores the generated schema in the database so the schema is available outside the `schema.graphql` and can be used to sync permission.
