@@ -77,7 +77,7 @@ class PaginateAllQueryGenerator
             $allQuery .= sprintf(' @can(if: "%1$s", model: "User")', $permission);
         }
 
-        GraphQLSchema::register('findAll', $typeName, 'query', $permission ?: null);
+        GraphQLSchema::register('findAll', $typeName, 'query', $permission ?? null);
 
         $paginatedQuery = '    ' . str_plural(strtolower($typeName)) . 'Paginated';
         $paginatedQuery .= sprintf('%1$s: [%2$s]! @paginate(model: "%2$s")', $queryArguments, $typeName);
@@ -87,7 +87,7 @@ class PaginateAllQueryGenerator
             $paginatedQuery .= sprintf(' @can(if: "%1$s", model: "User")', $permission);
         }
 
-        GraphQLSchema::register('paginate', $typeName, 'query', $permission ?: null);
+        GraphQLSchema::register('paginate', $typeName, 'query', $permission ?? null);
 
         return $allQuery ."\r\n". $paginatedQuery;
     }

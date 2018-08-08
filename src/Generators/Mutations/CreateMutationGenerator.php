@@ -34,7 +34,7 @@ class CreateMutationGenerator
             $mutation .= sprintf(' @can(if: "%1$s", model: "User")', $permission);
         }
 
-        GraphQLSchema::register('create', $typeName, 'mutation', $permission ?: null);
+        GraphQLSchema::register('create', $typeName, 'mutation', $permission ?? null);
 
         return $mutation;
     }

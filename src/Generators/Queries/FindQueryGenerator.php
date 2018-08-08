@@ -42,7 +42,7 @@ class FindQueryGenerator
             $query .= sprintf(' @can(if: "%1$s", model: "User")', $permission);
         }
 
-        GraphQLSchema::register('find', $typeName, 'query', $permission ?: null);
+        GraphQLSchema::register('find', $typeName, 'query', $permission ?? null);
 
         return $query;
     }

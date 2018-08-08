@@ -32,7 +32,7 @@ class DeleteMutationGenerator
             $query .= sprintf(' @can(if: "%1$s", model: "User")', $permission);
         }
 
-        GraphQLSchema::register('delete', $typeName, 'mutation', $permission ?: null);
+        GraphQLSchema::register('delete', $typeName, 'mutation', $permission ?? null);
 
         return $query;
     }
