@@ -73,8 +73,8 @@ class PaginateAllQueryGenerator
         $inputType = sprintf("input %s {%s}", $inputTypeName, implode($arguments, " "));
         $inputTypeArgument = sprintf('(input: %s)', $inputTypeName);
 
-        $allQuery = sprintf('    %1$s%2$s: [%3$s]! @all(model: "%3$s")', strtolower($typeName), $inputTypeArgument, $returnType);
-        $paginatedQuery = sprintf('    %1$sPaginated%2$s: [%3$s]! @paginate(model: "%3$s")', strtolower($typeName), $inputTypeArgument, $returnType);
+        $allQuery = sprintf('    %1$s%2$s: [%3$s]! @all(model: "%3$s", flatten: true)', strtolower($typeName), $inputTypeArgument, $returnType);
+        $paginatedQuery = sprintf('    %1$sPaginated%2$s: [%3$s]! @paginate(model: "%3$s", flatten: true)', strtolower($typeName), $inputTypeArgument, $returnType);
 
         return new QueriesWithInput([$allQuery, $paginatedQuery], $inputType);
     }
