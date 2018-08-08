@@ -50,8 +50,21 @@ To get started, run the following command in your Laravel application:
 ```bash
 php artisan vendor:publish --provider="Nuwave\Lighthouse\Providers\LighthouseServiceProvider" --tag="config"
 ```
-
 A config file will be generated: `config/lighthouse.php`. You can change these values if you want.  
+
+## Migrations
+This package stores the generated schema in the database so the schema is available outside the `schema.graphql` and can be used to sync permission.
+Publish the migration and migrate the database.
+```bash
+php artisan vendor:publish --provider="DeInternetJongens\LighthouseUtils\ServiceProvider" --tag="migrations"
+php artisan migrate
+```
+
+## Authorization
+To protect your queries and migrations from unauthorized users just enable the `authorization` in the published config file.
+When a schema is generated the event `DeInternetJongens\LighthouseUtils\Events\GraphQLSchemaGenerated` will be fired.
+In your application you can listen for this event to sync the generated permissions with your application.
+The event has a `schema` variable with the generated schema.
 
 ### Schema
 Define your GraphQL schema by adding Types and Mutations in `app/GraphQL/Queries` and `app/GraphQL/Mutations` folders.

@@ -2,6 +2,7 @@
 
 namespace DeInternetJongens\LighthouseUtils\Generators\Queries;
 
+use DeInternetJongens\LighthouseUtils\Models\GraphQLSchema;
 use GraphQL\Type\Definition\IDType;
 use GraphQL\Type\Definition\Type;
 
@@ -37,8 +38,11 @@ class FindQueryGenerator
         $query .= sprintf(': %1$s! @find(model: "%1$s")', $typeName);
 
         if (config('lighthouse-utils.authorization')) {
-            $query .= sprintf(' @can(if: "find%1$s", model: "User")', $typeName);
+            $permission = sprintf('find%1$s', $typeName);
+            $query .= sprintf(' @can(if: "%1$s", model: "User")', $permission);
         }
+
+        GraphQLSchema::register('find', $typeName, 'query', $permission ?? null);
 
         return $query;
     }

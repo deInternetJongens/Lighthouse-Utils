@@ -5,6 +5,7 @@ namespace DeInternetJongens\LighthouseUtils\Generators\Mutations;
 use DeInternetJongens\LighthouseUtils\Generators\Arguments\InputTypeArgumentGenerator;
 use DeInternetJongens\LighthouseUtils\Generators\Arguments\RelationArgumentGenerator;
 use DeInternetJongens\LighthouseUtils\Generators\Classes\MutationWithInput;
+use DeInternetJongens\LighthouseUtils\Models\GraphQLSchema;
 use GraphQL\Type\Definition\Type;
 
 class CreateMutationWithInputTypeGenerator
@@ -33,8 +34,11 @@ class CreateMutationWithInputTypeGenerator
         $mutation .= sprintf(': %1$s @create(model: "%1$s")', $typeName);
 
         if (config('lighthouse-utils.authorization')) {
-            $mutation .= sprintf(' @can(if: "create%1$s", model: "User")', $typeName);
+            $permission = sprintf('create%1$s', $typeName);
+            $mutation .= sprintf(' @can(if: "%1$s", model: "User")', $permission);
         }
+
+        GraphQLSchema::register('create', $typeName, 'mutation', $permission ?? null);
 
         return new MutationWithInput($mutation, $inputType);
     }

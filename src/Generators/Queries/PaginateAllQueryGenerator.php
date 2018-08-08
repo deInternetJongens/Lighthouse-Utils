@@ -2,6 +2,7 @@
 
 namespace DeInternetJongens\LighthouseUtils\Generators\Queries;
 
+use DeInternetJongens\LighthouseUtils\Models\GraphQLSchema;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\Date;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\DateTimeTz;
 use GraphQL\Type\Definition\FloatType;
@@ -72,15 +73,21 @@ class PaginateAllQueryGenerator
         $allQuery .= sprintf('%1$s: [%2$s]! @all(model: "%2$s")', $queryArguments, $typeName);
 
         if (config('lighthouse-utils.authorization')) {
-            $allQuery .= sprintf(' @can(if: "findAll%1$s", model: "User")', $typeName);
+            $permission = sprintf('findAll%1$s', str_plural($typeName));
+            $allQuery .= sprintf(' @can(if: "%1$s", model: "User")', $permission);
         }
+
+        GraphQLSchema::register('findAll', $typeName, 'query', $permission ?? null);
 
         $paginatedQuery = '    ' . str_plural(strtolower($typeName)) . 'Paginated';
         $paginatedQuery .= sprintf('%1$s: [%2$s]! @paginate(model: "%2$s")', $queryArguments, $typeName);
 
         if (config('lighthouse-utils.authorization')) {
-            $paginatedQuery .= sprintf(' @can(if: "paginate%1$s", model: "User")', $typeName);
+            $permission = sprintf('paginate%1$s', str_plural($typeName));
+            $paginatedQuery .= sprintf(' @can(if: "%1$s", model: "User")', $permission);
         }
+
+        GraphQLSchema::register('paginate', $typeName, 'query', $permission ?? null);
 
         return $allQuery ."\r\n". $paginatedQuery;
     }

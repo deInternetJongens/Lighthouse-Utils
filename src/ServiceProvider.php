@@ -8,6 +8,7 @@ use ReflectionClass;
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
     const CONFIG_PATH = __DIR__ . '/../config/lighthouse-utils.php';
+    const MIGRATION_PATH = __DIR__ . '/../database/migrations/create_graphql_schema_table.php.stub';
     const DIRECTIVE_PATH = __DIR__.'/Directives';
     const DIRECTIVE_NAMESPACE = 'DeInternetJongens\\LighthouseUtils\\Directives';
 
@@ -26,8 +27,15 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
     public function boot()
     {
         $this->publishes([
-            self::CONFIG_PATH => config_path('lightho   use-utils.php'),
+            self::CONFIG_PATH => config_path('lighthouse-utils.php'),
         ], 'config');
+
+        if (! class_exists('CreatePermissionTables')) {
+            $timestamp = date('Y_m_d_His', time());
+            $this->publishes([
+                self::MIGRATION_PATH => $this->app->databasePath()."/migrations/{$timestamp}_create_graphql_schema_table.php",
+            ], 'migrations');
+        }
 
         $this->registerDirectives();
     }
