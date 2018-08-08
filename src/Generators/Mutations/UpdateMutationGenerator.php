@@ -5,7 +5,6 @@ namespace DeInternetJongens\LighthouseUtils\Generators\Mutations;
 use DeInternetJongens\LighthouseUtils\Generators\Arguments\IdArgumentGenerator;
 use DeInternetJongens\LighthouseUtils\Generators\Arguments\InputFieldsArgumentGenerator;
 use DeInternetJongens\LighthouseUtils\Generators\Arguments\RelationArgumentGenerator;
-use DeInternetJongens\LighthouseUtils\Generators\Classes\MutationWithInput;
 use GraphQL\Type\Definition\Type;
 
 class UpdateMutationGenerator
@@ -15,25 +14,22 @@ class UpdateMutationGenerator
      *
      * @param string $typeName
      * @param Type[] $typeFields
-     * @return MutationWithInput
+     * @return string
      */
-    public static function generate(string $typeName, array $typeFields): MutationWithInput
+    public static function generate(string $typeName, array $typeFields): string
     {
-        $mutation = '    update' . $typeName;
-        $inputTypeName = sprintf('update%sInput', $typeName);
+        $query = '    update' . $typeName;
+        $arguments = IdArgumentGenerator::generate($typeFields);
+        $arguments = array_merge($arguments, RelationArgumentGenerator::generate($typeFields, false));
+        $arguments = array_merge($arguments, InputFieldsArgumentGenerator::generate($typeFields));
 
-        $inputTypeArguments = IdArgumentGenerator::generate($typeFields);
-        $inputTypeArguments = array_merge($inputTypeArguments, RelationArgumentGenerator::generate($typeFields, false));
-        $inputTypeArguments = array_merge($inputTypeArguments, InputFieldsArgumentGenerator::generate($typeFields));
-        $inputType = sprintf('input %s {%s}', $inputTypeName, implode($inputTypeArguments, ' '));
-
-        if (count($inputTypeArguments) < 1) {
-            return new MutationWithInput('', '');
+        if (count($arguments) < 1) {
+            return '';
         }
 
-        $mutation .= sprintf('(input: %s!)', $inputTypeName);
-        $mutation .= sprintf(': %1$s @update(model: "%1$s", flatten: true)', $typeName);
+        $query .= sprintf('(%s)', implode(', ', $arguments));
+        $query .= sprintf(': %1$s @update(model: "%1$s")', $typeName);
 
-        return new MutationWithInput($mutation, $inputType);
+        return $query;
     }
 }

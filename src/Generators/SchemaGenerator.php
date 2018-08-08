@@ -4,9 +4,9 @@ namespace DeInternetJongens\LighthouseUtils\Generators;
 
 use Config;
 use DeInternetJongens\LighthouseUtils\Exceptions\InvalidConfigurationException;
-use DeInternetJongens\LighthouseUtils\Generators\Mutations\CreateMutationGenerator;
+use DeInternetJongens\LighthouseUtils\Generators\Mutations\CreateMutationWithInputTypeGenerator;
 use DeInternetJongens\LighthouseUtils\Generators\Mutations\DeleteMutationGenerator;
-use DeInternetJongens\LighthouseUtils\Generators\Mutations\UpdateMutationGenerator;
+use DeInternetJongens\LighthouseUtils\Generators\Mutations\UpdateMutationWithInputTypeGenerator;
 use DeInternetJongens\LighthouseUtils\Generators\Queries\FindQueryGenerator;
 use DeInternetJongens\LighthouseUtils\Generators\Queries\PaginateAllQueryGenerator;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\Date;
@@ -304,13 +304,13 @@ class SchemaGenerator
                 $queries[] = $findQuery;
             }
 
-            $createMutation = CreateMutationGenerator::generate($typeName, $type);
+            $createMutation = createMutationWithInputTypeGenerator::generate($typeName, $type);
             if ($createMutation->isNotEmpty()) {
                 $mutations[] = $createMutation->getMutation();
                 $inputTypes[] = $createMutation->getInputType();
             }
 
-            $updateMutation = UpdateMutationGenerator::generate($typeName, $type);
+            $updateMutation = updateMutationWithInputTypeGenerator::generate($typeName, $type);
             if ($updateMutation->isNotEmpty()) {
                 $mutations[] = $updateMutation->getMutation();
                 $inputTypes[] = $updateMutation->getInputType();

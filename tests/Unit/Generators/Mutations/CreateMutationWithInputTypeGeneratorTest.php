@@ -2,13 +2,13 @@
 
 namespace DeInternetJongens\LighthouseUtils\Tests\Unit\Generators\Mutations;
 
-use DeInternetJongens\LighthouseUtils\Generators\Mutations\CreateMutationGenerator;
+use DeInternetJongens\LighthouseUtils\Generators\Mutations\CreateMutationWithInputTypeGenerator;
 use DeInternetJongens\LighthouseUtils\Tests\Unit\TestCase;
 use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\IDType;
 use GraphQL\Type\Definition\StringType;
 
-class CreateMutationGeneratorTest extends TestCase
+class CreateMutationWithInputTypeGeneratorTest extends TestCase
 {
     /**
      * @return array
@@ -23,7 +23,8 @@ class CreateMutationGeneratorTest extends TestCase
                     'name' => new StringType(),
                     'id' => new StringType(),
                 ],
-                'expected_query' => '    createClubMember(name: String, id: String): ClubMember @create(model: "ClubMember")',
+                'expected_input_type' => 'input createClubMemberInput {name: String id: String}',
+                'expected_mutation' => '    createClubMember(input: createClubMemberInput!): ClubMember @create(model: "ClubMember", flatten: true)',
             ],
             'Happy flow, required fields' => [
                 'type_name' => 'ClubMember',
@@ -36,12 +37,14 @@ class CreateMutationGeneratorTest extends TestCase
                         'generator-required' => true,
                     ]),
                 ],
-                'expected_query' => '    createClubMember(name: String!, id: String!): ClubMember @create(model: "ClubMember")',
+                'expected_input_type' => 'input createClubMemberInput {name: String! id: String!}',
+                'expected_mutation' => '    createClubMember(input: createClubMemberInput!): ClubMember @create(model: "ClubMember", flatten: true)',
             ],
-            'No type fields given' => [
+            'no type fields given' => [
                 'type_name' => 'ClubMember',
                 'type_fields' => [],
-                'expected_query' => '',
+                'expected_input_type' => '',
+                'expected_mutation' => '',
             ],
             'Wrong type fields given' => [
                 'type_name' => 'ClubMember',
@@ -50,7 +53,8 @@ class CreateMutationGeneratorTest extends TestCase
                         'name' => 'enum',
                     ]),
                 ],
-                'expected_query' => '',
+                'expected_input_type' => '',
+                'expected_mutation' => '',
             ],
         ];
     }
@@ -59,18 +63,21 @@ class CreateMutationGeneratorTest extends TestCase
      * @dataProvider dataProvider
      * @param string $typeName
      * @param array $typeFields
-     * @param string $expectedQuery
+     * @param string $expectedInputType
+     * @param string $expectedMutation
      */
-    public function testCanGenerateCreateMutationForClubMember(
+    public function testCanGenerateCreateMutationWithInputTypeForClubMember(
         string $typeName,
         array $typeFields,
-        string $expectedQuery
+        string $expectedInputType,
+        string $expectedMutation
     ): void {
-        $mutation = CreateMutationGenerator::generate(
+        $mutationWithInput = CreateMutationWithInputTypeGenerator::generate(
             $typeName,
             $typeFields
         );
 
-        $this->assertEquals($expectedQuery, $mutation, 'Expected mutation');
+        $this->assertEquals($expectedInputType, $mutationWithInput->getInputType(), 'Expected input type');
+        $this->assertEquals($expectedMutation, $mutationWithInput->getMutation(), 'Expected mutation');
     }
 }
