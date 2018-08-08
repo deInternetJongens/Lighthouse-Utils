@@ -12,11 +12,15 @@ class GraphQLSchema extends Model
 
     public static function register($action, $model, $type, $permission = null)
     {
-        return static::create([
-            'name' => $action . $model,
-            'type' => $type,
-            'model' => $model,
-            'permission' => $permission,
-        ]);
+        if (config('lighthouse-utils.authorization')) {
+            return static::create([
+                'name' => $action . $model,
+                'type' => $type,
+                'model' => $model,
+                'permission' => $permission,
+            ]);
+        }
+
+        return null;
     }
 }
