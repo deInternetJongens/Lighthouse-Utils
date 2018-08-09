@@ -50,7 +50,10 @@ class SchemaGenerator
      */
     public function generate(array $definitionFileDirectories): string
     {
-        GraphQLSchema::truncate();
+        $authEnabled = config('lighthouse-utils.authorization');
+        if ($authEnabled) {
+            GraphQLSchema::truncate();
+        }
 
         $this->validateFilesPaths($definitionFileDirectories);
 
@@ -60,7 +63,9 @@ class SchemaGenerator
         $queries = $this->generateQueriesForDefinedTypes($definedTypes);
         $typesImports = $this->generateGraphqlRelativeImports($this->getGraphqlDefinitionFilePaths($definitionFileDirectories['types']));
 
-        event(new GraphQLSchemaGenerated(GraphQLSchema::all()));
+        if($authEnabled) {
+            event(new GraphQLSchemaGenerated(GraphQLSchema::all()));
+        }
 
         //Merge queries and types into one file with required newlines
         return sprintf("%s\r\n\r\n%s\r\n", $typesImports, $queries);
