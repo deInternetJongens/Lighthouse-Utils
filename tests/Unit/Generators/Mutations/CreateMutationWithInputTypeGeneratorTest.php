@@ -24,7 +24,7 @@ class CreateMutationWithInputTypeGeneratorTest extends TestCase
                     'id' => new StringType(),
                 ],
                 'expected_input_type' => 'input createClubMemberInput {name: String id: String}',
-                'expected_mutation' => '    createClubMember(input: createClubMemberInput!): ClubMember @create(model: "ClubMember", flatten: true)',
+                'expected_mutation' => '    createClubMember(input: createClubMemberInput!): ClubMember @create(model: "ClubMember", flatten: true) @can(if: "createClubMember", model: "User")',
             ],
             'Happy flow, required fields' => [
                 'type_name' => 'ClubMember',
@@ -38,7 +38,7 @@ class CreateMutationWithInputTypeGeneratorTest extends TestCase
                     ]),
                 ],
                 'expected_input_type' => 'input createClubMemberInput {name: String! id: String!}',
-                'expected_mutation' => '    createClubMember(input: createClubMemberInput!): ClubMember @create(model: "ClubMember", flatten: true)',
+                'expected_mutation' => '    createClubMember(input: createClubMemberInput!): ClubMember @create(model: "ClubMember", flatten: true) @can(if: "createClubMember", model: "User")',
             ],
             'no type fields given' => [
                 'type_name' => 'ClubMember',

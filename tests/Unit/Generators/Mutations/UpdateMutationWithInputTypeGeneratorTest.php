@@ -24,7 +24,7 @@ class UpdateMutationWithInputTypeGeneratorTest extends TestCase
                     'id' => new StringType(),
                 ],
                 'expected_input_type' => 'input updateClubMemberInput {name: String id: String club_id: ID!}',
-                'expected_mutation' => '    updateClubMember(input: updateClubMemberInput!): ClubMember @update(model: "ClubMember", flatten: true)',
+                'expected_mutation' => '    updateClubMember(input: updateClubMemberInput!): ClubMember @update(model: "ClubMember", flatten: true) @can(if: "updateClubMember", model: "User")',
             ],
             'Happy flow, required fields' => [
                 'type_name' => 'ClubMember',
@@ -38,7 +38,7 @@ class UpdateMutationWithInputTypeGeneratorTest extends TestCase
                     ]),
                 ],
                 'expected_input_type' => 'input updateClubMemberInput {name: String! id: String! club_id: ID!}',
-                'expected_mutation' => '    updateClubMember(input: updateClubMemberInput!): ClubMember @update(model: "ClubMember", flatten: true)',
+                'expected_mutation' => '    updateClubMember(input: updateClubMemberInput!): ClubMember @update(model: "ClubMember", flatten: true) @can(if: "updateClubMember", model: "User")',
             ],
             'No data given' => [
                 'type_name' => '',
@@ -68,7 +68,7 @@ class UpdateMutationWithInputTypeGeneratorTest extends TestCase
                     ]),
                 ],
                 'expected_input_type' => 'input updateClubMemberInput {name: String! club_id: ID!}',
-                'expected_mutation' => '    updateClubMember(input: updateClubMemberInput!): ClubMember @update(model: "ClubMember", flatten: true)',
+                'expected_mutation' => '    updateClubMember(input: updateClubMemberInput!): ClubMember @update(model: "ClubMember", flatten: true) @can(if: "updateClubMember", model: "User")',
             ],
         ];
     }
