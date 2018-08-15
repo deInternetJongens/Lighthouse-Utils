@@ -20,7 +20,7 @@ class FindQueryGeneratorTest extends TestCase
                 'type_fields' => [
                     'id' => new IDType(),
                 ],
-                'expected_query' => '    clubmember(id: ID! @eq): ClubMember! @find(model: "ClubMember")',
+                'expected_query' => '    clubmember(id: ID! @eq): ClubMember! @find(model: "ClubMember") @can(if: "findClubMember", model: "User")',
             ],
             'Missing type field given' => [
                 'type_name' => 'ClubMember',
@@ -41,7 +41,7 @@ class FindQueryGeneratorTest extends TestCase
                 'type_fields' => [
                     'id' => new IDType(),
                 ],
-                'expected_query' => '    (id: ID! @eq): ! @find(model: "")',
+                'expected_query' => '    (id: ID! @eq): ! @find(model: "") @can(if: "find", model: "User")',
             ],
         ];
     }

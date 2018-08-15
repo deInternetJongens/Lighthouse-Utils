@@ -3,6 +3,7 @@
 namespace DeInternetJongens\LighthouseUtils\Generators\Mutations;
 
 use DeInternetJongens\LighthouseUtils\Generators\Arguments\IdArgumentGenerator;
+use DeInternetJongens\LighthouseUtils\Models\GraphQLSchema;
 use GraphQL\Type\Definition\Type;
 
 class DeleteMutationGenerator
@@ -25,6 +26,13 @@ class DeleteMutationGenerator
 
         $query .= sprintf('(%s)', implode(', ', $arguments));
         $query .= sprintf(': %1$s @delete', $typeName);
+
+        if (config('lighthouse-utils.authorization')) {
+            $permission = sprintf('delete%1$s', $typeName);
+            $query .= sprintf(' @can(if: "%1$s", model: "User")', $permission);
+        }
+
+        GraphQLSchema::register('delete', $typeName, 'mutation', $permission ?? null);
 
         return $query;
     }

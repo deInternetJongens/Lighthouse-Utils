@@ -4,13 +4,13 @@ namespace DeInternetJongens\LighthouseUtils\Generators\Mutations;
 
 use DeInternetJongens\LighthouseUtils\Generators\Arguments\InputTypeArgumentGenerator;
 use DeInternetJongens\LighthouseUtils\Generators\Classes\MutationWithInput;
+use DeInternetJongens\LighthouseUtils\Models\GraphQLSchema;
 use GraphQL\Type\Definition\Type;
 
 class UpdateMutationWithInputTypeGenerator
 {
     /**
      * Generates a GraphQL Mutation to update a record
-     *
      * @param string $typeName
      * @param Type[] $typeFields
      * @return MutationWithInput
@@ -27,6 +27,13 @@ class UpdateMutationWithInputTypeGenerator
 
         $mutation .= sprintf('(input: %s!)', $inputTypeName);
         $mutation .= sprintf(': %1$s @update(model: "%1$s", flatten: true)', $typeName);
+
+        if (config('lighthouse-utils.authorization')) {
+            $permission = sprintf('update%1$s', $typeName);
+            $mutation .= sprintf(' @can(if: "%1$s", model: "User")', $permission);
+        }
+
+        GraphQLSchema::register('update', $typeName, 'mutation', $permission ?? null);
 
         return new MutationWithInput($mutation, $inputType);
     }

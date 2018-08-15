@@ -3,6 +3,7 @@
 namespace DeInternetJongens\LighthouseUtils\Generators\Queries;
 
 use DeInternetJongens\LighthouseUtils\Generators\Classes\QueriesWithInput;
+use DeInternetJongens\LighthouseUtils\Models\GraphQLSchema;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\Date;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\DateTimeTz;
 use GraphQL\Type\Definition\FloatType;
@@ -75,6 +76,18 @@ class PaginateAllQueryGenerator
 
         $allQuery = sprintf('    %1$s%2$s: [%3$s]! @all(model: "%3$s", flatten: true)', strtolower($typeName), $inputTypeArgument, $returnType);
         $paginatedQuery = sprintf('    %1$sPaginated%2$s: [%3$s]! @paginate(model: "%3$s", flatten: true)', strtolower($typeName), $inputTypeArgument, $returnType);
+
+        if (config('lighthouse-utils.authorization')) {
+            $allPermission = sprintf('findAll%1$s', str_plural($typeName));
+            $allQuery .= sprintf(' @can(if: "%1$s", model: "User")', $allPermission);
+
+            $paginatePermission = sprintf('paginate%1$s', str_plural($typeName));
+            $paginatedQuery .= sprintf(' @can(if: "%1$s", model: "User")', $paginatePermission);
+
+            GraphQLSchema::register('findAll', $typeName, 'query', $allPermission ?? null);
+            GraphQLSchema::register('paginate', $typeName, 'query', $paginatePermission ?? null);
+        }
+
 
         return new QueriesWithInput([$allQuery, $paginatedQuery], $inputType);
     }

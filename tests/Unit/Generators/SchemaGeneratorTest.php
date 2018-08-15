@@ -2,9 +2,11 @@
 
 namespace DeInternetJongens\LighthouseUtils\Tests\Unit\Generators;
 
+use DeInternetJongens\LighthouseUtils\Events\GraphQLSchemaGenerated;
 use DeInternetJongens\LighthouseUtils\Exceptions\InvalidConfigurationException;
 use DeInternetJongens\LighthouseUtils\Generators\SchemaGenerator;
 use DeInternetJongens\LighthouseUtils\Tests\Unit\TestCase;
+use Illuminate\Support\Facades\Event;
 
 class SchemaGeneratorTest extends TestCase
 {
@@ -33,9 +35,11 @@ class SchemaGeneratorTest extends TestCase
         $schemaGenerator = new SchemaGenerator();
         $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage('The "schema_paths" config value is incomplete, it should contain a value with a valid path for the following keys: mutations, queries, types');
-        $schemaGenerator->generate([[
-            'mutations' => 'app/GraphQL/Mutations',
-        ]]);
+        $schemaGenerator->generate([
+            [
+                'mutations' => 'app/GraphQL/Mutations',
+            ],
+        ]);
     }
 
     public function testGenerateWithEmptyPathsThrowsException()
@@ -60,5 +64,20 @@ class SchemaGeneratorTest extends TestCase
             'queries' => 'this-folder-does-not-exist',
             'types' => 'this-folder-does-not-exist',
         ]);
+    }
+
+    public function testEventIsFiredAfterGeneratingSchema()
+    {
+        Event::fake();
+
+        $schemaGenerator = new SchemaGenerator();
+
+        $schemaGenerator->generate([
+            'mutations' => __DIR__ . '/files/schema/Mutations',
+            'queries' => __DIR__ . '/files/schema/Queries',
+            'types' => __DIR__ . '/files/schema/Types',
+        ]);
+
+        Event::assertDispatched(GraphQLSchemaGenerated::class);
     }
 }

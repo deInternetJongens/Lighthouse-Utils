@@ -23,7 +23,7 @@ class UpdateMutationGeneratorTest extends TestCase
                     'name' => new StringType(),
                     'id' => new StringType(),
                 ],
-                'expected_query' => '    updateClubMember(club_id: ID!, name: String, id: String): ClubMember @update(model: "ClubMember")',
+                'expected_query' => '    updateClubMember(club_id: ID!, name: String, id: String): ClubMember @update(model: "ClubMember") @can(if: "updateClubMember", model: "User")',
             ],
             'Happy flow, required fields' => [
                 'type_name' => 'ClubMember',
@@ -36,7 +36,7 @@ class UpdateMutationGeneratorTest extends TestCase
                         'generator-required' => true,
                     ]),
                 ],
-                'expected_query' => '    updateClubMember(club_id: ID!, name: String!, id: String!): ClubMember @update(model: "ClubMember")',
+                'expected_query' => '    updateClubMember(club_id: ID!, name: String!, id: String!): ClubMember @update(model: "ClubMember") @can(if: "updateClubMember", model: "User")',
             ],
             'No data given' => [
                 'type_name' => '',
@@ -63,7 +63,7 @@ class UpdateMutationGeneratorTest extends TestCase
                         'name' => 'enum',
                     ]),
                 ],
-                'expected_query' => '    updateClubMember(club_id: ID!, name: String!): ClubMember @update(model: "ClubMember")',
+                'expected_query' => '    updateClubMember(club_id: ID!, name: String!): ClubMember @update(model: "ClubMember") @can(if: "updateClubMember", model: "User")',
             ],
         ];
     }

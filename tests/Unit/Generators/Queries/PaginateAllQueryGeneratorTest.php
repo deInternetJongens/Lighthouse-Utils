@@ -23,8 +23,8 @@ class PaginateAllQueryGeneratorTest extends TestCase
                 ],
                 'expected_input_type' => 'input whereClubMembersInput {id: ID @eq id_not: ID @not id_in: ID @in id_not_in: ID @not_in id_lt: ID @lt id_lte: ID @lte id_gt: ID @gt id_gte: ID @gte}',
                 'expected_queries' => [
-                    '    clubmembers(input: whereClubMembersInput): [ClubMember]! @all(model: "ClubMember", flatten: true)',
-                    '    clubmembersPaginated(input: whereClubMembersInput): [ClubMember]! @paginate(model: "ClubMember", flatten: true)',
+                    '    clubmembers(input: whereClubMembersInput): [ClubMember]! @all(model: "ClubMember", flatten: true)  @can(if: "findAllClubMembers", model: "User")',
+                    '    clubmembersPaginated(input: whereClubMembersInput): [ClubMember]! @paginate(model: "ClubMember", flatten: true) @can(if: "paginateClubMembers", model: "User")',
                 ],
             ],
             'Happy flow, string type' => [
@@ -34,8 +34,8 @@ class PaginateAllQueryGeneratorTest extends TestCase
                 ],
                 'expected_input_type' => 'input whereClubMembersInput {id: String @eq id_not: String @not id_in: String @in id_not_in: String @not_in id_lt: String @lt id_lte: String @lte id_gt: String @gt id_gte: String @gte id_contains: String @contains id_not_contains: String @not_contains id_starts_with: String @starts_with id_not_starts_with: String @not_starts_with id_ends_with: String @not_ends_with}',
                 'expected_queries' => [
-                    '    clubmembers(input: whereClubMembersInput): [ClubMember]! @all(model: "ClubMember", flatten: true)',
-                    '    clubmembersPaginated(input: whereClubMembersInput): [ClubMember]! @paginate(model: "ClubMember", flatten: true)',
+                    '    clubmembers(input: whereClubMembersInput): [ClubMember]! @all(model: "ClubMember", flatten: true) @can(if: "findAllClubMembers", model: "User"',
+                    '    clubmembersPaginated(input: whereClubMembersInput): [ClubMember]! @paginate(model: "ClubMember", flatten: true) @can(if: "paginateClubMembers", model: "User")',
                 ],
             ],
             'No type fields given' => [
@@ -51,8 +51,8 @@ class PaginateAllQueryGeneratorTest extends TestCase
                 ],
                 'expected_input_type' => 'input whereInput {id: ID @eq id_not: ID @not id_in: ID @in id_not_in: ID @not_in id_lt: ID @lt id_lte: ID @lte id_gt: ID @gt id_gte: ID @gte}',
                 'expected_queries' => [
-                    '    (input: whereInput): []! @all(model: "", flatten: true)',
-                    '    Paginated(input: whereInput): []! @paginate(model: "", flatten: true)',
+                    '    (input: whereInput): []! @all(model: "", flatten: true) @can(if: "findAll", model: "User")',
+                    '    Paginated(input: whereInput): []! @paginate(model: "", flatten: true) @can(if: "paginate", model: "User")',
                 ],
             ],
             'Wrong type field given' => [
