@@ -63,7 +63,7 @@ class SchemaGenerator
         $queries = $this->generateQueriesForDefinedTypes($definedTypes);
         $typesImports = $this->generateGraphqlRelativeImports($this->getGraphqlDefinitionFilePaths($definitionFileDirectories['types']));
 
-        if($authEnabled) {
+        if ($authEnabled) {
             event(new GraphQLSchemaGenerated(GraphQLSchema::all()));
         }
 

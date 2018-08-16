@@ -12,7 +12,7 @@ class GraphQLSchemaTest extends TestCase
         $testRow = GraphQLSchema::register('action', 'RandomModel', 'testType', 'testRegister');
 
         $this->assertEquals(1, GraphQLSchema::count());
-        $this->assertEquals('actionRandomModel', $testRow->name);
+        $this->assertEquals('action', $testRow->name);
         $this->assertEquals('RandomModel', $testRow->model);
         $this->assertEquals('testType', $testRow->type);
         $this->assertEquals('testRegister', $testRow->permission);

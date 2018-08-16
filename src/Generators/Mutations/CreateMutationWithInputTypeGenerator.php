@@ -27,7 +27,7 @@ class CreateMutationWithInputTypeGenerator
             return new MutationWithInput('', '');
         }
 
-        $mutation = sprintf('    %s (input: %s!)', $mutationName, $inputTypeName);
+        $mutation = sprintf('    %s(input: %s!)', $mutationName, $inputTypeName);
         $mutation .= sprintf(': %1$s @create(model: "%1$s", flatten: true)', $typeName);
 
         if (config('lighthouse-utils.authorization')) {

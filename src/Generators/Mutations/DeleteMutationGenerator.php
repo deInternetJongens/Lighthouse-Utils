@@ -24,7 +24,7 @@ class DeleteMutationGenerator
             return '';
         }
 
-        $mutation = sprintf('    %s (%s)', $mutationName, implode(', ', $arguments));
+        $mutation = sprintf('    %s(%s)', $mutationName, implode(', ', $arguments));
         $mutation .= sprintf(': %1$s @delete', $typeName);
 
         if (config('lighthouse-utils.authorization')) {

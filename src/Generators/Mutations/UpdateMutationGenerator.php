@@ -28,7 +28,7 @@ class UpdateMutationGenerator
             return '';
         }
 
-        $mutation = sprintf('    %s (%s)', $mutationName, implode(', ', $arguments));
+        $mutation = sprintf('    %s(%s)', $mutationName, implode(', ', $arguments));
         $mutation .= sprintf(': %1$s @update(model: "%1$s")', $typeName);
 
         if (config('lighthouse-utils.authorization')) {

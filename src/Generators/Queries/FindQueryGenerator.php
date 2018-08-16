@@ -34,7 +34,7 @@ class FindQueryGenerator
         }
 
         $queryName = strtolower($typeName);
-        $query = sprintf('    %s (%s)', $queryName, implode(', ', $arguments));
+        $query = sprintf('    %s(%s)', $queryName, implode(', ', $arguments));
         $query .= sprintf(': %1$s! @find(model: "%1$s")', $typeName);
 
         if (config('lighthouse-utils.authorization')) {

@@ -69,10 +69,10 @@ class PaginateAllQueryGenerator
 
         $allQueryName = str_plural(strtolower($typeName));
         $queryArguments = sprintf('(%s)', implode(', ', $arguments));
-        $allQuery = sprintf('    %1$s %2$s: [%3$s]! @all(model: "%3$s")', $allQueryName, $queryArguments, $typeName);
+        $allQuery = sprintf('    %1$s%2$s: [%3$s]! @all(model: "%3$s")', $allQueryName, $queryArguments, $typeName);
 
         $paginatedQueryName = str_plural(strtolower($typeName)) . 'Paginated';
-        $paginatedQuery = sprintf('    %1$s %2$s: [%3$s]! @paginate(model: "%3$s")', $paginatedQueryName, $queryArguments, $typeName);
+        $paginatedQuery = sprintf('    %1$s%2$s: [%3$s]! @paginate(model: "%3$s")', $paginatedQueryName, $queryArguments, $typeName);
 
         if (config('lighthouse-utils.authorization')) {
             $allPermission = sprintf('All%1$s', str_plural($typeName));
