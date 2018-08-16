@@ -67,23 +67,22 @@ class PaginateAllQueryGenerator
             return '';
         }
 
-        $allQuery = '    ' . str_plural(strtolower($typeName));
+        $allQueryName = str_plural(strtolower($typeName));
         $queryArguments = sprintf('(%s)', implode(', ', $arguments));
-        $allQuery .= sprintf('%1$s: [%2$s]! @all(model: "%2$s")', $queryArguments, $typeName);
+        $allQuery = sprintf('    %1$s%2$s: [%3$s]! @all(model: "%3$s")', $allQueryName, $queryArguments, $typeName);
 
-
-        $paginatedQuery = '    ' . str_plural(strtolower($typeName)) . 'Paginated';
-        $paginatedQuery .= sprintf('%1$s: [%2$s]! @paginate(model: "%2$s")', $queryArguments, $typeName);
+        $paginatedQueryName = str_plural(strtolower($typeName)) . 'Paginated';
+        $paginatedQuery = sprintf('    %1$s%2$s: [%3$s]! @paginate(model: "%3$s")', $paginatedQueryName, $queryArguments, $typeName);
 
         if (config('lighthouse-utils.authorization')) {
-            $allPermission = sprintf('findAll%1$s', str_plural($typeName));
+            $allPermission = sprintf('All%1$s', str_plural($typeName));
             $allQuery .= sprintf(' @can(if: "%1$s", model: "User")', $allPermission);
 
             $paginatePermission = sprintf('paginate%1$s', str_plural($typeName));
             $paginatedQuery .= sprintf(' @can(if: "%1$s", model: "User")', $paginatePermission);
 
-            GraphQLSchema::register('findAll', $typeName, 'query', $allPermission ?? null);
-            GraphQLSchema::register('paginate', $typeName, 'query', $paginatePermission ?? null);
+            GraphQLSchema::register($allQueryName, $typeName, 'query', $allPermission ?? null);
+            GraphQLSchema::register($paginatedQueryName, $typeName, 'query', $paginatePermission ?? null);
         }
 
 

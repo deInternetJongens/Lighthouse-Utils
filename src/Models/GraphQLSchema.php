@@ -14,7 +14,7 @@ class GraphQLSchema extends Model
     {
         if (config('lighthouse-utils.authorization')) {
             return static::create([
-                'name' => $action . $model,
+                'name' => $action,
                 'type' => $type,
                 'model' => $model,
                 'permission' => $permission,

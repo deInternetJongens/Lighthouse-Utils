@@ -18,7 +18,7 @@ class CreateMutationWithInputTypeGenerator
      */
     public static function generate(string $typeName, array $typeFields): MutationWithInput
     {
-        $mutation = '    create' . $typeName;
+        $mutationName = 'create' . $typeName;
 
         $inputTypeName = sprintf('create%sInput', ucfirst($typeName));
         $inputType = InputTypeArgumentGenerator::generate($inputTypeName, $typeFields);
@@ -27,7 +27,7 @@ class CreateMutationWithInputTypeGenerator
             return new MutationWithInput('', '');
         }
 
-        $mutation .= sprintf('(input: %s!)', $inputTypeName);
+        $mutation = sprintf('    %s(input: %s!)', $mutationName, $inputTypeName);
         $mutation .= sprintf(': %1$s @create(model: "%1$s", flatten: true)', $typeName);
 
         if (config('lighthouse-utils.authorization')) {
@@ -35,7 +35,7 @@ class CreateMutationWithInputTypeGenerator
             $mutation .= sprintf(' @can(if: "%1$s", model: "User")', $permission);
         }
 
-        GraphQLSchema::register('create', $typeName, 'mutation', $permission ?? null);
+        GraphQLSchema::register($mutationName, $typeName, 'mutation', $permission ?? null);
 
         return new MutationWithInput($mutation, $inputType);
     }

@@ -17,7 +17,7 @@ class UpdateMutationWithInputTypeGenerator
      */
     public static function generate(string $typeName, array $typeFields): MutationWithInput
     {
-        $mutation = '    update' . $typeName;
+        $mutationName = 'update' . $typeName;
         $inputTypeName = sprintf('update%sInput', ucfirst($typeName));
         $inputType = InputTypeArgumentGenerator::generate($inputTypeName, $typeFields, true);
 
@@ -25,7 +25,7 @@ class UpdateMutationWithInputTypeGenerator
             return new MutationWithInput('', '');
         }
 
-        $mutation .= sprintf('(input: %s!)', $inputTypeName);
+        $mutation = sprintf('    %s(input: %s!)', $mutationName, $inputTypeName);
         $mutation .= sprintf(': %1$s @update(model: "%1$s", flatten: true)', $typeName);
 
         if (config('lighthouse-utils.authorization')) {
@@ -33,7 +33,7 @@ class UpdateMutationWithInputTypeGenerator
             $mutation .= sprintf(' @can(if: "%1$s", model: "User")', $permission);
         }
 
-        GraphQLSchema::register('update', $typeName, 'mutation', $permission ?? null);
+        GraphQLSchema::register($mutationName, $typeName, 'mutation', $permission ?? null);
 
         return new MutationWithInput($mutation, $inputType);
     }
