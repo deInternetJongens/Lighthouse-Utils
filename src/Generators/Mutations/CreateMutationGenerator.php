@@ -17,7 +17,7 @@ class CreateMutationGenerator
      */
     public static function generate(string $typeName, array $typeFields): string
     {
-        $mutation = '    create' . $typeName;
+        $mutationName = 'create' . $typeName;
 
         $arguments = RelationArgumentGenerator::generate($typeFields);
         $arguments = array_merge($arguments, InputFieldsArgumentGenerator::generate($typeFields));
@@ -26,7 +26,7 @@ class CreateMutationGenerator
             return '';
         }
 
-        $mutation .= sprintf('(%s)', implode(', ', $arguments));
+        $mutation = sprintf('    %s (%s)', $mutationName, implode(', ', $arguments));
         $mutation .= sprintf(': %1$s @create(model: "%1$s")', $typeName);
 
         if (config('lighthouse-utils.authorization')) {
@@ -34,7 +34,7 @@ class CreateMutationGenerator
             $mutation .= sprintf(' @can(if: "%1$s", model: "User")', $permission);
         }
 
-        GraphQLSchema::register('create', $typeName, 'mutation', $permission ?? null);
+        GraphQLSchema::register($mutationName, $typeName, 'mutation', $permission ?? null);
 
         return $mutation;
     }

@@ -19,7 +19,7 @@ class UpdateMutationGenerator
      */
     public static function generate(string $typeName, array $typeFields): string
     {
-        $query = '    update' . $typeName;
+        $mutationName = 'update' . $typeName;
         $arguments = IdArgumentGenerator::generate($typeFields);
         $arguments = array_merge($arguments, RelationArgumentGenerator::generate($typeFields, false));
         $arguments = array_merge($arguments, InputFieldsArgumentGenerator::generate($typeFields));
@@ -28,16 +28,16 @@ class UpdateMutationGenerator
             return '';
         }
 
-        $query .= sprintf('(%s)', implode(', ', $arguments));
-        $query .= sprintf(': %1$s @update(model: "%1$s")', $typeName);
+        $mutation = sprintf('    %s (%s)', $mutationName, implode(', ', $arguments));
+        $mutation .= sprintf(': %1$s @update(model: "%1$s")', $typeName);
 
         if (config('lighthouse-utils.authorization')) {
             $permission = sprintf('update%1$s', $typeName);
-            $query .= sprintf(' @can(if: "%1$s", model: "User")', $permission);
+            $mutation .= sprintf(' @can(if: "%1$s", model: "User")', $permission);
         }
 
-        GraphQLSchema::register('update', $typeName, 'mutation', $permission ?? null);
+        GraphQLSchema::register($mutationName, $typeName, 'mutation', $permission ?? null);
 
-        return $query;
+        return $mutation;
     }
 }
