@@ -36,7 +36,6 @@ class PaginateAllQueryGenerator
     public static function generate(string $typeName, array $typeFields): string
     {
         $arguments = [];
-        $typeName = str_plural($typeName);
 
         foreach ($typeFields as $fieldName => $field) {
             $className = get_class($field);
@@ -68,12 +67,12 @@ class PaginateAllQueryGenerator
             return '';
         }
 
-        $allQuery = '    ' . strtolower($typeName);
+        $allQuery = '    ' . str_plural(strtolower($typeName));
         $queryArguments = sprintf('(%s)', implode(', ', $arguments));
         $allQuery .= sprintf('%1$s: [%2$s]! @all(model: "%2$s")', $queryArguments, $typeName);
 
 
-        $paginatedQuery = '    ' . strtolower($typeName) . 'Paginated';
+        $paginatedQuery = '    ' . str_plural(strtolower($typeName)) . 'Paginated';
         $paginatedQuery .= sprintf('%1$s: [%2$s]! @paginate(model: "%2$s")', $queryArguments, $typeName);
 
         if (config('lighthouse-utils.authorization')) {
