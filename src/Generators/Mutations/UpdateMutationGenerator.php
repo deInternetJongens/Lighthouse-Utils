@@ -21,7 +21,7 @@ class UpdateMutationGenerator
     {
         $mutationName = 'update' . $typeName;
         $arguments = IdArgumentGenerator::generate($typeFields);
-        $arguments = array_merge($arguments, RelationArgumentGenerator::generate($typeFields, false));
+        $arguments = array_merge($arguments, RelationArgumentGenerator::generate($typeFields));
         $arguments = array_merge($arguments, InputFieldsArgumentGenerator::generate($typeFields));
 
         if (count($arguments) < 1) {
