@@ -59,8 +59,7 @@ class PaginateAllQueryGeneratorTest extends TestCase
      * @dataProvider dataProvider
      * @param string $typeName
      * @param array $typeFields
-     * @param string $expectedInputType
-     * @param array $expectedQueries
+     * @param string $expectedQueries
      */
     public function testCanGenerateAllQueryForIDType(
         string $typeName,
