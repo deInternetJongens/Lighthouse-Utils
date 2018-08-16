@@ -8,6 +8,7 @@ use GraphQL\Type\Definition\FloatType;
 use GraphQL\Type\Definition\IntType;
 use GraphQL\Type\Definition\StringType;
 use GraphQL\Type\Definition\Type;
+use Nuwave\Lighthouse\Schema\Types\Scalars\DateTime;
 
 class InputFieldsArgumentGenerator
 {
@@ -17,6 +18,7 @@ class InputFieldsArgumentGenerator
         IntType::class,
         FloatType::class,
         Date::class,
+        DateTime::class,
         DateTimeTz::class
     ];
 

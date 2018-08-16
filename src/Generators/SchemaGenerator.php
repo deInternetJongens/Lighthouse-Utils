@@ -5,9 +5,9 @@ namespace DeInternetJongens\LighthouseUtils\Generators;
 use Config;
 use DeInternetJongens\LighthouseUtils\Events\GraphQLSchemaGenerated;
 use DeInternetJongens\LighthouseUtils\Exceptions\InvalidConfigurationException;
-use DeInternetJongens\LighthouseUtils\Generators\Mutations\CreateMutationGenerator;
+use DeInternetJongens\LighthouseUtils\Generators\Mutations\CreateMutationWithInputTypeGenerator;
 use DeInternetJongens\LighthouseUtils\Generators\Mutations\DeleteMutationGenerator;
-use DeInternetJongens\LighthouseUtils\Generators\Mutations\UpdateMutationGenerator;
+use DeInternetJongens\LighthouseUtils\Generators\Mutations\UpdateMutationWithInputTypeGenerator;
 use DeInternetJongens\LighthouseUtils\Generators\Queries\FindQueryGenerator;
 use DeInternetJongens\LighthouseUtils\Generators\Queries\PaginateAllQueryGenerator;
 use DeInternetJongens\LighthouseUtils\Models\GraphQLSchema;
@@ -285,16 +285,17 @@ class SchemaGenerator
     {
         $queries = [];
         $mutations = [];
+        $inputTypes = [];
 
         /**
          * @var string $typeName
          * @var Type $type
          */
         foreach ($definedTypes as $typeName => $type) {
-            $paginatedWhereQuery = PaginateAllQueryGenerator::generate($typeName, $type);
+            $paginateAndAllQuery = PaginateAllQueryGenerator::generate($typeName, $type);
 
-            if (! empty($paginatedWhereQuery)) {
-                $queries[] = $paginatedWhereQuery;
+            if (! empty($paginateAndAllQuery)) {
+                $queries[] = $paginateAndAllQuery;
             }
             $findQuery = FindQueryGenerator::generate($typeName, $type);
 
@@ -302,14 +303,16 @@ class SchemaGenerator
                 $queries[] = $findQuery;
             }
 
-            $createMutation = CreateMutationGenerator::generate($typeName, $type);
-            if (! empty($createMutation)) {
-                $mutations[] = $createMutation;
+            $createMutation = createMutationWithInputTypeGenerator::generate($typeName, $type);
+            if ($createMutation->isNotEmpty()) {
+                $mutations[] = $createMutation->getMutation();
+                $inputTypes[] = $createMutation->getInputType();
             }
 
-            $updateMutation = UpdateMutationGenerator::generate($typeName, $type);
-            if (! empty($updateMutation)) {
-                $mutations[] = $updateMutation;
+            $updateMutation = updateMutationWithInputTypeGenerator::generate($typeName, $type);
+            if ($updateMutation->isNotEmpty()) {
+                $mutations[] = $updateMutation->getMutation();
+                $inputTypes[] = $updateMutation->getInputType();
             }
 
             $deleteMutation = DeleteMutationGenerator::generate($typeName, $type);
@@ -320,6 +323,8 @@ class SchemaGenerator
         $return = sprintf("type Query{\r\n%s\r\n}", implode("\r\n", $queries));
         $return .= "\r\n\r\n";
         $return .= sprintf("type Mutation{\r\n%s\r\n}", implode("\r\n", $mutations));
+        $return .= "\r\n\r\n";
+        $return .= implode("\r\n", $inputTypes);
 
         return $return;
     }

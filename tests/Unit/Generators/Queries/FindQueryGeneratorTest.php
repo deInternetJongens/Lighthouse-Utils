@@ -15,32 +15,28 @@ class FindQueryGeneratorTest extends TestCase
     public function dataProvider(): array
     {
         return [
-            // Happy flow
-            [
+            'Happy flow' => [
                 'type_name' => 'ClubMember',
                 'type_fields' => [
                     'id' => new IDType(),
                 ],
                 'expected_query' => '    clubmember(id: ID! @eq): ClubMember! @find(model: "ClubMember") @can(if: "findClubMember", model: "User")',
             ],
-            // Missing type field given
-            [
+            'Missing type field given' => [
                 'type_name' => 'ClubMember',
                 'type_fields' => [
                     'id' => '',
                 ],
                 'expected_query' => '',
             ],
-            // Wrong type field given
-            [
+            'Wrong type field given' => [
                 'type_name' => 'ClubMember',
                 'type_fields' => [
                     'id' => new IntType(),
                 ],
                 'expected_query' => '',
             ],
-            // No type name given
-            [
+            'No type name given' => [
                 'type_name' => '',
                 'type_fields' => [
                     'id' => new IDType(),
@@ -60,6 +56,6 @@ class FindQueryGeneratorTest extends TestCase
     {
         $query = FindQueryGenerator::generate($typeName, $typeFields);
 
-        $this->assertEquals($expectedQuery, $query);
+        $this->assertEquals($expectedQuery, $query, 'Expected query');
     }
 }

@@ -13,13 +13,22 @@ class InputTypeArgumentGenerator
      *
      * @param string $inputName
      * @param Type[] $typeFields
+     * @param bool $generateIdField
      * @return string
      */
-    public static function generate(string $inputName, array $typeFields): string
+    public static function generate(string $inputName, array $typeFields, bool $generateIdField = false): string
     {
         $arguments = InputFieldsArgumentGenerator::generate($typeFields);
+        $arguments = array_merge($arguments, RelationArgumentGenerator::generate($typeFields));
+        if ($generateIdField) {
+            $arguments = array_merge($arguments, IdArgumentGenerator::generate($typeFields));
+        }
 
-        $query = sprintf("input %s {\r\n%s\r\n}", $inputName, implode("\r\n", $arguments));
+        if (count($arguments) < 1) {
+            return '';
+        }
+
+        $query = sprintf('input %s {%s}', $inputName, implode(' ', $arguments));
         return $query;
     }
 }

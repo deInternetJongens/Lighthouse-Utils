@@ -31,7 +31,6 @@ class PaginateAllQueryGenerator
      *
      * @param string $typeName
      * @param Type[] $typeFields
-     * @param array $supportedGraphQLTypes
      * @return string
      */
     public static function generate(string $typeName, array $typeFields): string
@@ -72,22 +71,21 @@ class PaginateAllQueryGenerator
         $queryArguments = sprintf('(%s)', implode(', ', $arguments));
         $allQuery .= sprintf('%1$s: [%2$s]! @all(model: "%2$s")', $queryArguments, $typeName);
 
-        if (config('lighthouse-utils.authorization')) {
-            $permission = sprintf('findAll%1$s', str_plural($typeName));
-            $allQuery .= sprintf(' @can(if: "%1$s", model: "User")', $permission);
-        }
-
-        GraphQLSchema::register('findAll', $typeName, 'query', $permission ?? null);
 
         $paginatedQuery = '    ' . str_plural(strtolower($typeName)) . 'Paginated';
         $paginatedQuery .= sprintf('%1$s: [%2$s]! @paginate(model: "%2$s")', $queryArguments, $typeName);
 
         if (config('lighthouse-utils.authorization')) {
-            $permission = sprintf('paginate%1$s', str_plural($typeName));
-            $paginatedQuery .= sprintf(' @can(if: "%1$s", model: "User")', $permission);
+            $allPermission = sprintf('findAll%1$s', str_plural($typeName));
+            $allQuery .= sprintf(' @can(if: "%1$s", model: "User")', $allPermission);
+
+            $paginatePermission = sprintf('paginate%1$s', str_plural($typeName));
+            $paginatedQuery .= sprintf(' @can(if: "%1$s", model: "User")', $paginatePermission);
+
+            GraphQLSchema::register('findAll', $typeName, 'query', $allPermission ?? null);
+            GraphQLSchema::register('paginate', $typeName, 'query', $paginatePermission ?? null);
         }
 
-        GraphQLSchema::register('paginate', $typeName, 'query', $permission ?? null);
 
         return $allQuery ."\r\n". $paginatedQuery;
     }
