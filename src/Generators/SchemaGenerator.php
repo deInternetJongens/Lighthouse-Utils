@@ -294,8 +294,11 @@ class SchemaGenerator
         foreach ($definedTypes as $typeName => $type) {
             $paginateAndAllQuery = PaginateAllQueryGenerator::generate($typeName, $type);
 
-            if (! empty($paginateAndAllQuery)) {
-                $queries[] = $paginateAndAllQuery;
+            if ($paginateAndAllQuery->isNotEmpty()) {
+                foreach ($paginateAndAllQuery->getQueries() as $query) {
+                    $queries[] = $query;
+                }
+                $inputTypes[] = $paginateAndAllQuery->getInputType();
             }
             $findQuery = FindQueryGenerator::generate($typeName, $type);
 
