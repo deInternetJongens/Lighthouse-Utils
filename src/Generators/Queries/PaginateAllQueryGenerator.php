@@ -2,6 +2,7 @@
 
 namespace DeInternetJongens\LighthouseUtils\Generators\Queries;
 
+use DeInternetJongens\LighthouseUtils\Generators\Classes\QueriesWithInput;
 use DeInternetJongens\LighthouseUtils\Models\GraphQLSchema;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\Date;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\DateTimeTz;
@@ -31,11 +32,13 @@ class PaginateAllQueryGenerator
      *
      * @param string $typeName
      * @param Type[] $typeFields
-     * @return string
+     * @return QueriesWithInput
      */
-    public static function generate(string $typeName, array $typeFields): string
+    public static function generate(string $typeName, array $typeFields): QueriesWithInput
     {
         $arguments = [];
+        $returnType = $typeName;
+        $typeName = str_plural($typeName);
 
         foreach ($typeFields as $fieldName => $field) {
             $className = get_class($field);
@@ -64,18 +67,20 @@ class PaginateAllQueryGenerator
         }
 
         if (count($arguments) < 1) {
-            return '';
+            return new QueriesWithInput([], '');
         }
 
-        $allQueryName = str_plural(strtolower($typeName));
-        $queryArguments = sprintf('(%s)', implode(', ', $arguments));
-        $allQuery = sprintf('    %1$s%2$s: [%3$s]! @all(model: "%3$s")', $allQueryName, $queryArguments, $typeName);
+        $inputTypeName = sprintf('where%sInput', $typeName);
+        $inputType = sprintf("input %s {%s}", $inputTypeName, implode($arguments, " "));
+        $inputTypeArgument = sprintf('(input: %s)', $inputTypeName);
 
-        $paginatedQueryName = str_plural(strtolower($typeName)) . 'Paginated';
-        $paginatedQuery = sprintf('    %1$s%2$s: [%3$s]! @paginate(model: "%3$s")', $paginatedQueryName, $queryArguments, $typeName);
+        $allQueryName = strtolower($typeName);
+        $paginatedQueryName = sprintf('%sPaginated', strtolower($typeName));
+        $allQuery = sprintf('    %1$s%2$s: [%3$s]! @all(model: "%3$s", flatten: true)', $allQueryName, $inputTypeArgument, $returnType);
+        $paginatedQuery = sprintf('    %1$sPaginated%2$s: [%3$s]! @paginate(model: "%3$s", flatten: true)', $paginatedQueryName, $inputTypeArgument, $returnType);
 
         if (config('lighthouse-utils.authorization')) {
-            $allPermission = sprintf('All%1$s', str_plural($typeName));
+            $allPermission = sprintf('findAll%1$s', str_plural($typeName));
             $allQuery .= sprintf(' @can(if: "%1$s", model: "User")', $allPermission);
 
             $paginatePermission = sprintf('paginate%1$s', str_plural($typeName));
@@ -86,6 +91,6 @@ class PaginateAllQueryGenerator
         }
 
 
-        return $allQuery ."\r\n". $paginatedQuery;
+        return new QueriesWithInput([$allQuery, $paginatedQuery], $inputType);
     }
 }
