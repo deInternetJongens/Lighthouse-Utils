@@ -1,0 +1,8 @@
+install:
+- composer install --no-scripts
+jobs:
+  include:
+  - stage: Code style
+    script: ./build/codestyle.sh
+  - stage: Testing
+    script: ./build/test.sh
