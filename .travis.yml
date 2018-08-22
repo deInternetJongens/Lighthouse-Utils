@@ -8,7 +8,7 @@ install:
 - composer install --no-scripts --prefer-dist
 jobs:
   include:
-  - stage: Code style
-    script: ./build/codestyle.sh
-  - stage: Testing
-    script: ./build/test.sh
+  - stage: Code style and testing
+    script:
+    - ./build/codestyle.sh
+    - ./build/test.sh
