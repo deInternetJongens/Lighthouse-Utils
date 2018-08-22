@@ -2,13 +2,13 @@
 
 namespace DeInternetJongens\LighthouseUtils\Tests\Unit\Generators\Mutations;
 
-use DeInternetJongens\LighthouseUtils\Generators\Mutations\UpdateMutationGenerator;
+use DeInternetJongens\LighthouseUtils\Generators\Mutations\UpdateMutationWithInputTypeGenerator;
 use DeInternetJongens\LighthouseUtils\Tests\Unit\TestCase;
 use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\IDType;
 use GraphQL\Type\Definition\StringType;
 
-class UpdateMutationGeneratorTest extends TestCase
+class UpdateMutationWithInputTypeGeneratorTest extends TestCase
 {
     /**
      * @return array
@@ -23,7 +23,8 @@ class UpdateMutationGeneratorTest extends TestCase
                     'name' => new StringType(),
                     'id' => new StringType(),
                 ],
-                'expected_query' => '    updateClubMember(club_id: ID!, name: String, id: String): ClubMember @update(model: "ClubMember") @can(if: "updateClubMember", model: "User")',
+                'expected_input_type' => 'input updateClubMemberInput {name: String id: String club_id: ID!}',
+                'expected_mutation' => '    updateClubMember(input: updateClubMemberInput!): ClubMember @update(model: "ClubMember", flatten: true) @can(if: "updateClubMember", model: "User")',
             ],
             'Happy flow, required fields' => [
                 'type_name' => 'ClubMember',
@@ -36,12 +37,14 @@ class UpdateMutationGeneratorTest extends TestCase
                         'generator-required' => true,
                     ]),
                 ],
-                'expected_query' => '    updateClubMember(club_id: ID!, name: String!, id: String!): ClubMember @update(model: "ClubMember") @can(if: "updateClubMember", model: "User")',
+                'expected_input_type' => 'input updateClubMemberInput {name: String! id: String! club_id: ID!}',
+                'expected_mutation' => '    updateClubMember(input: updateClubMemberInput!): ClubMember @update(model: "ClubMember", flatten: true) @can(if: "updateClubMember", model: "User")',
             ],
             'No data given' => [
                 'type_name' => '',
                 'type_fields' => [],
-                'expected_query' => '',
+                'expected_input_type' => '',
+                'expected_mutation' => '',
             ],
             'Wrong type fields given' => [
                 'type_name' => 'ClubMember',
@@ -50,7 +53,8 @@ class UpdateMutationGeneratorTest extends TestCase
                         'name' => 'enum',
                     ]),
                 ],
-                'expected_query' => '',
+                'expected_input_type' => '',
+                'expected_mutation' => '',
             ],
             'Correct and wrong type fields given' => [
                 'type_name' => 'ClubMember',
@@ -63,7 +67,8 @@ class UpdateMutationGeneratorTest extends TestCase
                         'name' => 'enum',
                     ]),
                 ],
-                'expected_query' => '    updateClubMember(club_id: ID!, name: String!): ClubMember @update(model: "ClubMember") @can(if: "updateClubMember", model: "User")',
+                'expected_input_type' => 'input updateClubMemberInput {name: String! club_id: ID!}',
+                'expected_mutation' => '    updateClubMember(input: updateClubMemberInput!): ClubMember @update(model: "ClubMember", flatten: true) @can(if: "updateClubMember", model: "User")',
             ],
         ];
     }
@@ -72,18 +77,21 @@ class UpdateMutationGeneratorTest extends TestCase
      * @dataProvider dataProvider
      * @param string $typeName
      * @param array $typeFields
-     * @param string $expectedQuery
+     * @param string $expectedInputType
+     * @param string $expectedMutation
      */
-    public function testCanGenerateUpdateMutationForClubMember(
+    public function testCanGenerateUpdateMutationWithInputTypeForClubMember(
         string $typeName,
         array $typeFields,
-        string $expectedQuery
+        string $expectedInputType,
+        string $expectedMutation
     ): void {
-        $query = UpdateMutationGenerator::generate(
+        $mutationWithInput = UpdateMutationWithInputTypeGenerator::generate(
             $typeName,
             $typeFields
         );
 
-        $this->assertEquals($expectedQuery, $query, 'Expected mutation');
+        $this->assertEquals($expectedInputType, $mutationWithInput->getInputType(), 'Expected input type');
+        $this->assertEquals($expectedMutation, $mutationWithInput->getMutation(), 'Expected mutation');
     }
 }

@@ -22,7 +22,6 @@ class RelationArgumentGeneratorTest extends TestCase
                         'name' => 'club',
                     ]),
                 ],
-                'required' => false,
                 'expected_arguments' => [
                     'club_id: ID',
                 ],
@@ -32,9 +31,9 @@ class RelationArgumentGeneratorTest extends TestCase
                 'type_fields' => [
                     'club' => new ObjectType([
                         'name' => 'club',
+                        'generator-required' => true,
                     ]),
                 ],
-                'required' => true,
                 'expected_arguments' => [
                     'club_id: ID!',
                 ],
@@ -49,7 +48,6 @@ class RelationArgumentGeneratorTest extends TestCase
                         'name' => 'club_member',
                     ]),
                 ],
-                'required' => false,
                 'expected_arguments' => [
                     'club_id: ID',
                     'club_member_id: ID'
@@ -60,12 +58,13 @@ class RelationArgumentGeneratorTest extends TestCase
                 'type_fields' => [
                     'club' => new ObjectType([
                         'name' => 'club',
+                        'generator-required' => true,
                     ]),
                     'club_member' => new ObjectType([
                         'name' => 'club_member',
+                        'generator-required' => true,
                     ]),
                 ],
-                'required' => true,
                 'expected_arguments' => [
                     'club_id: ID!',
                     'club_member_id: ID!'
@@ -76,21 +75,20 @@ class RelationArgumentGeneratorTest extends TestCase
                 'type_fields' => [
                     'club' => new StringType(),
                 ],
-                'required' => false,
                 'expected_arguments' => [],
             ],
             // Wrong type, but required
             [
                 'type_fields' => [
-                    'club' => new StringType(),
+                    'club' => new StringType([
+                        'generator-required' => true,
+                    ]),
                 ],
-                'required' => true,
                 'expected_arguments' => [],
             ],
             // No data given
             [
                 'type_fields' => [],
-                'required' => false,
                 'expected_arguments' => [],
             ],
         ];
@@ -102,9 +100,9 @@ class RelationArgumentGeneratorTest extends TestCase
      * @param bool $required
      * @param array $expectedArguments
      */
-    public function testCanGenerateRelationArgument(array $typeFields, bool $required, array $expectedArguments): void
+    public function testCanGenerateRelationArgument(array $typeFields, array $expectedArguments): void
     {
-        $arguments = RelationArgumentGenerator::generate($typeFields, $required);
+        $arguments = RelationArgumentGenerator::generate($typeFields);
 
         $this->assertEquals($expectedArguments, $arguments);
     }

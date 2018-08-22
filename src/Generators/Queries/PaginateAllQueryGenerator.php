@@ -2,6 +2,7 @@
 
 namespace DeInternetJongens\LighthouseUtils\Generators\Queries;
 
+use DeInternetJongens\LighthouseUtils\Models\GraphQLSchema;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\Date;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\DateTimeTz;
 use GraphQL\Type\Definition\FloatType;
@@ -30,7 +31,6 @@ class PaginateAllQueryGenerator
      *
      * @param string $typeName
      * @param Type[] $typeFields
-     * @param array $supportedGraphQLTypes
      * @return string
      */
     public static function generate(string $typeName, array $typeFields): string
@@ -67,12 +67,24 @@ class PaginateAllQueryGenerator
             return '';
         }
 
-        $allQuery = '    ' . str_plural(strtolower($typeName));
+        $allQueryName = str_plural(strtolower($typeName));
         $queryArguments = sprintf('(%s)', implode(', ', $arguments));
-        $allQuery .= sprintf('%1$s: [%2$s]! @all(model: "%2$s")', $queryArguments, $typeName);
+        $allQuery = sprintf('    %1$s%2$s: [%3$s]! @all(model: "%3$s")', $allQueryName, $queryArguments, $typeName);
 
-        $paginatedQuery = '    ' . str_plural(strtolower($typeName)) . 'Paginated';
-        $paginatedQuery .= sprintf('%1$s: [%2$s]! @paginate(model: "%2$s")', $queryArguments, $typeName);
+        $paginatedQueryName = str_plural(strtolower($typeName)) . 'Paginated';
+        $paginatedQuery = sprintf('    %1$s%2$s: [%3$s]! @paginate(model: "%3$s")', $paginatedQueryName, $queryArguments, $typeName);
+
+        if (config('lighthouse-utils.authorization')) {
+            $allPermission = sprintf('All%1$s', str_plural($typeName));
+            $allQuery .= sprintf(' @can(if: "%1$s", model: "User")', $allPermission);
+
+            $paginatePermission = sprintf('paginate%1$s', str_plural($typeName));
+            $paginatedQuery .= sprintf(' @can(if: "%1$s", model: "User")', $paginatePermission);
+
+            GraphQLSchema::register($allQueryName, $typeName, 'query', $allPermission ?? null);
+            GraphQLSchema::register($paginatedQueryName, $typeName, 'query', $paginatePermission ?? null);
+        }
+
 
         return $allQuery ."\r\n". $paginatedQuery;
     }

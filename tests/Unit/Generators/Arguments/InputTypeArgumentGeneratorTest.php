@@ -4,7 +4,7 @@ namespace DeInternetJongens\LighthouseUtils\Tests\Unit\Generators\Arguments;
 
 use DeInternetJongens\LighthouseUtils\Generators\Arguments\InputTypeArgumentGenerator;
 use DeInternetJongens\LighthouseUtils\Tests\Unit\TestCase;
-use GraphQL\Type\Definition\IDType;
+use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\StringType;
 
 class InputTypeArgumentGeneratorTest extends TestCase
@@ -15,47 +15,42 @@ class InputTypeArgumentGeneratorTest extends TestCase
     public function dataProvider(): array
     {
         return [
-            // Happy flow
-            [
+            'Happy flow' => [
                 'input_name' => 'name',
                 'type_fields' => [
                     'name' => new StringType(),
                 ],
-                'expected_argument' => "input name {\r\nname: String\r\n}",
+                'expected_argument' => 'input name {name: String}',
             ],
-            // Happy flow, required field
-            [
+            'Happy flow, required field' => [
                 'input_name' => 'name',
                 'type_fields' => [
                     'name' => new StringType([
                         'generator-required' => true,
                     ]),
                 ],
-                'expected_argument' => "input name {\r\nname: String!\r\n}",
+                'expected_argument' => 'input name {name: String!}',
             ],
-            // Wrong type given
-            [
-                'input_name' => 'id',
+            'Wrong type given' => [
+                'input_name' => 'enum',
                 'type_fields' => [
-                    'id' => new IDType(),
+                    'enum' => new EnumType(['name' => 'test']),
                 ],
-                'expected_argument' => "input id {\r\n\r\n}",
+                'expected_argument' => '',
             ],
-            // No data given
-            [
+            'No data given' => [
                 'input_name' => '',
                 'type_fields' => [],
-                'expected_argument' => "input  {\r\n\r\n}",
+                'expected_argument' => '',
             ],
-            // Type fields that are ignored
-            [
+            'Type fields that are ignored' => [
                 'input_name' => 'club',
                 'type_fields' => [
                     'created_at' => new StringType(),
                     'updated_at' => new StringType(),
                     'deleted_at' => new StringType(),
                 ],
-                'expected_argument' => "input club {\r\n\r\n}",
+                'expected_argument' => '',
             ],
         ];
     }
@@ -71,7 +66,7 @@ class InputTypeArgumentGeneratorTest extends TestCase
         array $typeFields,
         string $expectedArgument
     ): void {
-        $argument = InputTypeArgumentGenerator::generate($inputName, $typeFields);
+        $argument = InputTypeArgumentGenerator::generate($inputName, $typeFields, true);
 
         $this->assertEquals($expectedArgument, $argument);
     }

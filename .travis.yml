@@ -1,0 +1,14 @@
+language: php
+php:
+- 7.1.9
+cache:
+  directories:
+  - $HOME/.composer/cache/files
+install:
+- composer install --no-scripts --prefer-dist
+jobs:
+  include:
+  - stage: Code style and testing
+    script:
+    - ./build/codestyle.sh
+    - ./build/test.sh
