@@ -19,7 +19,6 @@ class RelationArgumentGenerator
         $arguments = [];
 
         foreach ($typeFields as $fieldName => $field) {
-
             $config = $field->config;
 
             $required =  isset($config['generator-required']) ? ($config['generator-required'] ? '!' : '') : '';
