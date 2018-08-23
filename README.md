@@ -1,5 +1,6 @@
 # Lighthouse Utils
 [![Build Status](https://travis-ci.org/deInternetJongens/Lighthouse-Utils.svg?branch=develop)](https://travis-ci.org/deInternetJongens/Lighthouse-Utils)
+[![codecov](https://codecov.io/gh/deInternetJongens/Lighthouse-Utils/branch/develop/graph/badge.svg)](https://codecov.io/gh/deInternetJongens/Lighthouse-Utils)
 
 This package can generate queries for the [Lighthouse GraphQL library](https://github.com/nuwave/lighthouse).
 This is not a standalone package, so Lighthouse is listed as a dependency.
