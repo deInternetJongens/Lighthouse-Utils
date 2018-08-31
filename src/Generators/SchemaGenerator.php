@@ -286,9 +286,11 @@ class SchemaGenerator
     {
         $customSchema = [];
         foreach ($this->getGraphqlDefinitionFilePaths($customSchemaPath) as $path) {
-            $customSchema[] = $this->getSchemaFrom($path, $type);
-        }
+            $returnData = $this->extractSchema($type, $this->getSchemaFrom($path));
 
+            $customSchema = array_merge($customSchema, $returnData);
+        }
+        
         return $customSchema;
     }
 
@@ -369,15 +371,32 @@ class SchemaGenerator
         return $return;
     }
 
-    private function getSchemaFrom($path, $type)
+    private function getSchemaFrom($path)
     {
         $file = fopen($path, "r");
-        $fileContents = fread($file, filesize($path));
 
-        $returnData = trim(str_replace(["type", $type, "{", "}"], '', $fileContents));
+        $fileContents = fread($file, filesize($path));
 
         fclose($file);
 
-        return '    ' . $returnData;
+        return $fileContents;
+    }
+
+    /**
+     * @param $type
+     * @param $fileContents
+     * @return array
+     */
+    private function extractSchema($type, $fileContents): array
+    {
+        return array_filter(
+            array_map(
+                'trim',
+                explode(
+                    "\n",
+                    str_replace(["type", $type, "{", "}"], "", $fileContents)
+                )
+            )
+        );
     }
 }
