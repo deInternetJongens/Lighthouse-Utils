@@ -387,6 +387,6 @@ class SchemaGenerator
 
         fclose($file);
 
-        return '    ' . $fileContents;
+        return '    ' . $parsedData;
     }
 }
