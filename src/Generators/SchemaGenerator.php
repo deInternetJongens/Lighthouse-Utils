@@ -13,6 +13,8 @@ use DeInternetJongens\LighthouseUtils\Generators\Queries\PaginateAllQueryGenerat
 use DeInternetJongens\LighthouseUtils\Models\GraphQLSchema;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\Date;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\DateTimeTz;
+use GraphQL\Language\Parser;
+use GraphQL\Language\Source;
 use GraphQL\Type\Definition\FieldDefinition;
 use GraphQL\Type\Definition\FloatType;
 use GraphQL\Type\Definition\IDType;
@@ -58,9 +60,10 @@ class SchemaGenerator
         $this->validateFilesPaths($definitionFileDirectories);
 
         $schema = $this->getSchemaForFiles($definitionFileDirectories);
+
         $definedTypes = $this->getDefinedTypesFromSchema($schema, $definitionFileDirectories);
 
-        $queries = $this->generateQueriesForDefinedTypes($definedTypes);
+        $queries = $this->generateQueriesForDefinedTypes($definedTypes, $definitionFileDirectories);
         $typesImports = $this->generateGraphqlRelativeImports($this->getGraphqlDefinitionFilePaths($definitionFileDirectories['types']));
 
         if ($authEnabled) {
@@ -123,6 +126,7 @@ class SchemaGenerator
     private function getSchemaForFiles(array $definitionFileDirectories): Schema
     {
         $originalSchemaFilePath = Config::get('lighthouse.schema.register');
+
         //Get a temp folder and file
         $schemaDirectory = dirname(config('lighthouse.schema.register'));
         $tempSchemaFilePath = $schemaDirectory . '/tempschema.graphql';
@@ -275,13 +279,36 @@ class SchemaGenerator
         return $internalTypes;
     }
 
+    private function parseCustomQueriesFrom($customQueriesPath)
+    {
+
+        $customQueries = [];
+        foreach ($this->getGraphqlDefinitionFilePaths($customQueriesPath) as $customQueryPath) {
+            $customQueries[] = $this->getQueriesFrom($customQueryPath);
+        }
+
+        return $customQueries;
+    }
+
+    private function parseCustomMutationsFrom($customMutationsPath)
+    {
+
+        $customMutations = [];
+        foreach ($this->getGraphqlDefinitionFilePaths($customMutationsPath) as $customQueryPath) {
+            $customMutations[] = $this->getMutationsFrom($customQueryPath);
+        }
+
+        return $customMutations;
+    }
+
     /**
      * Auto-generates a query for each definedType
      * These queries contain arguments for each field defined in the Type
      * @param array $definedTypes
+     * @param array $definitionFileDirectories
      * @return string
      */
-    private function generateQueriesForDefinedTypes(array $definedTypes): string
+    private function generateQueriesForDefinedTypes(array $definedTypes, array $definitionFileDirectories): string
     {
         $queries = [];
         $mutations = [];
@@ -320,6 +347,10 @@ class SchemaGenerator
                 $mutations[] = $deleteMutation;
             }
         }
+
+        $queries = array_merge($queries, $this->parseCustomQueriesFrom($definitionFileDirectories['queries']));
+        $mutations = array_merge($mutations, $this->parseCustomMutationsFrom($definitionFileDirectories['mutations']));
+
         $return = sprintf("type Query{\r\n%s\r\n}", implode("\r\n", $queries));
         $return .= "\r\n\r\n";
         $return .= sprintf("type Mutation{\r\n%s\r\n}", implode("\r\n", $mutations));
@@ -327,5 +358,37 @@ class SchemaGenerator
         $return .= implode("\r\n", $inputTypes);
 
         return $return;
+    }
+
+    /**
+     * @param $customQueryPath
+     * @return string
+     */
+    private function getQueriesFrom($customQueryPath): string
+    {
+        $file = fopen($customQueryPath, "r");
+        $fileContents = fread($file, filesize($customQueryPath));
+
+        $returnData = trim(str_replace(["type Query", "{", "}", "\n"], '', $fileContents));
+
+        fclose($file);
+
+        return '    ' . $returnData;
+    }
+
+    /**
+     * @param $customQueryPath
+     * @return string
+     */
+    private function getMutationsFrom($customMutationPath): string
+    {
+        $file = fopen($customMutationPath, "r");
+        $fileContents = fread($file, filesize($customMutationPath));
+
+        $parsedData = trim(str_replace(["type Mutation", "{", "}", "\n"], '', $fileContents));
+
+        fclose($file);
+
+        return '    ' . $fileContents;
     }
 }
