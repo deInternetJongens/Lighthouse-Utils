@@ -277,26 +277,37 @@ class SchemaGenerator
         return $internalTypes;
     }
 
-    private function parseCustomQueriesFrom($customQueriesPath)
+    /**
+     * @param $customSchemaPath
+     * @param $type
+     * @return array
+     */
+    private function parseCustomSchemaFrom($customSchemaPath, $type)
     {
-
-        $customQueries = [];
-        foreach ($this->getGraphqlDefinitionFilePaths($customQueriesPath) as $customQueryPath) {
-            $customQueries[] = $this->getQueriesFrom($customQueryPath);
+        $customSchema = [];
+        foreach ($this->getGraphqlDefinitionFilePaths($customSchemaPath) as $path) {
+            $customSchema[] = $this->getSchemaFrom($path, $type);
         }
 
-        return $customQueries;
+        return $customSchema;
     }
 
-    private function parseCustomMutationsFrom($customMutationsPath)
+    /**
+     * @param $path
+     * @return array
+     */
+    private function parseCustomQueriesFrom($path)
     {
+        return $this->parseCustomSchemaFrom($path, 'Query');
+    }
 
-        $customMutations = [];
-        foreach ($this->getGraphqlDefinitionFilePaths($customMutationsPath) as $customQueryPath) {
-            $customMutations[] = $this->getMutationsFrom($customQueryPath);
-        }
-
-        return $customMutations;
+    /**
+     * @param $path
+     * @return array
+     */
+    private function parseCustomMutationsFrom($path)
+    {
+        return $this->parseCustomSchemaFrom($path, 'Mutation');
     }
 
     /**
@@ -358,35 +369,15 @@ class SchemaGenerator
         return $return;
     }
 
-    /**
-     * @param $customQueryPath
-     * @return string
-     */
-    private function getQueriesFrom($customQueryPath): string
+    private function getSchemaFrom($path, $type)
     {
-        $file = fopen($customQueryPath, "r");
-        $fileContents = fread($file, filesize($customQueryPath));
+        $file = fopen($path, "r");
+        $fileContents = fread($file, filesize($path));
 
-        $returnData = trim(str_replace(["type Query", "{", "}"], '', $fileContents));
+        $returnData = trim(str_replace(["type", $type, "{", "}"], '', $fileContents));
 
         fclose($file);
 
         return '    ' . $returnData;
-    }
-
-    /**
-     * @param $customMutationPath
-     * @return string
-     */
-    private function getMutationsFrom($customMutationPath): string
-    {
-        $file = fopen($customMutationPath, "r");
-        $fileContents = fread($file, filesize($customMutationPath));
-
-        $parsedData = trim(str_replace(["type Mutation", "{", "}"], '', $fileContents));
-
-        fclose($file);
-
-        return '    ' . $parsedData;
     }
 }
