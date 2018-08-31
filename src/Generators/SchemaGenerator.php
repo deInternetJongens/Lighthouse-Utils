@@ -375,7 +375,7 @@ class SchemaGenerator
     }
 
     /**
-     * @param $customQueryPath
+     * @param $customMutationPath
      * @return string
      */
     private function getMutationsFrom($customMutationPath): string
