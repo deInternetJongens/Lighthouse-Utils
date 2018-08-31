@@ -13,8 +13,6 @@ use DeInternetJongens\LighthouseUtils\Generators\Queries\PaginateAllQueryGenerat
 use DeInternetJongens\LighthouseUtils\Models\GraphQLSchema;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\Date;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\DateTimeTz;
-use GraphQL\Language\Parser;
-use GraphQL\Language\Source;
 use GraphQL\Type\Definition\FieldDefinition;
 use GraphQL\Type\Definition\FloatType;
 use GraphQL\Type\Definition\IDType;
