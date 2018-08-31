@@ -367,7 +367,7 @@ class SchemaGenerator
         $file = fopen($customQueryPath, "r");
         $fileContents = fread($file, filesize($customQueryPath));
 
-        $returnData = trim(str_replace(["type Query", "{", "}", "\n"], '', $fileContents));
+        $returnData = trim(str_replace(["type Query", "{", "}"], '', $fileContents));
 
         fclose($file);
 
@@ -383,7 +383,7 @@ class SchemaGenerator
         $file = fopen($customMutationPath, "r");
         $fileContents = fread($file, filesize($customMutationPath));
 
-        $parsedData = trim(str_replace(["type Mutation", "{", "}", "\n"], '', $fileContents));
+        $parsedData = trim(str_replace(["type Mutation", "{", "}"], '', $fileContents));
 
         fclose($file);
 
