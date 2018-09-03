@@ -21,23 +21,15 @@ class DateTimeTz extends ScalarType
     public $description = 'A date string with format Y-m-d H:i:s+P. Example: "2018-01-01 13:00:00+00:00"';
 
     /**
-     * @param Carbon $value
-     * @return string
-     * @throws Error
+     * @inheritdoc
      */
     public function serialize($value)
     {
-        if (! $value instanceof Carbon) {
-            $value = $this->parseValue($value);
-        }
-
         return $value->format(self::FORMAT);
     }
 
     /**
-     * @param string $value
-     * @return Carbon
-     * @throws Error
+     * @inheritdoc
      */
     public function parseValue($value)
     {
@@ -49,10 +41,7 @@ class DateTimeTz extends ScalarType
     }
 
     /**
-     * @param Node $valueNode
-     * @param array|null $variables
-     * @return Carbon
-     * @throws Error
+     * @inheritdoc
      */
     public function parseLiteral($valueNode, array $variables = null)
     {
