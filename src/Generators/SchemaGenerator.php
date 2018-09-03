@@ -5,6 +5,7 @@ namespace DeInternetJongens\LighthouseUtils\Generators;
 use Config;
 use DeInternetJongens\LighthouseUtils\Events\GraphQLSchemaGenerated;
 use DeInternetJongens\LighthouseUtils\Exceptions\InvalidConfigurationException;
+use DeInternetJongens\LighthouseUtils\Generators\Classes\ParseDefinitions;
 use DeInternetJongens\LighthouseUtils\Generators\Mutations\CreateMutationWithInputTypeGenerator;
 use DeInternetJongens\LighthouseUtils\Generators\Mutations\DeleteMutationGenerator;
 use DeInternetJongens\LighthouseUtils\Generators\Mutations\UpdateMutationWithInputTypeGenerator;
@@ -13,14 +14,6 @@ use DeInternetJongens\LighthouseUtils\Generators\Queries\PaginateAllQueryGenerat
 use DeInternetJongens\LighthouseUtils\Models\GraphQLSchema;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\Date;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\DateTimeTz;
-use GraphQL\Error\SyntaxError;
-use GraphQL\Language\AST\ArgumentNode;
-use GraphQL\Language\AST\DirectiveNode;
-use GraphQL\Language\AST\DocumentNode;
-use GraphQL\Language\AST\NodeList;
-use GraphQL\Language\AST\ObjectTypeDefinitionNode;
-use GraphQL\Language\Parser;
-use GraphQL\Language\Source;
 use GraphQL\Type\Definition\FieldDefinition;
 use GraphQL\Type\Definition\FloatType;
 use GraphQL\Type\Definition\IDType;
@@ -49,6 +42,21 @@ class SchemaGenerator
     ];
 
     /**
+     * @var \DeInternetJongens\LighthouseUtils\Generators\Classes\ParseDefinitions
+     */
+    private $definitionsParser;
+
+    /**
+     * SchemaGenerator constructor.
+     *
+     * @param \DeInternetJongens\LighthouseUtils\Generators\Classes\ParseDefinitions $definitionsParser
+     */
+    public function __construct(ParseDefinitions $definitionsParser)
+    {
+        $this->definitionsParser = $definitionsParser;
+    }
+
+    /**
      * Generates a schema from an array of definition file directories
      * For now, this only supports Types.
      * In the future it should also support Mutations and Queries.
@@ -71,7 +79,9 @@ class SchemaGenerator
         $definedTypes = $this->getDefinedTypesFromSchema($schema, $definitionFileDirectories);
 
         $queries = $this->generateQueriesForDefinedTypes($definedTypes, $definitionFileDirectories);
-        $typesImports = $this->generateGraphqlRelativeImports($this->getGraphqlDefinitionFilePaths($definitionFileDirectories['types']));
+        $typesImports = $this->generateGraphqlRelativeImports(
+            $this->definitionsParser->getGraphqlDefinitionFilePaths($definitionFileDirectories['types'])
+        );
 
         if ($authEnabled) {
             event(new GraphQLSchemaGenerated(GraphQLSchema::all()));
@@ -140,7 +150,9 @@ class SchemaGenerator
         $schemaDirectory = dirname(config('lighthouse.schema.register'));
         $tempSchemaFilePath = $schemaDirectory . '/tempschema.graphql';
 
-        $typeDefinitionPaths = $this->getGraphqlDefinitionFilePaths($definitionFileDirectories['types']);
+        $typeDefinitionPaths = $this->definitionsParser->getGraphqlDefinitionFilePaths(
+            $definitionFileDirectories['types']
+        );
         $relativeTypeImports = $this->generateGraphqlRelativeImports($typeDefinitionPaths);
 
         if (! file_exists($schemaDirectory)) {
@@ -164,20 +176,6 @@ class SchemaGenerator
         Config::set('lighthouse.schema.register', $originalSchemaFilePath);
 
         return $schema;
-    }
-
-    /**
-     * @param string $typePath
-     * @return array
-     */
-    private function getGraphqlDefinitionFilePaths(string $typePath): array
-    {
-        $files = [];
-        foreach (glob(sprintf('%s/%s/*.graphql', base_path(), $typePath)) as $file) {
-            $files[] = $file;
-        }
-
-        return $files;
     }
 
     /**
@@ -248,7 +246,10 @@ class SchemaGenerator
      */
     private function getDefinedTypesFromSchema(Schema $schema, array $definitionFileDirectories): array
     {
-        $definedTypes = $this->getGraphqlDefinitionFilePaths($definitionFileDirectories['types']);
+        $definedTypes = $this->definitionsParser->getGraphqlDefinitionFilePaths(
+            $definitionFileDirectories['types']
+        );
+
         foreach ($definedTypes as $key => $type) {
             $definedTypes[$key] = str_replace('.graphql', '', basename($type));
         }
@@ -290,41 +291,6 @@ class SchemaGenerator
         }
 
         return $internalTypes;
-    }
-
-    /**
-     * @param string $customSchemaPath
-     * @param string $type
-     * @return array
-     */
-    private function parseCustomSchemaFrom(string $customSchemaPath, string $type)
-    {
-        $customSchema = [];
-        foreach ($this->getGraphqlDefinitionFilePaths($customSchemaPath) as $path) {
-            $returnData = $this->extractSchema($type, $this->getSchemaFrom($path));
-
-            $customSchema = array_merge($customSchema, $returnData);
-        }
-
-        return $customSchema;
-    }
-
-    /**
-     * @param string $path
-     * @return array
-     */
-    private function parseCustomQueriesFrom(string $path)
-    {
-        return $this->parseCustomSchemaFrom($path, 'Query');
-    }
-
-    /**
-     * @param string $path
-     * @return array
-     */
-    private function parseCustomMutationsFrom(string $path)
-    {
-        return $this->parseCustomSchemaFrom($path, 'Mutation');
     }
 
     /**
@@ -375,8 +341,15 @@ class SchemaGenerator
             }
         }
 
-        $queries = array_merge($queries, $this->parseCustomQueriesFrom($definitionFileDirectories['queries']));
-        $mutations = array_merge($mutations, $this->parseCustomMutationsFrom($definitionFileDirectories['mutations']));
+        $queries = array_merge(
+            $queries,
+            $this->definitionsParser->parseCustomQueriesFrom($definitionFileDirectories['queries'])
+        );
+
+        $mutations = array_merge(
+            $mutations,
+            $this->definitionsParser->parseCustomMutationsFrom($definitionFileDirectories['mutations'])
+        );
 
         $return = sprintf("type Query{\r\n%s\r\n}", implode("\r\n", $queries));
         $return .= "\r\n\r\n";
@@ -385,129 +358,5 @@ class SchemaGenerator
         $return .= implode("\r\n", $inputTypes);
 
         return $return;
-    }
-
-    /**
-     * @param string $path
-     * @return bool|string
-     */
-    private function getSchemaFrom(string $path)
-    {
-        $file = fopen($path, "r");
-
-        $fileContents = fread($file, filesize($path));
-
-        fclose($file);
-
-        return $fileContents;
-    }
-
-    /**
-     * @param string $type
-     * @param string $fileContents
-     * @return array
-     */
-    private function extractSchema(string $type, string $fileContents): array
-    {
-        $this->registerPermissions($fileContents);
-
-        $rawSchemaRows = $this->extractRawRowsFromSchema($type, $fileContents);
-
-        $whitespaceRemovedRows = $this->removeWhitespaceFromRows($rawSchemaRows);
-
-        $cleared = array_filter($whitespaceRemovedRows);
-
-        return $this->indentRows($cleared);
-    }
-
-    /**
-     * @param array $rawSchemaRows
-     * @return array
-     */
-    private function removeWhitespaceFromRows(array $rawSchemaRows): array
-    {
-        return array_map(
-            'trim',
-            $rawSchemaRows
-        );
-    }
-
-    /**
-     * @param array $cleared
-     * @return array
-     */
-    private function indentRows(array $cleared): array
-    {
-        return array_map(function ($row) {
-            return '    ' . $row;
-        }, $cleared);
-    }
-
-    /**
-     * @param string $type
-     * @param string $fileContents
-     * @return array
-     */
-    private function extractRawRowsFromSchema(string $type, string $fileContents): array
-    {
-        return explode(
-            "\n",
-            str_replace(["type", $type, "{", "}"], "", $fileContents)
-        );
-    }
-
-    /**
-     * @param string $fileContents
-     * @return array
-     */
-    private function registerPermissions(string $fileContents)
-    {
-        /** @var DocumentNode $parser */
-        try {
-            $parser = Parser::parse(new Source($fileContents));
-        } catch (SyntaxError $e) {
-        }
-
-        /** @var \GraphQL\Language\AST\NodeList $nodeList */
-        $nodeList = $parser->definitions;
-
-        /** @var ObjectTypeDefinitionNode $firstNode */
-        $wrapper = $nodeList[0];
-
-        $cans = [];
-
-        /** @var NodeList $field */
-        foreach ($wrapper->fields as $field) {
-            $arguments = [];
-
-            $model = $field->type->type->name->value ?? $field->type->name->value;
-
-            /** @var DirectiveNode $directive */
-            foreach ($field->directives as $directive) {
-                if ($directive->name->value === 'can') {
-                    $arguments[] = $directive->arguments;
-
-                    /** @var ArgumentNode $argument */
-                    foreach ($directive->arguments as $argument) {
-                        if ($argument->name->value === 'if') {
-                            $cans[] = [
-                                'name' => $field->name->value,
-                                'model' => $model,
-                                'type' => strtolower($wrapper->name->value),
-                                'permission' => $argument->value->value ?? '',
-                            ];
-                            GraphQLSchema::register(
-                                $field->name->value,
-                                $model,
-                                strtolower($wrapper->name->value),
-                                $argument->value->value
-                            );
-                        }
-                    }
-                }
-            }
-        }
-
-        return $cans;
     }
 }
