@@ -44,6 +44,7 @@ class SchemaGenerator
      * Generates a schema from an array of definition file directories
      * For now, this only supports Types.
      * In the future it should also support Mutations and Queries.
+     *
      * @param array $definitionFileDirectories
      * @return string Generated Schema with Types and Queries
      * @throws InvalidConfigurationException
@@ -77,6 +78,7 @@ class SchemaGenerator
      * - All required keys
      * - Filled values for each key
      * - Existing paths for each key
+     *
      * @param array $definitionFileDirectories
      * @return bool
      * @throws InvalidConfigurationException
@@ -118,6 +120,7 @@ class SchemaGenerator
      * Generates a GraphQL schema for a set of definition files
      * Definition files can only be Types at this time
      * In the future this should also support Mutations and Queries
+     *
      * @param array $definitionFileDirectories
      * @return Schema
      */
@@ -171,6 +174,7 @@ class SchemaGenerator
 
     /**
      * Generates
+     *
      * @param array $schemaDefinitionFilePaths
      * @return string
      */
@@ -188,6 +192,7 @@ class SchemaGenerator
     /**
      * Find the relative file system path between two file system paths
      * As stolen from: https://gist.github.com/ohaal/2936041
+     *
      * @param  string $frompath Path to start from
      * @param  string $topath Path we want to end up in
      * @return string             Path leading from $frompath to $topath
@@ -228,6 +233,7 @@ class SchemaGenerator
 
     /**
      * Parse defined types from a schema into an array with the native GraphQL Scalar types for each field
+     *
      * @param Schema $schema
      * @param array $definitionFileDirectories
      * @return Type[]
@@ -258,7 +264,8 @@ class SchemaGenerator
 
                 //Every required field is defined by a parent 'NonNullType'
                 if (method_exists($graphQLType, 'getWrappedType')) {
-                    //Clone the field to prevent pass by reference, because we want to add a config value unique to this field.
+                    // Clone the field to prevent pass by reference,
+                    // because we want to add a config value unique to this field.
                     $graphQLType = clone $graphQLType->getWrappedType();
 
                     //We want to know later on wether or not a field is required
@@ -278,11 +285,11 @@ class SchemaGenerator
     }
 
     /**
-     * @param $customSchemaPath
-     * @param $type
+     * @param string $customSchemaPath
+     * @param string $type
      * @return array
      */
-    private function parseCustomSchemaFrom($customSchemaPath, $type)
+    private function parseCustomSchemaFrom(string $customSchemaPath, string $type)
     {
         $customSchema = [];
         foreach ($this->getGraphqlDefinitionFilePaths($customSchemaPath) as $path) {
@@ -290,24 +297,24 @@ class SchemaGenerator
 
             $customSchema = array_merge($customSchema, $returnData);
         }
-        
+
         return $customSchema;
     }
 
     /**
-     * @param $path
+     * @param string $path
      * @return array
      */
-    private function parseCustomQueriesFrom($path)
+    private function parseCustomQueriesFrom(string $path)
     {
         return $this->parseCustomSchemaFrom($path, 'Query');
     }
 
     /**
-     * @param $path
+     * @param string $path
      * @return array
      */
-    private function parseCustomMutationsFrom($path)
+    private function parseCustomMutationsFrom(string $path)
     {
         return $this->parseCustomSchemaFrom($path, 'Mutation');
     }
@@ -315,6 +322,7 @@ class SchemaGenerator
     /**
      * Auto-generates a query for each definedType
      * These queries contain arguments for each field defined in the Type
+     *
      * @param array $definedTypes
      * @param array $definitionFileDirectories
      * @return string
@@ -371,7 +379,11 @@ class SchemaGenerator
         return $return;
     }
 
-    private function getSchemaFrom($path)
+    /**
+     * @param string $path
+     * @return bool|string
+     */
+    private function getSchemaFrom(string $path)
     {
         $file = fopen($path, "r");
 
@@ -383,20 +395,54 @@ class SchemaGenerator
     }
 
     /**
-     * @param $type
-     * @param $fileContents
+     * @param string $type
+     * @param string $fileContents
      * @return array
      */
-    private function extractSchema($type, $fileContents): array
+    private function extractSchema(string $type, string $fileContents): array
     {
-        return array_filter(
-            array_map(
-                'trim',
-                explode(
-                    "\n",
-                    str_replace(["type", $type, "{", "}"], "", $fileContents)
-                )
-            )
+        $rawSchemaRows = $this->extractRawRowsFromSchema($type, $fileContents);
+
+        $whitespaceRemovedRows = $this->removeWhitespaceFromRows($rawSchemaRows);
+
+        $cleared = array_filter($whitespaceRemovedRows);
+
+        return $this->indentRows($cleared);
+    }
+
+    /**
+     * @param array $rawSchemaRows
+     * @return array
+     */
+    private function removeWhitespaceFromRows(array $rawSchemaRows): array
+    {
+        return array_map(
+            'trim',
+            $rawSchemaRows
+        );
+    }
+
+    /**
+     * @param array $cleared
+     * @return array
+     */
+    private function indentRows(array $cleared): array
+    {
+        return array_map(function ($row) {
+            return '    ' . $row;
+        }, $cleared);
+    }
+
+    /**
+     * @param string $type
+     * @param string $fileContents
+     * @return array
+     */
+    private function extractRawRowsFromSchema(string $type, string $fileContents): array
+    {
+        return explode(
+            "\n",
+            str_replace(["type", $type, "{", "}"], "", $fileContents)
         );
     }
 }
