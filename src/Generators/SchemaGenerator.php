@@ -13,6 +13,14 @@ use DeInternetJongens\LighthouseUtils\Generators\Queries\PaginateAllQueryGenerat
 use DeInternetJongens\LighthouseUtils\Models\GraphQLSchema;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\Date;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\DateTimeTz;
+use GraphQL\Error\SyntaxError;
+use GraphQL\Language\AST\ArgumentNode;
+use GraphQL\Language\AST\DirectiveNode;
+use GraphQL\Language\AST\DocumentNode;
+use GraphQL\Language\AST\NodeList;
+use GraphQL\Language\AST\ObjectTypeDefinitionNode;
+use GraphQL\Language\Parser;
+use GraphQL\Language\Source;
 use GraphQL\Type\Definition\FieldDefinition;
 use GraphQL\Type\Definition\FloatType;
 use GraphQL\Type\Definition\IDType;
@@ -401,6 +409,8 @@ class SchemaGenerator
      */
     private function extractSchema(string $type, string $fileContents): array
     {
+        $this->registerPermissions($fileContents);
+
         $rawSchemaRows = $this->extractRawRowsFromSchema($type, $fileContents);
 
         $whitespaceRemovedRows = $this->removeWhitespaceFromRows($rawSchemaRows);
@@ -444,5 +454,60 @@ class SchemaGenerator
             "\n",
             str_replace(["type", $type, "{", "}"], "", $fileContents)
         );
+    }
+
+    /**
+     * @param string $fileContents
+     * @return array
+     */
+    private function registerPermissions(string $fileContents)
+    {
+        /** @var DocumentNode $parser */
+        try {
+            $parser = Parser::parse(new Source($fileContents));
+        } catch (SyntaxError $e) {
+        }
+
+        /** @var \GraphQL\Language\AST\NodeList $nodeList */
+        $nodeList = $parser->definitions;
+
+        /** @var ObjectTypeDefinitionNode $firstNode */
+        $wrapper = $nodeList[0];
+
+        $cans = [];
+
+        /** @var NodeList $field */
+        foreach ($wrapper->fields as $field) {
+            $arguments = [];
+
+            $model = $field->type->type->name->value ?? $field->type->name->value;
+
+            /** @var DirectiveNode $directive */
+            foreach ($field->directives as $directive) {
+                if ($directive->name->value === 'can') {
+                    $arguments[] = $directive->arguments;
+
+                    /** @var ArgumentNode $argument */
+                    foreach ($directive->arguments as $argument) {
+                        if ($argument->name->value === 'if') {
+                            $cans[] = [
+                                'name' => $field->name->value,
+                                'model' => $model,
+                                'type' => strtolower($wrapper->name->value),
+                                'permission' => $argument->value->value ?? '',
+                            ];
+                            GraphQLSchema::register(
+                                $field->name->value,
+                                $model,
+                                strtolower($wrapper->name->value),
+                                $argument->value->value
+                            );
+                        }
+                    }
+                }
+            }
+        }
+
+        return $cans;
     }
 }
