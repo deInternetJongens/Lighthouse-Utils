@@ -79,6 +79,20 @@ php artisan lighthouse-utils:generate-schema
 ```
 The schema will be generated to the path as defined in the Lighthouse config, `lighthouse.schema.register`
 
+## Custom Queries and Mutations
+
+It might happen that you need a custom query or mutation beside the generated schema. In this package you have the ability to add custom queries and mutations by creating `.graphql` files in the default directories
+`app/GraphQL/Queries` and `app/GraphQL/Mutations` *(These directories are adjustable by editing the `config/lighthouse.php` file)* 
+
+Take for example a custom query to retrieve an instance of a model:
+```graphql
+type Query{
+    customQuery(id: ID! @eq): Model! @find(model: "Model")
+}
+```
+
+This query will be parsed after running the schema generation command and will be added to the Query section of the `schema.graphql`
+
 ### Scalar types
 
 Currently two scalar types are included. More about scalar type usage can be [found here](https://lighthouse-php.netlify.com/docs/schema-scalars.html).

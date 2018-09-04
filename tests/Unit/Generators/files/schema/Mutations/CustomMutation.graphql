@@ -1,0 +1,4 @@
+type Mutation{
+    test(input: testInput!): Model @create(model: "Model") @can(if: "testPermission", model: "User")
+    secondTest(input: testInput!): Model @create(model: "Model") @can(if: "testPermission", model: "User")
+}
