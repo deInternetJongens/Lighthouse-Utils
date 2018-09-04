@@ -6,6 +6,8 @@ use DeInternetJongens\LighthouseUtils\Schema\Scalars\PostalCode;
 use Faker\Factory;
 use Faker\Generator;
 use GraphQL\Error\Error;
+use GraphQL\Language\AST\BooleanValueNode;
+use GraphQL\Language\AST\StringValueNode;
 use PHPUnit\Framework\TestCase;
 
 class PostalCodeTest extends TestCase
@@ -53,6 +55,23 @@ class PostalCodeTest extends TestCase
     }
 
     /**
+     * @return array
+     */
+    public function serializeDataProvider(): array
+    {
+        return [
+            [
+                'input' => '8111 BS',
+                'expected result' => '8111 BS'
+            ],
+            [
+                'input' => '3081 KD',
+                'expected result' => '3081 KD'
+            ]
+        ];
+    }
+
+    /**
      * @return void
      * @throws Error
      * @throws \PHPUnit\Framework\ExpectationFailedException
@@ -60,19 +79,63 @@ class PostalCodeTest extends TestCase
      *
      * @dataProvider serializeDataProvider
      */
-    public function testSerialize()
+    public function testSerialize($input, $expectedResult)
     {
-        $faker = new Factory();
-
-        for($i = 0; $i < 10; $i++) {
-            $input = $faker->postcode;
-            $result = $this->getScalar()->serialize($input);
-            $this->assertEquals($input, $result);
-        }
+        $this->assertEquals($expectedResult, $this->getScalar()->serialize($input));
     }
 
-    public function testParseLiteral()
+    /**
+     * @return array
+     */
+    public function parseLiteralDataProvider(): array
     {
+        return [
+            'Happy flow' => [
+                'input' => '8111BS',
+                'node class' => StringValueNode::class,
+            ],
+            'Invalid format' => [
+                'input' => '8111 BS',
+                'node class' => StringValueNode::class,
+                'exception' => Error::class,
+            ],
+            'Invalid node type' => [
+                'input' => '8111BS',
+                'node class' => BooleanValueNode::class,
+                'exception' => Error::class,
+            ],
+        ];
+    }
+
+    /**
+     * @param string $input
+     * @param string $nodeClass
+     * @param string $exception
+     * @return void
+     * @throws Error
+     * @throws \InvalidArgumentException
+     * @throws ExpectationFailedException
+     * @throws InvalidArgumentException
+     * @dataProvider parseLiteralDataProvider
+     */
+    public function testParseLiteral(string $input, string $nodeClass, string $exception = ''): void
+    {
+        if ($exception !== '') {
+            $this->expectException($exception);
+        }
+
+        $result = $this->getScalar()->parseLiteral(
+            new $nodeClass(
+                [
+                    'value' => $input,
+                    'kind' => 'String!',
+                ]
+            )
+        );
+
+        $expectedResult = $input;
+
+        $this->assertEquals($result, $expectedResult);
     }
 
     private function getScalar(): PostalCode

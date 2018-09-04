@@ -45,6 +45,6 @@ class PostalCode extends ScalarType
             throw new Error('Query error: Can only parse strings got: ' . $valueNode->kind, [$valueNode]);
         }
 
-        return $this->parseValue($valueNode);
+        return $this->parseValue($valueNode->value);
     }
 }
