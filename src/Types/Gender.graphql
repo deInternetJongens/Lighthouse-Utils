@@ -1,0 +1,6 @@
+enum Gender {
+    MALE @enum(value: "male")
+    FEMALE @enum(value: "female")
+    UNKNOWN @enum(value: "unknown")
+    OTHER @enum(value: "other")
+}

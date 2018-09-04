@@ -164,6 +164,8 @@ class SchemaGenerator
             $files[] = $file;
         }
 
+        $files = array_merge($files, glob(__DIR__.'/../Types/*.graphql'));
+        
         return $files;
     }
 
