@@ -32,4 +32,29 @@ class ParsePermissionsTest extends TestCase
             GraphQLSchema::where('permission', 'testPermission')->get()
         );
     }
+
+    public function testQueryWithSyntaxErrorThrowsSyntaxErrorException()
+    {
+        $graphQLSchema = 'type Query{
+                test(id: ID! @eq):  @find(model: "Model")
+            }';
+
+        $this->expectException(\GraphQL\Error\SyntaxError::class);
+
+        $this->permissionParser->register($graphQLSchema);
+    }
+
+    public function testQueryWithoutCan()
+    {
+        $graphQLSchema = 'type Query{
+                test(id: ID! @eq): Model! @find(model: "Model")
+            }';
+
+        $this->permissionParser->register($graphQLSchema);
+
+        $this->assertCount(
+            0,
+            GraphQLSchema::all()
+        );
+    }
 }
