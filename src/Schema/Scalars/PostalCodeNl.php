@@ -14,7 +14,7 @@ class PostalCodeNl extends ScalarType
     public $name = 'PostalCode';
 
     /** @var string */
-    public $description = 'A valid postalcode for the Netherlands with pattern [1234aa]. Example: 1234AA.';
+    public $description = 'A valid postalcode for The Netherlands with pattern [1234aa]. Example: 1234AA.';
 
     /**
      * @inheritDoc
