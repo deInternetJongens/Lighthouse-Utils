@@ -3,8 +3,6 @@
 namespace Tests\Unit\Schema\Scalars;
 
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\PostalCodeNl;
-use Faker\Factory;
-use Faker\Generator;
 use GraphQL\Error\Error;
 use GraphQL\Language\AST\BooleanValueNode;
 use GraphQL\Language\AST\StringValueNode;
