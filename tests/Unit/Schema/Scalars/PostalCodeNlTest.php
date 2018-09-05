@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Schema\Scalars;
 
-use DeInternetJongens\LighthouseUtils\Schema\Scalars\NlPostalCode;
+use DeInternetJongens\LighthouseUtils\Schema\Scalars\PostalCodeNl;
 use Faker\Factory;
 use Faker\Generator;
 use GraphQL\Error\Error;
@@ -10,7 +10,7 @@ use GraphQL\Language\AST\BooleanValueNode;
 use GraphQL\Language\AST\StringValueNode;
 use PHPUnit\Framework\TestCase;
 
-class NlPostalCodeTest extends TestCase
+class PostalCodeNlTest extends TestCase
 {
     public function parseValueDataProvider(): array
     {
@@ -138,8 +138,8 @@ class NlPostalCodeTest extends TestCase
         $this->assertEquals($result, $expectedResult);
     }
 
-    private function getScalar(): NlPostalCode
+    private function getScalar(): PostalCodeNl
     {
-        return new NlPostalCode();
+        return new PostalCodeNl();
     }
 }
