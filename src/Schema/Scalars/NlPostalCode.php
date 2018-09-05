@@ -6,7 +6,7 @@ use GraphQL\Error\Error;
 use GraphQL\Language\AST\StringValueNode;
 use GraphQL\Type\Definition\ScalarType;
 
-class PostalCode extends ScalarType
+class NlPostalCode extends ScalarType
 {
     private const PATTERN = '/^\d{4}[a-zA-Z]{2}$/';
 
