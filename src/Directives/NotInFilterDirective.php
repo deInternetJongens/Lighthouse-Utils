@@ -11,7 +11,7 @@ class NotInFilterDirective extends BaseDirective
      */
     public function handle(string $fieldName, $value, Builder $builder): Builder
     {
-        return $builder->whereNotIn($fieldName, explode(',', $value));
+        return $builder->whereNotIn($fieldName, $value);
     }
 
     public function name(): string

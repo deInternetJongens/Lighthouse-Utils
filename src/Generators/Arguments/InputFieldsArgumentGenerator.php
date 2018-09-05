@@ -20,7 +20,8 @@ class InputFieldsArgumentGenerator
         FloatType::class,
         Date::class,
         DateTime::class,
-        DateTimeTz::class
+        DateTimeTz::class,
+        EnumType::class
     ];
 
     /** @var array */
