@@ -58,14 +58,10 @@ class PostalCodeNlTest extends TestCase
     public function serializeDataProvider(): array
     {
         return [
-            [
+            'Happy flow' => [
                 'input' => '8111BS',
                 'expected result' => '8111BS'
             ],
-            [
-                'input' => '3081KD',
-                'expected result' => '3081KD'
-            ]
         ];
     }
 
