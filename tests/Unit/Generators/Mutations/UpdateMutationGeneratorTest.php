@@ -7,6 +7,7 @@ use DeInternetJongens\LighthouseUtils\Tests\Unit\TestCase;
 use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\IDType;
 use GraphQL\Type\Definition\StringType;
+use GraphQL\Type\Definition\UnionType;
 
 class UpdateMutationGeneratorTest extends TestCase
 {
@@ -46,8 +47,8 @@ class UpdateMutationGeneratorTest extends TestCase
             'Wrong type fields given' => [
                 'type_name' => 'ClubMember',
                 'type_fields' => [
-                    'enum' => new EnumType([
-                        'name' => 'enum',
+                    'union' => new UnionType([
+                        'name' => 'union',
                     ]),
                 ],
                 'expected_query' => '',
@@ -59,8 +60,8 @@ class UpdateMutationGeneratorTest extends TestCase
                     'name' => new StringType([
                         'generator-required' => true,
                     ]),
-                    'enum' => new EnumType([
-                        'name' => 'enum',
+                    'union' => new UnionType([
+                        'name' => 'union',
                     ]),
                 ],
                 'expected_query' => '    updateClubMember(club_id: ID!, name: String!): ClubMember @update(model: "ClubMember") @can(if: "updateClubMember", model: "User")',

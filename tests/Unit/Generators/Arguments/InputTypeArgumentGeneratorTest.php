@@ -4,8 +4,8 @@ namespace DeInternetJongens\LighthouseUtils\Tests\Unit\Generators\Arguments;
 
 use DeInternetJongens\LighthouseUtils\Generators\Arguments\InputTypeArgumentGenerator;
 use DeInternetJongens\LighthouseUtils\Tests\Unit\TestCase;
-use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\StringType;
+use GraphQL\Type\Definition\UnionType;
 
 class InputTypeArgumentGeneratorTest extends TestCase
 {
@@ -32,9 +32,9 @@ class InputTypeArgumentGeneratorTest extends TestCase
                 'expected_argument' => 'input name {name: String!}',
             ],
             'Wrong type given' => [
-                'input_name' => 'enum',
+                'input_name' => 'union',
                 'type_fields' => [
-                    'enum' => new EnumType(['name' => 'test']),
+                    'union' => new UnionType(['name' => 'test']),
                 ],
                 'expected_argument' => '',
             ],
