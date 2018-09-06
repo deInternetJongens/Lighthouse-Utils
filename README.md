@@ -110,6 +110,10 @@ A date string with format Y-m-d H:i:s+P. Example: "2018-01-01 13:00:00+00:00"
 
 `scalar DateTimeTz @scalar(class: "DeInternetJongens\\LighthouseUtils\\Schema\\Scalars\\DateTimeTz")`
 
+#### PostalCodeNl
+
+A postal code as valid for The Netherlands, format 1111aa. Example: "7311SZ"
+
 ### Directives
 
 To run more advanced queries, a couple of directives are included. 
