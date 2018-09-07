@@ -3,6 +3,7 @@
 namespace DeInternetJongens\LighthouseUtils\Tests\Unit\Generators\Arguments;
 
 use DeInternetJongens\LighthouseUtils\Generators\Arguments\InputFieldsArgumentGenerator;
+use DeInternetJongens\LighthouseUtils\Schema\Scalars\Date;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\DateTimeTz;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\PostalCodeNl;
 use DeInternetJongens\LighthouseUtils\Tests\Unit\TestCase;
@@ -57,6 +58,14 @@ class InputFieldsArgumentGeneratorTest extends TestCase
             'Custom scalar DateTime is supported' => [
                 'type_fields' => [
                     'date' => new DateTime(),
+                ],
+                'expected_arguments' => [
+                    'date: DateTime',
+                ],
+            ],
+            'Custom scalar Date is supported' => [
+                'type_fields' => [
+                    'date' => new Date(),
                 ],
                 'expected_arguments' => [
                     'date: DateTime',
