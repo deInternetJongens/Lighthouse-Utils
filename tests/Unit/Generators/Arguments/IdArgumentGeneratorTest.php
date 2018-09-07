@@ -15,8 +15,7 @@ class IdArgumentGeneratorTest extends TestCase
     public function dataProvider(): array
     {
         return [
-            // Happy flow
-            [
+            'Happy flow' => [
                 'type_fields' => [
                     'id' => new IdType(),
                 ],
@@ -24,15 +23,13 @@ class IdArgumentGeneratorTest extends TestCase
                     'id: ID!',
                 ],
             ],
-            // Wrong type given
-            [
+            'Wrong type given' => [
                 'type_fields' => [
                     'name' => new StringType(),
                 ],
                 'expected_arguments' => []
             ],
-            // Multiple types given, single id is supported
-            [
+            'Multiple types given, single id is supported' => [
                 'type_fields' => [
                     'id' => new IDType(),
                     'club_id' => new IDType(),
@@ -41,8 +38,7 @@ class IdArgumentGeneratorTest extends TestCase
                     'id: ID!',
                 ]
             ],
-            // No types given
-            [
+            'No types given' => [
                 'type_fields' => [],
                 'expected_arguments' => []
             ],

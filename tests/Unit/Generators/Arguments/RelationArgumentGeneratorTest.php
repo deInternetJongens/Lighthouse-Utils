@@ -15,8 +15,7 @@ class RelationArgumentGeneratorTest extends TestCase
     public function dataProvider(): array
     {
         return [
-            // Happy flow, not required
-            [
+            'Happy flow, not required' => [
                 'type_fields' => [
                     'club' => new ObjectType([
                         'name' => 'club',
@@ -26,8 +25,7 @@ class RelationArgumentGeneratorTest extends TestCase
                     'club_id: ID',
                 ],
             ],
-            // Happy flow, required
-            [
+            'Happy flow, required' => [
                 'type_fields' => [
                     'club' => new ObjectType([
                         'name' => 'club',
@@ -38,8 +36,7 @@ class RelationArgumentGeneratorTest extends TestCase
                     'club_id: ID!',
                 ],
             ],
-            // Multiple types, not required
-            [
+            'Multiple types, not required' => [
                 'type_fields' => [
                     'club' => new ObjectType([
                         'name' => 'club',
@@ -53,8 +50,7 @@ class RelationArgumentGeneratorTest extends TestCase
                     'club_member_id: ID'
                 ],
             ],
-            // Multiple types, required
-            [
+            'Multiple types, required' => [
                 'type_fields' => [
                     'club' => new ObjectType([
                         'name' => 'club',
@@ -70,15 +66,13 @@ class RelationArgumentGeneratorTest extends TestCase
                     'club_member_id: ID!'
                 ],
             ],
-            // Wrong type
-            [
+            'Wrong type' => [
                 'type_fields' => [
                     'club' => new StringType(),
                 ],
                 'expected_arguments' => [],
             ],
-            // Wrong type, but required
-            [
+            'Wrong type, but required' => [
                 'type_fields' => [
                     'club' => new StringType([
                         'generator-required' => true,
@@ -86,8 +80,7 @@ class RelationArgumentGeneratorTest extends TestCase
                 ],
                 'expected_arguments' => [],
             ],
-            // No data given
-            [
+            'No data given' => [
                 'type_fields' => [],
                 'expected_arguments' => [],
             ],

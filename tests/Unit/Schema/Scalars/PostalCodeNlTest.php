@@ -43,8 +43,8 @@ class PostalCodeNlTest extends TestCase
      */
     public function testParseValue(string $input, string $expectedException = '')
     {
-        if($expectedException !== '') {
-            $this->expectException($expectedException );
+        if ($expectedException !== '') {
+            $this->expectException($expectedException);
         }
 
         $result = $this->getScalar()->parseValue($input);

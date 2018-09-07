@@ -11,7 +11,7 @@ class PostalCodeNl extends ScalarType
     private const PATTERN = '/^\d{4}[a-zA-Z]{2}$/';
 
     /** @var string */
-    public $name = 'PostalCode';
+    public $name = 'PostalCodeNl';
 
     /** @var string */
     public $description = 'A valid postalcode for The Netherlands with pattern [1234aa]. Example: 1234AA.';
