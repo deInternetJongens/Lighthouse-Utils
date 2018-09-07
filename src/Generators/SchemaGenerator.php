@@ -14,6 +14,7 @@ use DeInternetJongens\LighthouseUtils\Generators\Queries\PaginateAllQueryGenerat
 use DeInternetJongens\LighthouseUtils\Models\GraphQLSchema;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\Date;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\DateTimeTz;
+use DeInternetJongens\LighthouseUtils\Schema\Scalars\PostalCodeNl;
 use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\FieldDefinition;
 use GraphQL\Type\Definition\FloatType;
@@ -40,6 +41,7 @@ class SchemaGenerator
         Date::class,
         DateTime::class,
         DateTimeTZ::class,
+        PostalCodeNl::class,
         EnumType::class
     ];
 
