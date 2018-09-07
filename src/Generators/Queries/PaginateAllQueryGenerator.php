@@ -53,7 +53,7 @@ class PaginateAllQueryGenerator
             $arguments[] = sprintf('%s_in: [%s] @in', $fieldName, $field->name);
             $arguments[] = sprintf('%s_not_in: [%s] @not_in', $fieldName, $field->name);
 
-            if($field instanceof EnumType) {
+            if ($field instanceof EnumType) {
                 continue;
             }
 

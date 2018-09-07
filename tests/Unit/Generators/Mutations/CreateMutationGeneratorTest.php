@@ -49,7 +49,8 @@ class CreateMutationGeneratorTest extends TestCase
                     'union' => new UnionType(
                         [
                             'name' => 'union',
-                    ]),
+                        ]
+                    ),
                 ],
                 'expected_query' => '',
             ],
