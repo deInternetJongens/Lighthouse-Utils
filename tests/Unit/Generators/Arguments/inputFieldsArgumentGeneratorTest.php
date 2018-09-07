@@ -68,7 +68,7 @@ class InputFieldsArgumentGeneratorTest extends TestCase
                     'date' => new Date(),
                 ],
                 'expected_arguments' => [
-                    'date: DateTime',
+                    'date: Date',
                 ],
             ],
             'Custom scalar DateTimeTz is supported' => [
