@@ -2,46 +2,42 @@
 
 namespace DeInternetJongens\LighthouseUtils\Schema\Scalars;
 
-use Carbon\Carbon;
 use GraphQL\Error\Error;
-use GraphQL\Language\AST\Node;
 use GraphQL\Language\AST\StringValueNode;
 use GraphQL\Type\Definition\ScalarType;
-use GraphQL\Utils\Utils;
-use InvalidArgumentException;
 
-class DateTimeTz extends ScalarType
+class PostalCodeNl extends ScalarType
 {
-    private const FORMAT = 'Y-m-d H:i:sP';
+    private const PATTERN = '/^\d{4}[a-zA-Z]{2}$/';
 
     /** @var string */
-    public $name = 'DateTimeTz';
+    public $name = 'PostalCodeNl';
 
     /** @var string */
-    public $description = 'A date string with format Y-m-d H:i:s+P. Example: "2018-01-01 13:00:00+00:00"';
+    public $description = 'A valid postalcode for The Netherlands with pattern [1234aa]. Example: 1234AA.';
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function serialize($value)
     {
-        return $value->format(self::FORMAT);
+        return $value;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function parseValue($value)
     {
-        try {
-            return Carbon::createFromFormat(self::FORMAT, $value);
-        } catch (InvalidArgumentException $exception) {
-            throw new Error(Utils::printSafeJson($exception->getMessage()));
+        if (! \preg_match(self::PATTERN, $value)) {
+            throw new Error(sprintf('Input error: Expected valid postal code with pattern [1234aa], got: [%s]', $value));
         }
+
+        return $value;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function parseLiteral($valueNode, array $variables = null)
     {

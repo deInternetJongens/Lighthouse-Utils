@@ -7,6 +7,7 @@ use DeInternetJongens\LighthouseUtils\Tests\Unit\TestCase;
 use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\IDType;
 use GraphQL\Type\Definition\StringType;
+use GraphQL\Type\Definition\UnionType;
 
 class CreateMutationWithInputTypeGeneratorTest extends TestCase
 {
@@ -49,8 +50,8 @@ class CreateMutationWithInputTypeGeneratorTest extends TestCase
             'Wrong type fields given' => [
                 'type_name' => 'ClubMember',
                 'type_fields' => [
-                    'enum' => new EnumType([
-                        'name' => 'enum',
+                    'union' => new UnionType([
+                        'name' => 'union',
                     ]),
                 ],
                 'expected_input_type' => '',

@@ -1,0 +1,4 @@
+type Query{
+    test(id: ID! @eq): Model! @can(if: "testPermission", model: "User")  @find(model: "Model")
+    testTwo(id: ID! @eq): Model! @can(if: "testPermission", model: "User")  @find(model: "Model")
+}

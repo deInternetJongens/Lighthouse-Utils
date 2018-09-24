@@ -16,13 +16,13 @@
   ],
   "require": {
     "php": ">=7.1",
-    "nuwave/lighthouse": "dev-master",
-    "illuminate/support": "^5.4",
     "illuminate/auth": "^5.4",
-    "illuminate/database": "^5.4"
+    "illuminate/database": "^5.4",
+    "illuminate/support": "^5.4",
+    "nuwave/lighthouse": "^2.2"
   },
   "require-dev": {
-    "orchestra/testbench": "~3.6.0",
+    "orchestra/testbench": "~3.6.0|~3.7.0",
     "phpunit/phpunit": "~7.0",
     "squizlabs/php_codesniffer": "^3.3"
   },

@@ -4,9 +4,9 @@ namespace DeInternetJongens\LighthouseUtils\Tests\Unit\Generators\Mutations;
 
 use DeInternetJongens\LighthouseUtils\Generators\Mutations\CreateMutationGenerator;
 use DeInternetJongens\LighthouseUtils\Tests\Unit\TestCase;
-use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\IDType;
 use GraphQL\Type\Definition\StringType;
+use GraphQL\Type\Definition\UnionType;
 
 class CreateMutationGeneratorTest extends TestCase
 {
@@ -46,9 +46,11 @@ class CreateMutationGeneratorTest extends TestCase
             'Wrong type fields given' => [
                 'type_name' => 'ClubMember',
                 'type_fields' => [
-                    'enum' => new EnumType([
-                        'name' => 'enum',
-                    ]),
+                    'union' => new UnionType(
+                        [
+                            'name' => 'union',
+                        ]
+                    ),
                 ],
                 'expected_query' => '',
             ],

@@ -1,5 +1,7 @@
 # Lighthouse Utils
 [![Build Status](https://travis-ci.org/deInternetJongens/Lighthouse-Utils.svg?branch=develop)](https://travis-ci.org/deInternetJongens/Lighthouse-Utils)
+[![Code Coverage](https://codecov.io/gh/deInternetJongens/Lighthouse-Utils/branch/develop/graph/badge.svg)](https://codecov.io/gh/deInternetJongens/Lighthouse-Utils)
+[![Latest Unstable Version](https://poser.pugx.org/deinternetjongens/lighthouse-utils/v/unstable)](https://packagist.org/packages/deinternetjongens/lighthouse-utils)
 
 This package can generate queries for the [Lighthouse GraphQL library](https://github.com/nuwave/lighthouse).
 This is not a standalone package, so Lighthouse is listed as a dependency.
@@ -54,7 +56,7 @@ It exposes a GraphQL interface interface on the `/graphql` route.
 
 To get started, run the following command in your Laravel application:
 ```bash
-php artisan vendor:publish --provider="Nuwave\Lighthouse\Providers\LighthouseServiceProvider" --tag="config"
+php artisan vendor:publish --provider="Nuwave\Lighthouse\Providers\LighthouseServiceProvider"
 php artisan vendor:publish --provider="DeInternetJongens\LighthouseUtils\ServiceProvider" --tag="migrations"
 php artisan migrate
 ```
@@ -78,6 +80,20 @@ php artisan lighthouse-utils:generate-schema
 ```
 The schema will be generated to the path as defined in the Lighthouse config, `lighthouse.schema.register`
 
+## Custom Queries and Mutations
+
+It might happen that you need a custom query or mutation beside the generated schema. In this package you have the ability to add custom queries and mutations by creating `.graphql` files in the default directories
+`app/GraphQL/Queries` and `app/GraphQL/Mutations` *(These directories are adjustable by editing the `config/lighthouse.php` file)* 
+
+Take for example a custom query to retrieve an instance of a model:
+```graphql
+type Query{
+    customQuery(id: ID! @eq): Model! @find(model: "Model")
+}
+```
+
+This query will be parsed after running the schema generation command and will be added to the Query section of the `schema.graphql`
+
 ### Scalar types
 
 Currently two scalar types are included. More about scalar type usage can be [found here](https://lighthouse-php.netlify.com/docs/schema-scalars.html).
@@ -93,6 +109,10 @@ A date string with format Y-m-d. Example: "2018-01-01"
 A date string with format Y-m-d H:i:s+P. Example: "2018-01-01 13:00:00+00:00"
 
 `scalar DateTimeTz @scalar(class: "DeInternetJongens\\LighthouseUtils\\Schema\\Scalars\\DateTimeTz")`
+
+#### PostalCodeNl
+
+A postal code as valid for The Netherlands, format 1111aa. Example: "7311SZ"
 
 ### Directives
 
