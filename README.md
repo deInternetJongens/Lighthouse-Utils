@@ -56,7 +56,7 @@ It exposes a GraphQL interface interface on the `/graphql` route.
 
 To get started, run the following command in your Laravel application:
 ```bash
-php artisan vendor:publish --provider="Nuwave\Lighthouse\Providers\LighthouseServiceProvider" --tag="config"
+php artisan vendor:publish --provider="Nuwave\Lighthouse\Providers\LighthouseServiceProvider"
 php artisan vendor:publish --provider="DeInternetJongens\LighthouseUtils\ServiceProvider" --tag="migrations"
 php artisan migrate
 ```
