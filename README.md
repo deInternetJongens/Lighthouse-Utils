@@ -18,6 +18,11 @@ Install via composer
 ```bash
 composer require deinternetjongens/lighthouse-utils
 ```
+Alternatively, you can try the example installation below.
+
+### Example installation
+
+An example installation is available at: https://github.com/maarten00/lighthouse-utils-example
 
 ### Register Service Provider
 
