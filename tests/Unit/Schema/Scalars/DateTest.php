@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Schema\Scalars;
+namespace DeInternetJongens\LighthouseUtils\Tests\Unit\Schema\Scalars;
 
 use Carbon\Carbon;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\Date;
