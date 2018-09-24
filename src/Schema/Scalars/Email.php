@@ -3,22 +3,33 @@
 namespace DeInternetJongens\LighthouseUtils\Schema\Scalars;
 
 use Egulias\EmailValidator\EmailValidator;
+use Egulias\EmailValidator\Validation\EmailValidation;
 use GraphQL\Error\Error;
 use GraphQL\Language\AST\StringValueNode;
 use GraphQL\Type\Definition\ScalarType;
 
+/**
+ * To validate e-mails we're using https://github.com/egulias/EmailValidator, this is a wrapper for the e-mail validation function provided by: http://isemail.info/
+ * This package checks against RFC 5321 whereas `filter_var()` does not.
+ */
 class Email extends ScalarType
 {
-    private const PATTERN = '/^\d{4}[a-zA-Z]{2}$/';
+    /** @var string */
+    public $name = 'Email';
 
     /** @var string */
-    public $name = 'PostalCodeNl';
+    public $description = 'A valid RFC 5321 compliant e-mail.';
 
-    /** @var string */
-    public $description = 'A valid postalcode for The Netherlands with pattern [1234aa]. Example: 1234AA.';
+    /** @var EmailValidator */
+    private $emailValidator;
 
-    public function __construct(EmailValidator $emailValidator)
+    /** @var EmailValidation */
+    private $validation;
+
+    public function __construct(EmailValidator $emailValidator, EmailValidation $validation)
     {
+        $this->emailValidator = $emailValidator;
+        $this->validation = $validation;
     }
 
     /**
@@ -34,8 +45,8 @@ class Email extends ScalarType
      */
     public function parseValue($value)
     {
-        if (! \preg_match(self::PATTERN, $value)) {
-            throw new Error(sprintf('Input error: Expected valid postal code with pattern [1234aa], got: [%s]', $value));
+        if (! $this->emailValidator->isValid($value, $this->validation)) {
+            throw new Error(sprintf('Input error: Expected valid e-mail, got: [%s]', $value));
         }
 
         return $value;
