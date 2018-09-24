@@ -33,7 +33,7 @@ class FindQueryGenerator
             return '';
         }
 
-        $queryName = strtolower($typeName);
+        $queryName = lcfirst($typeName);
         $query = sprintf('    %s(%s)', $queryName, implode(', ', $arguments));
         $query .= sprintf(': %1$s @find(model: "%1$s")', $typeName);
 
