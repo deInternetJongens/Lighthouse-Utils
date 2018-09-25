@@ -5,6 +5,7 @@ namespace DeInternetJongens\LighthouseUtils\Generators\Queries;
 use DeInternetJongens\LighthouseUtils\Models\GraphQLSchema;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\Date;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\DateTimeTz;
+use DeInternetJongens\LighthouseUtils\Schema\Scalars\Email;
 use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\FloatType;
 use GraphQL\Type\Definition\IDType;
@@ -24,7 +25,8 @@ class PaginateAllQueryGenerator
         Date::class,
         DateTime::class,
         DateTimeTz::class,
-        EnumType::class
+        EnumType::class,
+        Email::class
     ];
 
     /**
