@@ -5,7 +5,7 @@ namespace DeInternetJongens\LighthouseUtils\Tests\Unit\Schema\Scalars;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\Email;
 use DeInternetJongens\LighthouseUtils\Tests\Unit\TestCase;
 use Egulias\EmailValidator\EmailValidator;
-use Egulias\EmailValidator\Validation\EmailValidation;
+use Egulias\EmailValidator\Validation\RFCValidation;
 use GraphQL\Error\Error;
 use GraphQL\Language\AST\BooleanValueNode;
 use GraphQL\Language\AST\StringValueNode;
@@ -131,6 +131,6 @@ class EmailTest extends TestCase
 
     private function getScalar(): Email
     {
-        return new Email(new EmailValidator(), resolve(EmailValidation::class));
+        return new Email(new EmailValidator(), new RFCValidation());
     }
 }
