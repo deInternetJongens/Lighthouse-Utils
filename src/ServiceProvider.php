@@ -3,8 +3,6 @@
 namespace DeInternetJongens\LighthouseUtils;
 
 use DeInternetJongens\LighthouseUtils\Console\GenerateSchemaCommand;
-use Egulias\EmailValidator\Validation\EmailValidation;
-use Egulias\EmailValidator\Validation\RFCValidation;
 use ReflectionClass;
 
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
@@ -56,9 +54,6 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         $this->app->bind('lighthouse-utils', function () {
             return new LighthouseUtils();
         });
-
-        // The type of e-mail validation to use.
-        $this->app->bind(EmailValidation::class, RFCValidation::class);
 
         if ($this->app->runningInConsole()) {
             $this->commands([

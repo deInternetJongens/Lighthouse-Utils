@@ -4,6 +4,7 @@ namespace DeInternetJongens\LighthouseUtils\Schema\Scalars;
 
 use Egulias\EmailValidator\EmailValidator;
 use Egulias\EmailValidator\Validation\EmailValidation;
+use Egulias\EmailValidator\Validation\RFCValidation;
 use GraphQL\Error\Error;
 use GraphQL\Language\AST\StringValueNode;
 use GraphQL\Type\Definition\ScalarType;
@@ -26,10 +27,10 @@ class Email extends ScalarType
     /** @var EmailValidation */
     private $validation;
 
-    public function __construct(EmailValidator $emailValidator, EmailValidation $validation)
+    public function __construct()
     {
-        $this->emailValidator = $emailValidator;
-        $this->validation = $validation;
+        $this->emailValidator = new EmailValidator();
+        $this->validation = new RFCValidation();
     }
 
     /**
