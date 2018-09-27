@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 class FulltextFilterDirective extends BaseDirective
 {
-
     public function name(): string
     {
         return 'fulltext';
