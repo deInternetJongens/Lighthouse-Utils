@@ -13,7 +13,9 @@ use SebastianBergmann\RecursionContext\InvalidArgumentException;
 
 class DateTimeTzTest extends TestCase
 {
-    const FORMAT = 'Y-m-d H:i:sP';
+    const TIMEZONE_FORMAT = 'Y-m-d H:i:sP';
+
+    const FORMAT = 'Y-m-d H:i:s';
 
     /**
      * @return array
@@ -53,16 +55,13 @@ class DateTimeTzTest extends TestCase
         }
 
         $result = $dateScalar->parseValue($input);
-        $expectedResult = Carbon::createFromFormat(self::FORMAT, $input);
+        $expectedResult = Carbon::createFromFormat(self::TIMEZONE_FORMAT, $input);
 
         $this->assertEquals($result, $expectedResult);
     }
 
     /**
-     * @return void
-     * @throws ExpectationFailedException
-     * @throws InvalidArgumentException
-     * @throws \InvalidArgumentException
+     * @throws Error
      */
     public function testSerialize(): void
     {
@@ -128,7 +127,7 @@ class DateTimeTzTest extends TestCase
             )
         );
 
-        $expectedResult = Carbon::createFromFormat(self::FORMAT, $input);
+        $expectedResult = Carbon::createFromFormat(self::TIMEZONE_FORMAT, $input);
 
         $this->assertEquals($result, $expectedResult);
     }
