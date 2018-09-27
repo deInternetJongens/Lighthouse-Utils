@@ -66,7 +66,7 @@ class DateTimeTzTest extends TestCase
      */
     public function testSerialize(): void
     {
-        $expectedResult = '2018-09-06 13:00:00+02:00';
+        $expectedResult = '2018-09-06 15:00:00';
 
         $input = Carbon::createFromFormat(self::FORMAT, $expectedResult);
 
