@@ -11,8 +11,8 @@ class FulltextFilterDirective extends BaseDirective
         return 'fulltext';
     }
 
-    public function handle(string $fieldName, string $value, Builder $builder): Builder
+    public function handle(string $fieldName, $value, Builder $builder): Builder
     {
-       return $builder->getModel()->fullTextSearch($builder, $value);
+        return $builder->getModel()->fullTextSearch($value);
     }
 }
