@@ -4,7 +4,6 @@ namespace DeInternetJongens\LighthouseUtils\Schema\Scalars;
 
 use Carbon\Carbon;
 use GraphQL\Error\Error;
-use GraphQL\Language\AST\Node;
 use GraphQL\Language\AST\StringValueNode;
 use GraphQL\Type\Definition\ScalarType;
 use GraphQL\Utils\Utils;
@@ -25,7 +24,13 @@ class DateTimeTz extends ScalarType
      */
     public function serialize($value)
     {
-        return $value->format(self::FORMAT);
+        $value->format(self::FORMAT);
+
+        $timeZoneInHours = (float)substr($value->getTimezone()->getName(), 0, 3);
+
+        $value->addHours($timeZoneInHours);
+
+        return $value->format('Y-m-d H:i:s');
     }
 
     /**
