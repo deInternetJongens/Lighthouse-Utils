@@ -3,6 +3,7 @@
 namespace DeInternetJongens\LighthouseUtils\Tests\Unit\Generators\Queries;
 
 use DeInternetJongens\LighthouseUtils\Generators\Queries\PaginateAllQueryGenerator;
+use DeInternetJongens\LighthouseUtils\Schema\Scalars\FullTextSearch;
 use DeInternetJongens\LighthouseUtils\Tests\Unit\TestCase;
 use GraphQL\Type\Definition\IDType;
 use GraphQL\Type\Definition\ObjectType;
@@ -51,6 +52,13 @@ class PaginateAllQueryGeneratorTest extends TestCase
                     ]),
                 ],
                 'expected_query' => '',
+            ],
+            'FullTextSearch' => [
+                'type_name' => 'FullName',
+                'type_fields' => [
+                    'id' => new FullTextSearch(),
+                ],
+                'expected_query' => "    fullNames(id_fulltext: FullTextSearch @fulltext): [FullName]! @all(model: \"FullName\") @can(if: \"AllFullNames\", model: \"User\")\r\n    fullNamesPaginated(id_fulltext: FullTextSearch @fulltext): [FullName]! @paginate(model: \"FullName\") @can(if: \"paginateFullNames\", model: \"User\")",
             ],
         ];
     }
