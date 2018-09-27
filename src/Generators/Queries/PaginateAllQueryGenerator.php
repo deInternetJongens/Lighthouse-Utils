@@ -6,6 +6,7 @@ use DeInternetJongens\LighthouseUtils\Models\GraphQLSchema;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\Date;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\DateTimeTz;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\Email;
+use DeInternetJongens\LighthouseUtils\Schema\Scalars\FullTextSearch;
 use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\FloatType;
 use GraphQL\Type\Definition\IDType;
@@ -26,7 +27,8 @@ class PaginateAllQueryGenerator
         DateTime::class,
         DateTimeTz::class,
         EnumType::class,
-        Email::class
+        Email::class,
+        FullTextSearch::class,
     ];
 
     /**
@@ -48,8 +50,12 @@ class PaginateAllQueryGenerator
                 continue;
             }
 
-            // Add all our custom directives
+            if ($field instanceof FullTextSearch) {
+                $arguments[] = sprintf('%s_fulltext: %s @fulltext', $fieldName, $field->name);
+                continue;
+            }
 
+            // Add all our custom directives
             $arguments[] = sprintf('%s: %s @eq', $fieldName, $field->name);
             $arguments[] = sprintf('%s_not: %s @not', $fieldName, $field->name);
             $arguments[] = sprintf('%s_in: [%s] @in', $fieldName, $field->name);
