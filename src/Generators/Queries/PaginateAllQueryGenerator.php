@@ -51,7 +51,7 @@ class PaginateAllQueryGenerator
             }
 
             if ($field instanceof FullTextSearch) {
-                $arguments[] = sprintf('%s_fulltext: %s @fulltext', $fieldName, $field->name);
+                $arguments[] = sprintf('%s: %s @fulltext', $fieldName, $field->name);
                 continue;
             }
 

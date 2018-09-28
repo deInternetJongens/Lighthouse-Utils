@@ -8,7 +8,7 @@ class FullTextSearch extends ScalarType
 {
     public $name = 'FullTextSearch';
 
-    public $description = 'To enable fulltext searching on a type';
+    public $description = 'Extension of String type. When querying this field, you can extend the query via the model Scope fullTextSearch';
 
     public function serialize($value)
     {

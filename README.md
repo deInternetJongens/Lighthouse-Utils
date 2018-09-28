@@ -124,6 +124,18 @@ A postal code as valid for The Netherlands, format 1111aa. Example: "7311SZ"
 
 An RFC 5321 compliant e-mail
 
+#### fullTextSearch
+
+Via this Scalar is it possible to extend the query via the Scope fullTextSearch, to enable FullText searching
+postGresql example: 
+```php
+public function scopeFullTextSearch(Builder $builder, $value)
+{
+    return $builder->whereRaw("column_one % ? OR column_two % ?", [$value, $value])
+        ->orderByRaw('column_two <-> ?', [$value]);
+}
+```
+
 ### Directives
 
 To run more advanced queries, a couple of directives are included. 
@@ -144,6 +156,7 @@ Currently these directives are included:
 - not_in (comma seperated string)
 - not_starts_with
 - starts_with
+- fullTextSearch
 
 ### Migrations
 
