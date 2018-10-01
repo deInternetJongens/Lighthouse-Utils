@@ -26,6 +26,7 @@ class CreateMutationWithInputTypeGeneratorTest extends TestCase
                 ],
                 'expected_input_type' => 'input createClubMemberInput {name: String id: String}',
                 'expected_mutation' => '    createClubMember(input: createClubMemberInput!): ClubMember @create(model: "ClubMember", flatten: true) @can(if: "createClubMember", model: "User")',
+                'containsMutationAndInputType' => true
             ],
             'Happy flow, required fields' => [
                 'type_name' => 'ClubMember',
@@ -40,12 +41,14 @@ class CreateMutationWithInputTypeGeneratorTest extends TestCase
                 ],
                 'expected_input_type' => 'input createClubMemberInput {name: String! id: String!}',
                 'expected_mutation' => '    createClubMember(input: createClubMemberInput!): ClubMember @create(model: "ClubMember", flatten: true) @can(if: "createClubMember", model: "User")',
+                'containsMutationAndInputType' => true
             ],
             'no type fields given' => [
                 'type_name' => 'ClubMember',
                 'type_fields' => [],
                 'expected_input_type' => '',
                 'expected_mutation' => '',
+                'containsMutationAndInputType' => false
             ],
             'Wrong type fields given' => [
                 'type_name' => 'ClubMember',
@@ -56,6 +59,7 @@ class CreateMutationWithInputTypeGeneratorTest extends TestCase
                 ],
                 'expected_input_type' => '',
                 'expected_mutation' => '',
+                'containsMutationAndInputType' => false
             ],
         ];
     }
@@ -66,18 +70,21 @@ class CreateMutationWithInputTypeGeneratorTest extends TestCase
      * @param array $typeFields
      * @param string $expectedInputType
      * @param string $expectedMutation
+     * @param bool $containsMutationAndInputType
      */
     public function testCanGenerateCreateMutationWithInputTypeForClubMember(
         string $typeName,
         array $typeFields,
         string $expectedInputType,
-        string $expectedMutation
+        string $expectedMutation,
+        $containsMutationAndInputType = true
     ): void {
         $mutationWithInput = CreateMutationWithInputTypeGenerator::generate(
             $typeName,
             $typeFields
         );
 
+        $this->assertEquals($containsMutationAndInputType, $mutationWithInput->isNotEmpty(), 'Contains a mutation and input type');
         $this->assertEquals($expectedInputType, $mutationWithInput->getInputType(), 'Expected input type');
         $this->assertEquals($expectedMutation, $mutationWithInput->getMutation(), 'Expected mutation');
     }
