@@ -124,10 +124,10 @@ A postal code as valid for The Netherlands, format 1111aa. Example: "7311SZ"
 
 An RFC 5321 compliant e-mail
 
-#### fullTextSearch
+#### FullTextSearch
 
-Via this Scalar is it possible to extend the query via the Scope fullTextSearch, to enable FullText searching
-postGresql example: 
+Indicates that a field searches through multiple fields.
+To use this scalar, you need to add a scope on your model `scopeFullTextSearch`. Example: 
 ```php
 public function scopeFullTextSearch(Builder $builder, $value)
 {
@@ -135,6 +135,8 @@ public function scopeFullTextSearch(Builder $builder, $value)
         ->orderByRaw('column_two <-> ?', [$value]);
 }
 ```
+
+In the scope you can basically define whatever kind of query you want.
 
 ### Directives
 
