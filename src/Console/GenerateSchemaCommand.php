@@ -5,6 +5,9 @@ namespace DeInternetJongens\LighthouseUtils\Console;
 use DeInternetJongens\LighthouseUtils\Generators\SchemaGenerator;
 use Illuminate\Console\Command;
 
+/**
+ * @codeCoverageIgnore
+ */
 class GenerateSchemaCommand extends Command
 {
     /**
