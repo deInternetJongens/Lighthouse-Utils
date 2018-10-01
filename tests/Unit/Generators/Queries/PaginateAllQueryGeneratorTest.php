@@ -58,7 +58,7 @@ class PaginateAllQueryGeneratorTest extends TestCase
                 'type_fields' => [
                     'id' => new FullTextSearch(),
                 ],
-                'expected_query' => "    fullNames(id: FullTextSearch @fulltext): [FullName]! @all(model: \"FullName\") @can(if: \"AllFullNames\", model: \"User\")\r\n    fullNamesPaginated(id_fulltext: FullTextSearch @fulltext): [FullName]! @paginate(model: \"FullName\") @can(if: \"paginateFullNames\", model: \"User\")",
+                'expected_query' => "    fullNames(id: FullTextSearch @fulltext): [FullName]! @all(model: \"FullName\") @can(if: \"AllFullNames\", model: \"User\")\r\n    fullNamesPaginated(id: FullTextSearch @fulltext): [FullName]! @paginate(model: \"FullName\") @can(if: \"paginateFullNames\", model: \"User\")",
             ],
         ];
     }
@@ -69,7 +69,7 @@ class PaginateAllQueryGeneratorTest extends TestCase
      * @param array $typeFields
      * @param string $expectedQueries
      */
-    public function testCanGenerateAllQueryForIDType(
+    public function testCanGenerateAllQueries(
         string $typeName,
         array $typeFields,
         string $expectedQueries
