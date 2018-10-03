@@ -17,6 +17,7 @@ use DeInternetJongens\LighthouseUtils\Schema\Scalars\DateTimeTz;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\Email;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\PostalCodeNl;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\FullTextSearch;
+use GraphQL\Type\Definition\BooleanType;
 use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\FieldDefinition;
 use GraphQL\Type\Definition\FloatType;
@@ -47,6 +48,7 @@ class SchemaGenerator
         EnumType::class,
         Email::class,
         FullTextSearch::class,
+        BooleanType::class,
     ];
 
     /**
