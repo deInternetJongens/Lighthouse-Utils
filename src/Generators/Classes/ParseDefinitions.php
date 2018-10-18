@@ -53,6 +53,7 @@ class ParseDefinitions
      * @param string $customSchemaPath
      * @param string $type
      * @return array
+     * @throws \GraphQL\Error\SyntaxError
      */
     private function parseCustomSchemaFrom(string $customSchemaPath, string $type)
     {
