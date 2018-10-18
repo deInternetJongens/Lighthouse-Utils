@@ -16,15 +16,12 @@ abstract class BaseDirective extends LighthouseBaseDirective implements ArgMiddl
     {
         $argument = $this->injectFilter(
             $argument,
-            [
-                'resolve' => function (Builder $builder, string $key, array $arguments): Builder {
-                    $value = $arguments[$key];
+            function (Builder $builder, string $key, array $arguments): Builder {
+                $value = $arguments[$key];
+                $field = \preg_replace(sprintf('/%s$/', $this->getSuffix()), '', $key);
 
-                    $field = \preg_replace(sprintf('/%s$/', $this->getSuffix()), '', $key);
-
-                    return $this->handle($field, $value, $builder);
-                },
-            ]
+                return $this->handle($field, $value, $builder);
+            }
         );
 
         return $next($argument);
