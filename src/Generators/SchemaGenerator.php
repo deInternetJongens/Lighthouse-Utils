@@ -2,7 +2,6 @@
 
 namespace DeInternetJongens\LighthouseUtils\Generators;
 
-use Config;
 use DeInternetJongens\LighthouseUtils\Events\GraphQLSchemaGenerated;
 use DeInternetJongens\LighthouseUtils\Exceptions\InvalidConfigurationException;
 use DeInternetJongens\LighthouseUtils\Generators\Classes\ParseDefinitions;
@@ -15,8 +14,8 @@ use DeInternetJongens\LighthouseUtils\Models\GraphQLSchema;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\Date;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\DateTimeTz;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\Email;
-use DeInternetJongens\LighthouseUtils\Schema\Scalars\PostalCodeNl;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\FullTextSearch;
+use DeInternetJongens\LighthouseUtils\Schema\Scalars\PostalCodeNl;
 use GraphQL\Type\Definition\BooleanType;
 use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\FieldDefinition;
