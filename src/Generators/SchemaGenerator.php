@@ -27,6 +27,7 @@ use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\StringType;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Schema;
+use Nuwave\Lighthouse\Schema\Source\SchemaSourceProvider;
 use Nuwave\Lighthouse\Schema\Types\Scalars\DateTime;
 
 class SchemaGenerator
@@ -56,14 +57,19 @@ class SchemaGenerator
      */
     private $definitionsParser;
 
+    /** @var SchemaSourceProvider */
+    private $schemaSourceProvider;
+
     /**
      * SchemaGenerator constructor.
      *
      * @param \DeInternetJongens\LighthouseUtils\Generators\Classes\ParseDefinitions $definitionsParser
+     * @param SchemaSourceProvider $schemaSourceProvider
      */
-    public function __construct(ParseDefinitions $definitionsParser)
+    public function __construct(ParseDefinitions $definitionsParser, SchemaSourceProvider $schemaSourceProvider)
     {
         $this->definitionsParser = $definitionsParser;
+        $this->schemaSourceProvider = $schemaSourceProvider;
     }
 
     /**
@@ -151,6 +157,8 @@ class SchemaGenerator
      *
      * @param array $definitionFileDirectories
      * @return Schema
+     * @throws \Nuwave\Lighthouse\Exceptions\DirectiveException
+     * @throws \Nuwave\Lighthouse\Exceptions\ParseException
      */
     private function getSchemaForFiles(array $definitionFileDirectories): Schema
     {
@@ -176,14 +184,14 @@ class SchemaGenerator
         fwrite($tempSchemaFile, sprintf("%s\r\n%s", $relativeTypeImports, $placeholderQuery));
 
         //Override the config value where Lighthouse parses it's schema from
-        Config::set('lighthouse.schema.register', $tempSchemaFilePath);
+        $this->schemaSourceProvider->setRootPath($tempSchemaFilePath);
         $schema = graphql()->prepSchema();
 
         fclose($tempSchemaFile);
         unlink($tempSchemaFilePath);
 
         //Set the config value back to where we want to the original path
-        Config::set('lighthouse.schema.register', $originalSchemaFilePath);
+        $this->schemaSourceProvider->setRootPath($originalSchemaFilePath);
 
         return $schema;
     }
