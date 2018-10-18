@@ -97,7 +97,7 @@ class SchemaGenerator
         $definedTypes = $this->getDefinedTypesFromSchema($schema, $definitionFileDirectories);
 
         $queries = $this->generateQueriesForDefinedTypes($definedTypes, $definitionFileDirectories);
-        $typesImports = $this->concatSchemaDefinitionFilesFromPath(
+        $typesConcatenated = $this->concatSchemaDefinitionFilesFromPath(
             $this->definitionsParser->getGraphqlDefinitionFilePaths($definitionFileDirectories['types'])
         );
 
@@ -106,7 +106,7 @@ class SchemaGenerator
         }
 
         //Merge queries and types into one file with required newlines
-        return sprintf("%s\r\n\r\n%s\r\n", $typesImports, $queries);
+        return sprintf("%s\r\n\r\n%s\r\n", $typesConcatenated, $queries);
     }
 
     /**
