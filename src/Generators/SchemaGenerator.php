@@ -95,7 +95,7 @@ class SchemaGenerator
         $definedTypes = $this->getDefinedTypesFromSchema($schema, $definitionFileDirectories);
 
         $queries = $this->generateQueriesForDefinedTypes($definedTypes, $definitionFileDirectories);
-        $typesImports = $this->generateGraphqlRelativeImports(
+        $typesImports = $this->concatSchemaDefinitionFilesFromPath(
             $this->definitionsParser->getGraphqlDefinitionFilePaths($definitionFileDirectories['types'])
         );
 
