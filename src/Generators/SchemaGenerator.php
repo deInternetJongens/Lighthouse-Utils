@@ -80,6 +80,8 @@ class SchemaGenerator
      * @param array $definitionFileDirectories
      * @return string Generated Schema with Types and Queries
      * @throws InvalidConfigurationException
+     * @throws \Nuwave\Lighthouse\Exceptions\DirectiveException
+     * @throws \Nuwave\Lighthouse\Exceptions\ParseException
      */
     public function generate(array $definitionFileDirectories): string
     {
@@ -95,7 +97,7 @@ class SchemaGenerator
         $definedTypes = $this->getDefinedTypesFromSchema($schema, $definitionFileDirectories);
 
         $queries = $this->generateQueriesForDefinedTypes($definedTypes, $definitionFileDirectories);
-        $typesImports = $this->generateGraphqlRelativeImports(
+        $typesImports = $this->concatSchemaDefinitionFilesFromPath(
             $this->definitionsParser->getGraphqlDefinitionFilePaths($definitionFileDirectories['types'])
         );
 
