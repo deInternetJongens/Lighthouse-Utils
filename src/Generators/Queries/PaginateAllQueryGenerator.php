@@ -26,7 +26,7 @@ class PaginateAllQueryGenerator
         Date::class,
         DateTime::class,
         DateTimeTz::class,
-        EnumType::class,
+        //EnumType::class,
         Email::class,
         FullTextSearch::class,
     ];
@@ -42,44 +42,54 @@ class PaginateAllQueryGenerator
     public static function generate(string $typeName, array $typeFields): string
     {
         $arguments = [];
+        $inputTypeNames = self::getInputTypeNamesKeyedByDataType();
 
-        foreach ($typeFields as $fieldName => $field) {
+        foreach ($typeFields as $columnName => $field) {
             $className = get_class($field);
+
             // We can generate queries for all but Object types, as Object types are relations
             if (! in_array($className, self::$supportedGraphQLTypes)) {
                 continue;
             }
 
+            $columnDataType = $field->name;
+            $inputTypeName = $inputTypeNames[$columnDataType] ?: false;
+
+            if (! $inputTypeName) {
+                continue;
+            }
+
             if ($field instanceof FullTextSearch) {
-                $arguments[] = sprintf('%s: %s @fulltext', $fieldName, $field->name);
+                $arguments[] = sprintf('%s: %s @fulltext', $columnName, $columnDataType);
                 continue;
             }
 
             // Add all our custom directives
-            $arguments[] = sprintf('%s: %s @eq', $fieldName, $field->name);
-            $arguments[] = sprintf('%s_not: %s @not', $fieldName, $field->name);
-            $arguments[] = sprintf('%s_in: [%s] @in', $fieldName, $field->name);
-            $arguments[] = sprintf('%s_not_in: [%s] @not_in', $fieldName, $field->name);
+            //$arguments[] = sprintf('%s: %s @eq', $fieldName, $field->name);
+            //$arguments[] = sprintf('%s_not: %s @not', $fieldName, $field->name);
+            //$arguments[] = sprintf('%s_in: [%s] @in', $fieldName, $field->name);
+            //$arguments[] = sprintf('%s_not_in: [%s] @not_in', $fieldName, $field->name);
+
+            $arguments[] = sprintf('%s: %s @queryable', $columnName, $inputTypeName);
 
             if ($field instanceof EnumType) {
                 continue;
             }
 
-            if ($field instanceof StringType) {
-                $arguments[] = sprintf('%s_contains: %s @contains', $fieldName, $field->name);
-                $arguments[] = sprintf('%s_not_contains: %s @not_contains', $fieldName, $field->name);
-                $arguments[] = sprintf('%s_starts_with: %s @starts_with', $fieldName, $field->name);
-                $arguments[] = sprintf('%s_not_starts_with: %s @not_starts_with', $fieldName, $field->name);
-                $arguments[] = sprintf('%s_ends_with: %s @not_ends_with', $fieldName, $field->name);
+            //if ($field instanceof StringType) {
+            //    $arguments[] = sprintf('%s_contains: %s @contains', $fieldName, $field->name);
+            //    $arguments[] = sprintf('%s_not_contains: %s @not_contains', $fieldName, $field->name);
+            //    $arguments[] = sprintf('%s_starts_with: %s @starts_with', $fieldName, $field->name);
+            //    $arguments[] = sprintf('%s_not_starts_with: %s @not_starts_with', $fieldName, $field->name);
+            //    $arguments[] = sprintf('%s_ends_with: %s @not_ends_with', $fieldName, $field->name);
+            //
+            //    continue;
+            //}
 
-                continue;
-            }
-
-
-            $arguments[] = sprintf('%s_lt: %s @lt', $fieldName, $field->name);
-            $arguments[] = sprintf('%s_lte: %s @lte', $fieldName, $field->name);
-            $arguments[] = sprintf('%s_gt: %s @gt', $fieldName, $field->name);
-            $arguments[] = sprintf('%s_gte: %s @gte', $fieldName, $field->name);
+            //$arguments[] = sprintf('%s_lt: %s @lt', $fieldName, $field->name);
+            //$arguments[] = sprintf('%s_lte: %s @lte', $fieldName, $field->name);
+            //$arguments[] = sprintf('%s_gt: %s @gt', $fieldName, $field->name);
+            //$arguments[] = sprintf('%s_gte: %s @gte', $fieldName, $field->name);
         }
 
         if (count($arguments) < 1) {
@@ -110,4 +120,41 @@ class PaginateAllQueryGenerator
 
         return $allQuery ."\r\n". $paginatedQuery;
     }
+
+    /**
+     * @return array
+     */
+    public static function getInputTypes(): array
+    {
+        $inputTypeNames = self::getInputTypeNamesKeyedByDataType();
+        $inputTypes = [
+            'enum Operator {
+                MORETHAN @enum(value: ">")
+                LESSTHAN @enum(value: "<")
+                EQUALS @enum(value: "=")
+                NOTEQUALS @enum(value: "!=")
+            }',
+        ];
+
+        foreach ($inputTypeNames as $dataType => $inputTypeName) {
+            $inputTypes[] = sprintf('input %s {operator: Operator! value: %s!}', $inputTypeName, $dataType);
+        }
+
+        return $inputTypes;
+    }
+
+    /**
+     * @return array
+     */
+    private static function getInputTypeNamesKeyedByDataType(): array
+    {
+        $names = [];
+        foreach (self::$supportedGraphQLTypes as $supportedGraphQLType) {
+            $columnDataType = (new $supportedGraphQLType())->name;
+            $names[$columnDataType] = sprintf('where%sInput', $columnDataType);;
+        }
+
+        return $names;
+    }
+
 }

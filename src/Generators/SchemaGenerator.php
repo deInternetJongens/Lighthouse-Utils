@@ -262,7 +262,7 @@ class SchemaGenerator
     {
         $queries = [];
         $mutations = [];
-        $inputTypes = [];
+        $inputTypes = PaginateAllQueryGenerator::getInputTypes();
 
         /**
          * @var string $typeName
