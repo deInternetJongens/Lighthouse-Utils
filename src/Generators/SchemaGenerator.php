@@ -57,19 +57,14 @@ class SchemaGenerator
      */
     private $definitionsParser;
 
-    /** @var SchemaSourceProvider */
-    private $schemaSourceProvider;
-
     /**
      * SchemaGenerator constructor.
      *
      * @param \DeInternetJongens\LighthouseUtils\Generators\Classes\ParseDefinitions $definitionsParser
-     * @param SchemaSourceProvider $schemaSourceProvider
      */
-    public function __construct(ParseDefinitions $definitionsParser, SchemaSourceProvider $schemaSourceProvider)
+    public function __construct(ParseDefinitions $definitionsParser)
     {
         $this->definitionsParser = $definitionsParser;
-        $this->schemaSourceProvider = $schemaSourceProvider;
     }
 
     /**
